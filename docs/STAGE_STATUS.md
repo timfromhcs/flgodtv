@@ -246,15 +246,26 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 13 — FLY-BRAIN ADAPTER
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Connectome / fly-brain adapter boundary (GEMINI.md Sections 7 & 8)
-- Protect existing baseline in `malecns/` (read-only baseline interface)
-- Isolate fly-brain adapter from world, physics, learning, evolution, and rendering
-- Connectome sensory input and motor output mapping
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/brain/fly_brain_interface.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/brain/fly_brain_interface.hpp) (Pure abstract interface `IFlyBrain`, `NeuronSoma`, `BrainSensoryInput`, `BrainMotorOutput`, `ConnectomeMetadata`; strict adapter boundary isolating world, physics, learning, and rendering per Section 8)
+- [include/flgod/brain/malecns_adapter.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/brain/malecns_adapter.hpp) (MaleCNS connectome adapter loading biological reconstructed somas from `malecns/data-raw/2023-27-2 soma_sides.csv`; bilateral hemisphere segregation, rate-coded leaky integration, optomotor differential wingbeat steering, proboscis extension response [PER], state hashing, and serialization)
+- Unit and integration tests:
+  - [test_brain_interface.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_brain_interface.cpp): Sensory stimulus mapping, optomotor response, proboscis feeding activation, and serialization: Passed.
+  - [test_brain_malecns_loader.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_brain_malecns_loader.cpp): Real biological data ingestion (10,000 and 125,507 somas from `soma_sides.csv`), hemisphere coordinate distribution ($nx, ny, nz$), spatial bounds validation, and empty fallback handling: Passed.
+  - [test_brain_agent_integration.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/integration/test_brain_agent_integration.cpp): Full agent integration: sensory perception -> connectome somatic integration -> motor output steering -> physical world displacement -> crash recovery match: Passed.
+- Benchmark:
+  - [evidence/windows/brain_benchmark.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/brain_benchmark.json): 128.95 million soma-updates/sec, 12,895 steps/sec (~129x realtime at 100 Hz).
+- CTest suite: **47/47 tests passed (100%)**.
+
+---
 
 ### STAGE 14 — MULTI-AGENT
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Multi-agent scenario combining Colonies, God Fly teacher, NPC agents, Connectome Brains, Procedural World, Physics, Language transmission, and Sandboxed Technology into a unified headless simulation.
+- Real-time interaction loop and emergent colony behaviors.
+- Deterministic multi-agent simulation test and benchmark.
 
 ### STAGE 15 — BACKEND FINAL
 **Status:** `PENDING`

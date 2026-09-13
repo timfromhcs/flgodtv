@@ -253,6 +253,23 @@ if(BUILD_TESTING)
     # Technology Benchmark
     add_executable(benchmark_technology_vm benchmarks/benchmark_technology_vm.cpp)
     target_link_libraries(benchmark_technology_vm PRIVATE flgod_core)
+
+    # Fly-Brain adapter subsystem tests
+    add_executable(test_brain_interface tests/unit/test_brain_interface.cpp)
+    target_link_libraries(test_brain_interface PRIVATE flgod_core)
+    add_test(NAME BrainInterfaceTest COMMAND test_brain_interface)
+
+    add_executable(test_brain_malecns_loader tests/unit/test_brain_malecns_loader.cpp)
+    target_link_libraries(test_brain_malecns_loader PRIVATE flgod_core)
+    add_test(NAME BrainMaleCNSLoaderTest COMMAND test_brain_malecns_loader)
+
+    add_executable(test_brain_agent_integration tests/integration/test_brain_agent_integration.cpp)
+    target_link_libraries(test_brain_agent_integration PRIVATE flgod_core)
+    add_test(NAME BrainAgentIntegrationTest COMMAND test_brain_agent_integration)
+
+    # Fly-Brain Benchmark
+    add_executable(benchmark_brain_simulation benchmarks/benchmark_brain_simulation.cpp)
+    target_link_libraries(benchmark_brain_simulation PRIVATE flgod_core)
 endif()
 
 
