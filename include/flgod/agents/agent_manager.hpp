@@ -72,16 +72,24 @@ public:
     void step(double dt, const World& world, RNGStream& rng) {
         std::vector<EntityID> dead_agents;
 
-        // Build list of active agent positions for peer perception
+        // Collect and sort agent IDs for bit-exact deterministic execution
+        std::vector<EntityID> sorted_ids;
+        sorted_ids.reserve(m_agents.size());
+        for (const auto& [id, _] : m_agents) sorted_ids.push_back(id);
+        std::sort(sorted_ids.begin(), sorted_ids.end());
+
+        // Build list of active agent positions for peer perception (deterministic sorted order)
         std::vector<std::pair<EntityID, Vec3>> positions;
-        positions.reserve(m_agents.size());
-        for (const auto& [id, agent] : m_agents) {
+        positions.reserve(sorted_ids.size());
+        for (EntityID id : sorted_ids) {
+            const auto& agent = m_agents.at(id);
             if (agent.is_alive()) {
                 positions.push_back({id, agent.position()});
             }
         }
 
-        for (auto& [id, agent] : m_agents) {
+        for (EntityID id : sorted_ids) {
+            auto& agent = m_agents.at(id);
             if (!agent.is_alive()) {
                 dead_agents.push_back(id);
                 continue;

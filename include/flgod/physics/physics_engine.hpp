@@ -80,8 +80,15 @@ public:
     void step(double dt) {
         if (dt <= 0.0) return;
 
+        // Collect and sort body IDs for bit-exact deterministic execution
+        std::vector<EntityID> sorted_body_ids;
+        sorted_body_ids.reserve(m_bodies.size());
+        for (const auto& [id, _] : m_bodies) sorted_body_ids.push_back(id);
+        std::sort(sorted_body_ids.begin(), sorted_body_ids.end());
+
         // 1. Multi-fidelity velocity integration
-        for (auto& [id, body] : m_bodies) {
+        for (EntityID id : sorted_body_ids) {
+            auto& body = m_bodies.at(id);
             if (!body.is_active || body.motion_type != BodyMotionType::Dynamic) {
                 continue;
             }
@@ -127,9 +134,10 @@ public:
             }
         }
 
-        // 2. Inter-body collision resolution for L0 bodies
+        // 2. Inter-body collision resolution for L0 bodies (strictly ordered)
         std::vector<EntityID> active_l0;
-        for (const auto& [id, body] : m_bodies) {
+        for (EntityID id : sorted_body_ids) {
+            const auto& body = m_bodies.at(id);
             if (body.is_active && body.fidelity == SimulationFidelity::L0_Full) {
                 active_l0.push_back(id);
             }

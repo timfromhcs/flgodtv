@@ -104,8 +104,14 @@ public:
         // 3. Physics step
         m_world_state.physics().step(dt);
 
-        // 4. Connectome brain updates & motor translation for equipped agents
-        for (auto& [raw_id, brain_ptr] : m_agent_brains) {
+        // 4. Connectome brain updates & motor translation for equipped agents (deterministic sorted order)
+        std::vector<uint64_t> brain_raw_ids;
+        brain_raw_ids.reserve(m_agent_brains.size());
+        for (const auto& [raw_id, _] : m_agent_brains) brain_raw_ids.push_back(raw_id);
+        std::sort(brain_raw_ids.begin(), brain_raw_ids.end());
+
+        for (uint64_t raw_id : brain_raw_ids) {
+            auto& brain_ptr = m_agent_brains.at(raw_id);
             EntityID id(raw_id);
             if (!m_agent_mgr.has_agent(id)) continue;
 
@@ -153,9 +159,10 @@ public:
         // 5. Multi-agent spatial & behavioral step
         m_agent_mgr.step(dt, m_world_state.world(), m_world_state.rng().agent());
 
-        // 6. Social communication & peer transmission among nearby agents
+        // 6. Social communication & peer transmission among nearby agents (strictly sorted)
         std::vector<EntityID> agent_ids;
-        for (const auto& [raw_id, _] : m_agent_brains) agent_ids.push_back(EntityID(raw_id));
+        agent_ids.reserve(brain_raw_ids.size());
+        for (uint64_t raw_id : brain_raw_ids) agent_ids.push_back(EntityID(raw_id));
 
         for (size_t i = 0; i < agent_ids.size(); ++i) {
             if (!m_agent_mgr.has_agent(agent_ids[i])) continue;
