@@ -1,0 +1,46 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+layout(std430, binding = 0) readonly buffer FieldIn {
+    float field_in[];
+};
+
+layout(std430, binding = 1) writeonly buffer FieldOut {
+    float field_out[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint width;
+    uint height;
+    float diffusion_rate;
+    float dt;
+} pc;
+
+void main() {
+    uint x = gl_GlobalInvocationID.x;
+    uint z = gl_GlobalInvocationID.y;
+
+    if (x >= pc.width || z >= pc.height) {
+        return;
+    }
+
+    uint idx = z * pc.width + x;
+    float center = field_in[idx];
+
+    // 4-neighbor laplacian with clamp-to-edge
+    uint left_x   = (x > 0) ? (x - 1) : 0;
+    uint right_x  = (x + 1 < pc.width) ? (x + 1) : (pc.width - 1);
+    uint up_z     = (z > 0) ? (z - 1) : 0;
+    uint down_z   = (z + 1 < pc.height) ? (z + 1) : (pc.height - 1);
+
+    float left  = field_in[z * pc.width + left_x];
+    float right = field_in[z * pc.width + right_x];
+    float up    = field_in[up_z * pc.width + x];
+    float down  = field_in[down_z * pc.width + x];
+
+    float laplacian = (left + right + up + down) - 4.0 * center;
+    float next_val = center + pc.diffusion_rate * laplacian * pc.dt;
+
+    field_out[idx] = next_val;
+}

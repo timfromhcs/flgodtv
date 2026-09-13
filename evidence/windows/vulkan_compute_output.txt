@@ -1,0 +1,17 @@
+[TEST] Running test_vulkan_init...
+  Device Name: AMD Radeon(TM) Graphics
+  Vendor ID: 0x1002, Device ID: 0x1681
+  API Version: 1.4.315
+  Compute Queue Family: 0
+  Total Memory: 14226 MB
+[TEST] test_vulkan_init PASSED
+[TEST] Running test_vulkan_buffer...
+  1 MB upload/download pattern match verified.
+  Memory Transfer Benchmark (4 MB payload):
+    Host -> Device: 28764.6 MB/s (0.13906 ms)
+    Device -> Host: 178.959 MB/s (22.3515 ms)
+[TEST] test_vulkan_buffer PASSED
+[TEST] Running test_vulkan_compute...
+  Vector add (65,536 floats) verified against CPU reference. Max diff: 0
+  2D field step (64x64 grid) verified against CPU reference. Max diff: 0
+[TEST] test_vulkan_compute PASSED

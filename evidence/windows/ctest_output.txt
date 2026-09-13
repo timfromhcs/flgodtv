@@ -14,7 +14,7 @@ test 1
 1: Test timeout computed to be: 10000000
 1: [TEST] Running test_core_clock...
 1: [PASS] test_core_clock passed successfully.
- 1/16 Test  #1: CoreClockTest ....................   Passed    0.01 sec
+ 1/19 Test  #1: CoreClockTest ....................   Passed    0.01 sec
 test 2
       Start  2: CoreRNGTest
 
@@ -23,7 +23,7 @@ test 2
 2: Test timeout computed to be: 10000000
 2: [TEST] Running test_core_rng...
 2: [PASS] test_core_rng passed successfully.
- 2/16 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
+ 2/19 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
 test 3
       Start  3: CoreEntityTest
 
@@ -32,7 +32,7 @@ test 3
 3: Test timeout computed to be: 10000000
 3: [TEST] Running test_core_entity...
 3: [PASS] test_core_entity passed successfully.
- 3/16 Test  #3: CoreEntityTest ...................   Passed    0.01 sec
+ 3/19 Test  #3: CoreEntityTest ...................   Passed    0.01 sec
 test 4
       Start  4: CoreEventBusTest
 
@@ -41,7 +41,7 @@ test 4
 4: Test timeout computed to be: 10000000
 4: [TEST] Running test_core_event_bus...
 4: [PASS] test_core_event_bus passed successfully.
- 4/16 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
+ 4/19 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
 test 5
       Start  5: DeterministicSimulationTest
 
@@ -52,7 +52,7 @@ test 5
 5: [CHECK 1/2] Uninterrupted parallel runs produced identical hash: 2326199170333143766
 5: [CHECK 2/2] Restored checkpoint run matched reference final hash: 2326199170333143766
 5: [PASS] test_deterministic_simulation passed successfully.
- 5/16 Test  #5: DeterministicSimulationTest ......   Passed    0.07 sec
+ 5/19 Test  #5: DeterministicSimulationTest ......   Passed    0.07 sec
 test 6
       Start  6: WorldNoiseTest
 
@@ -61,7 +61,7 @@ test 6
 6: Test timeout computed to be: 10000000
 6: [TEST] Running test_world_noise...
 6: [PASS] test_world_noise passed successfully.
- 6/16 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
+ 6/19 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
 test 7
       Start  7: WorldChunkTest
 
@@ -75,7 +75,7 @@ test 7
 7: [JSON]: {"coord":{"x":3,"y":0,"z":-7},"delta":{"biomass":[],"biomes":[{"idx":85,"val":4}],"heights":[{"idx":85,"val":-3.5}]},"id":26388281163769,"seed":13665729913251135165}
 7: [STEP 4 PASS]
 7: [PASS] test_world_chunk passed successfully.
- 7/16 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
+ 7/19 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
 test 8
       Start  8: WorldFieldsTest
 
@@ -84,7 +84,7 @@ test 8
 8: Test timeout computed to be: 10000000
 8: [TEST] Running test_world_fields...
 8: [PASS] test_world_fields passed successfully.
- 8/16 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
+ 8/19 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
 test 9
       Start  9: WorldProceduralTest
 
@@ -94,7 +94,7 @@ test 9
 9: [TEST] Running test_world_procedural...
 9: [INFO] Observed 4 distinct biomes across region.
 9: [PASS] test_world_procedural passed successfully.
- 9/16 Test  #9: WorldProceduralTest ..............   Passed    0.01 sec
+ 9/19 Test  #9: WorldProceduralTest ..............   Passed    0.02 sec
 test 10
       Start 10: DeterministicWorldTest
 
@@ -105,7 +105,7 @@ test 10
 10: [CHECK 1/2] Parallel identical world runs matched final hash: 1179954163374705284
 10: [CHECK 2/2] Restored checkpoint run matched reference final hash: 1179954163374705284
 10: [PASS] test_deterministic_world passed successfully.
-10/16 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
+10/19 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
 test 11
       Start 11: PhysicsFallTest
 
@@ -117,7 +117,7 @@ test 11
 11:   Restitution bounce observed successfully.
 11:   Ball settled on ground at y = 0.5, vy = 0
 11: [TEST] test_physics_fall PASSED
-11/16 Test #11: PhysicsFallTest ..................   Passed    0.01 sec
+11/19 Test #11: PhysicsFallTest ..................   Passed    0.01 sec
 test 12
       Start 12: PhysicsCollisionTest
 
@@ -128,7 +128,7 @@ test 12
 12:   Head-on collision reversal verified.
 12:   Raycast hit body 10 at dist 7.62084, point (-2.37916, 5, 0)
 12: [TEST] test_physics_collision PASSED
-12/16 Test #12: PhysicsCollisionTest .............   Passed    0.01 sec
+12/19 Test #12: PhysicsCollisionTest .............   Passed    0.01 sec
 test 13
       Start 13: PhysicsConstraintTest
 
@@ -140,7 +140,7 @@ test 13
 13:   Structural failure successfully triggered when force exceeded threshold.
 13:   Bodies separated after failure: dist = 7.48367
 13: [TEST] test_physics_constraint PASSED
-13/16 Test #13: PhysicsConstraintTest ............   Passed    0.01 sec
+13/19 Test #13: PhysicsConstraintTest ............   Passed    0.01 sec
 test 14
       Start 14: PhysicsFidelityTest
 
@@ -151,7 +151,7 @@ test 14
 14:   L2 statistical behavior verified (ground equilibrium: y = 0.5)
 14:   Promotion and demotion lifecycle verified cleanly without data loss.
 14: [TEST] test_physics_fidelity PASSED
-14/16 Test #14: PhysicsFidelityTest ..............   Passed    0.01 sec
+14/19 Test #14: PhysicsFidelityTest ..............   Passed    0.01 sec
 test 15
       Start 15: DeterministicPhysicsTest
 
@@ -162,7 +162,7 @@ test 15
 15:   Passed 500 steps bit-exact determinism check. Final hash: 0x7fe83107ca6891d4
 15:   Passed 100% crash recovery and checkpoint replay test. Hash: 0x7fe83107ca6891d4
 15: [TEST] test_deterministic_physics PASSED
-15/16 Test #15: DeterministicPhysicsTest .........   Passed    0.01 sec
+15/19 Test #15: DeterministicPhysicsTest .........   Passed    0.01 sec
 test 16
       Start 16: HeadlessModesTest
 
@@ -173,8 +173,46 @@ test 16
 16:   Checkpoint file write/restore verified. Hash: 0x580c022399993ec1
 16:   Replay file recording and verification verified bit-exact for 200 ticks.
 16: [TEST] test_headless_modes PASSED
-16/16 Test #16: HeadlessModesTest ................   Passed    0.16 sec
+16/19 Test #16: HeadlessModesTest ................   Passed    0.14 sec
+test 17
+      Start 17: VulkanInitTest
 
-100% tests passed out of 16
+17: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_vulkan_init.exe
+17: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+17: Test timeout computed to be: 10000000
+17: [TEST] Running test_vulkan_init...
+17:   Device Name: AMD Radeon(TM) Graphics
+17:   Vendor ID: 0x1002, Device ID: 0x1681
+17:   API Version: 1.4.315
+17:   Compute Queue Family: 0
+17:   Total Memory: 14226 MB
+17: [TEST] test_vulkan_init PASSED
+17/19 Test #17: VulkanInitTest ...................   Passed    0.12 sec
+test 18
+      Start 18: VulkanBufferTest
 
-Total Test time (real) =   0.43 sec
+18: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_vulkan_buffer.exe
+18: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+18: Test timeout computed to be: 10000000
+18: [TEST] Running test_vulkan_buffer...
+18:   1 MB upload/download pattern match verified.
+18:   Memory Transfer Benchmark (4 MB payload):
+18:     Host -> Device: 29443.5 MB/s (0.135853 ms)
+18:     Device -> Host: 179.687 MB/s (22.261 ms)
+18: [TEST] test_vulkan_buffer PASSED
+18/19 Test #18: VulkanBufferTest .................   Passed    0.80 sec
+test 19
+      Start 19: VulkanComputeTest
+
+19: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_vulkan_compute.exe
+19: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+19: Test timeout computed to be: 10000000
+19: [TEST] Running test_vulkan_compute...
+19:   Vector add (65,536 floats) verified against CPU reference. Max diff: 0
+19:   2D field step (64x64 grid) verified against CPU reference. Max diff: 0
+19: [TEST] test_vulkan_compute PASSED
+19/19 Test #19: VulkanComputeTest ................   Passed    0.13 sec
+
+100% tests passed out of 19
+
+Total Test time (real) =   1.46 sec

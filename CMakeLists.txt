@@ -23,12 +23,23 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party
 )
 
+# Vulkan dependency
+find_package(Vulkan REQUIRED)
+
 # Core library
 add_library(flgod_core INTERFACE)
 target_include_directories(flgod_core INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+    ${Vulkan_INCLUDE_DIRS}
 )
+target_link_libraries(flgod_core INTERFACE
+    Vulkan::Vulkan
+)
+
+# Copy shaders to binary dir for tests and execution
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 
 # Main headless executable
 add_executable(flgod
@@ -107,5 +118,18 @@ if(BUILD_TESTING)
     add_executable(test_headless_modes tests/integration/test_headless_modes.cpp)
     target_link_libraries(test_headless_modes PRIVATE flgod_core)
     add_test(NAME HeadlessModesTest COMMAND test_headless_modes)
+
+    # Vulkan compute subsystem tests
+    add_executable(test_vulkan_init tests/gpu/test_vulkan_init.cpp)
+    target_link_libraries(test_vulkan_init PRIVATE flgod_core)
+    add_test(NAME VulkanInitTest COMMAND test_vulkan_init)
+
+    add_executable(test_vulkan_buffer tests/gpu/test_vulkan_buffer.cpp)
+    target_link_libraries(test_vulkan_buffer PRIVATE flgod_core)
+    add_test(NAME VulkanBufferTest COMMAND test_vulkan_buffer)
+
+    add_executable(test_vulkan_compute tests/gpu/test_vulkan_compute.cpp)
+    target_link_libraries(test_vulkan_compute PRIVATE flgod_core)
+    add_test(NAME VulkanComputeTest COMMAND test_vulkan_compute)
 endif()
 

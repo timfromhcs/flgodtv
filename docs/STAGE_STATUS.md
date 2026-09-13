@@ -115,15 +115,35 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 06 — VULKAN
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Vulkan compute abstraction layer (`VulkanContext`, `ComputeDevice`, `ComputeBuffer`, `ComputePipeline`)
-- CPU reference vs GPU compute execution comparison tests (Sections 35 & 36)
-- Minimal verified compute kernel with explicit numerical tolerances
-- Memory transfer benchmarking (host-to-device, device-to-host)
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/gpu/vulkan_context.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/gpu/vulkan_context.hpp) (`VulkanContext`, physical device selection, compute queue extraction, memory type finder, and RAII cleanup)
+- [include/flgod/gpu/compute_buffer.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/gpu/compute_buffer.hpp) (`ComputeBuffer` host-visible/device-local memory allocation, upload, download, and transfer benchmarking)
+- [include/flgod/gpu/compute_pipeline.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/gpu/compute_pipeline.hpp) (`ComputePipeline` SPIR-V loader, descriptor set layout, pipeline layout, push constants, and dispatch fence synchronization)
+- [include/flgod/gpu/cpu_reference.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/gpu/cpu_reference.hpp) (CPU reference implementations for vector math and 2D field diffusion with numerical tolerance comparison)
+- Shaders:
+  - [shaders/vector_add.comp](file:///C:/Users/hcsme/Desktop/Fly/shaders/vector_add.comp) (Compiled to `shaders/vector_add.spv` via `glslc`)
+  - [shaders/field_step.comp](file:///C:/Users/hcsme/Desktop/Fly/shaders/field_step.comp) (Compiled to `shaders/field_step.spv` via `glslc`)
+- Unit and comparison tests:
+  - [test_vulkan_init.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/gpu/test_vulkan_init.cpp): Verified physical device AMD Radeon(TM) Graphics (Device ID `0x1681`, Vulkan API 1.4.315, 14,226 MB memory, compute queue family 0): Passed.
+  - [test_vulkan_buffer.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/gpu/test_vulkan_buffer.cpp): 1 MB pattern upload/download exact match; transfer benchmark measured **~28,764 MB/s** Host->Device and **~179 MB/s** Device->Host: Passed.
+  - [test_vulkan_compute.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/gpu/test_vulkan_compute.cpp):
+    - Vector add (65,536 floats): GPU output matches CPU reference with **0.0 maximum absolute difference** (exact bit match).
+    - 2D field diffusion (64x64 grid): GPU output matches CPU reference with **0.0 maximum absolute difference** (exact bit match).
+- Evidence output: [evidence/windows/vulkan_compute_output.txt](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/vulkan_compute_output.txt) and [evidence/windows/ctest_output.txt](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/ctest_output.txt).
+- CTest suite: **19/19 tests passed (100%)**.
+
+---
 
 ### STAGE 07 — LEARNING
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Learning engine decoupled from fly brain (Sections 29, 30, 31, 32, 33, 34)
+- Observation, Action, Outcome, Reward, Prediction, PredictionError abstractions
+- Experience model and ReplayBuffer
+- Multi-tier memory architecture (working, episodic, semantic, procedural, social)
+- Parallel environment workers and experience collectors
+- Benchmark measuring experiences_to_success on a toy environment
 
 ### STAGE 08 — EVOLUTION
 **Status:** `PENDING`
