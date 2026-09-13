@@ -105,11 +105,24 @@ struct RigidBodyState {
     }
 
     [[nodiscard]] nlohmann::json to_json() const {
+        uint64_t px_b = 0, py_b = 0, pz_b = 0;
+        uint64_t vx_b = 0, vy_b = 0, vz_b = 0;
+        uint64_t mass_b = 0;
+        std::memcpy(&px_b, &position.x, sizeof(double));
+        std::memcpy(&py_b, &position.y, sizeof(double));
+        std::memcpy(&pz_b, &position.z, sizeof(double));
+        std::memcpy(&vx_b, &linear_velocity.x, sizeof(double));
+        std::memcpy(&vy_b, &linear_velocity.y, sizeof(double));
+        std::memcpy(&vz_b, &linear_velocity.z, sizeof(double));
+        std::memcpy(&mass_b, &mass, sizeof(double));
         return {
             {"id", id.raw()},
             {"pos", {{"x", position.x}, {"y", position.y}, {"z", position.z}}},
             {"vel", {{"x", linear_velocity.x}, {"y", linear_velocity.y}, {"z", linear_velocity.z}}},
+            {"pos_b", {px_b, py_b, pz_b}},
+            {"vel_b", {vx_b, vy_b, vz_b}},
             {"mass", mass},
+            {"mass_b", mass_b},
             {"friction", friction},
             {"restitution", restitution},
             {"motion_type", static_cast<uint8_t>(motion_type)},
@@ -121,20 +134,37 @@ struct RigidBodyState {
 
     void from_json(const nlohmann::json& j) {
         id = EntityID(j.value("id", 0ULL));
-        if (j.contains("pos")) {
+        if (j.contains("pos_b")) {
+            auto arr = j["pos_b"];
+            uint64_t bx = arr[0], by = arr[1], bz = arr[2];
+            std::memcpy(&position.x, &bx, sizeof(double));
+            std::memcpy(&position.y, &by, sizeof(double));
+            std::memcpy(&position.z, &bz, sizeof(double));
+        } else if (j.contains("pos")) {
             position.x = j["pos"].value("x", 0.0);
             position.y = j["pos"].value("y", 0.0);
             position.z = j["pos"].value("z", 0.0);
         }
-        if (j.contains("vel")) {
+        if (j.contains("vel_b")) {
+            auto arr = j["vel_b"];
+            uint64_t bx = arr[0], by = arr[1], bz = arr[2];
+            std::memcpy(&linear_velocity.x, &bx, sizeof(double));
+            std::memcpy(&linear_velocity.y, &by, sizeof(double));
+            std::memcpy(&linear_velocity.z, &bz, sizeof(double));
+        } else if (j.contains("vel")) {
             linear_velocity.x = j["vel"].value("x", 0.0);
             linear_velocity.y = j["vel"].value("y", 0.0);
             linear_velocity.z = j["vel"].value("z", 0.0);
         }
-        mass = j.value("mass", 1.0);
+        if (j.contains("mass_b")) {
+            uint64_t mb = j["mass_b"];
+            std::memcpy(&mass, &mb, sizeof(double));
+        } else {
+            mass = j.value("mass", 1.0);
+        }
         friction = j.value("friction", 0.5);
         restitution = j.value("restitution", 0.2);
-        motion_type = static_cast<BodyMotionType>(j.value("motion_type", 2));
+        motion_type = static_cast<BodyMotionType>(j.value("motion_type", 0));
         fidelity = static_cast<SimulationFidelity>(j.value("fidelity", 0));
         is_active = j.value("is_active", true);
         if (j.contains("shape")) {

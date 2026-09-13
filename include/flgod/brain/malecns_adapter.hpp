@@ -225,6 +225,19 @@ public:
     }
 
     [[nodiscard]] nlohmann::json to_json() const override {
+        std::vector<uint64_t> act_b, pot_b;
+        act_b.reserve(m_activations.size());
+        for (double d : m_activations) {
+            uint64_t b = 0;
+            std::memcpy(&b, &d, sizeof(double));
+            act_b.push_back(b);
+        }
+        pot_b.reserve(m_potentials.size());
+        for (double d : m_potentials) {
+            uint64_t b = 0;
+            std::memcpy(&b, &d, sizeof(double));
+            pot_b.push_back(b);
+        }
         return {
             {"soma_count", m_somas.size()},
             {"left_count", m_left_somas.size()},
@@ -232,7 +245,9 @@ public:
             {"steps", m_step_count},
             {"active_neurons", active_neuron_count()},
             {"activations", m_activations},
-            {"potentials", m_potentials}
+            {"potentials", m_potentials},
+            {"act_b", act_b},
+            {"pot_b", pot_b}
         };
     }
 
@@ -240,10 +255,22 @@ public:
         if (j.contains("steps")) {
             m_step_count = j["steps"].get<uint64_t>();
         }
-        if (j.contains("activations")) {
+        if (j.contains("act_b")) {
+            auto arr = j["act_b"].get<std::vector<uint64_t>>();
+            m_activations.resize(arr.size());
+            for (size_t i = 0; i < arr.size(); ++i) {
+                std::memcpy(&m_activations[i], &arr[i], sizeof(double));
+            }
+        } else if (j.contains("activations")) {
             m_activations = j["activations"].get<std::vector<double>>();
         }
-        if (j.contains("potentials")) {
+        if (j.contains("pot_b")) {
+            auto arr = j["pot_b"].get<std::vector<uint64_t>>();
+            m_potentials.resize(arr.size());
+            for (size_t i = 0; i < arr.size(); ++i) {
+                std::memcpy(&m_potentials[i], &arr[i], sizeof(double));
+            }
+        } else if (j.contains("potentials")) {
             m_potentials = j["potentials"].get<std::vector<double>>();
         }
     }

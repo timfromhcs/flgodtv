@@ -141,11 +141,21 @@ public:
     }
 
     [[nodiscard]] nlohmann::json to_json() const {
+        uint64_t px_b = 0, py_b = 0, pz_b = 0;
+        uint64_t vx_b = 0, vy_b = 0, vz_b = 0;
+        std::memcpy(&px_b, &m_position.x, sizeof(double));
+        std::memcpy(&py_b, &m_position.y, sizeof(double));
+        std::memcpy(&pz_b, &m_position.z, sizeof(double));
+        std::memcpy(&vx_b, &m_velocity.x, sizeof(double));
+        std::memcpy(&vy_b, &m_velocity.y, sizeof(double));
+        std::memcpy(&vz_b, &m_velocity.z, sizeof(double));
         return {
             {"id", m_id.raw()},
             {"colony_id", m_colony_id},
             {"pos", {{"x", m_position.x}, {"y", m_position.y}, {"z", m_position.z}}},
             {"vel", {{"x", m_velocity.x}, {"y", m_velocity.y}, {"z", m_velocity.z}}},
+            {"pos_b", {px_b, py_b, pz_b}},
+            {"vel_b", {vx_b, vy_b, vz_b}},
             {"drives", m_drives.to_json()},
             {"genome", m_genome.to_json()},
             {"memory", m_memory.to_json()},
@@ -158,12 +168,24 @@ public:
     void from_json(const nlohmann::json& j) {
         m_id = EntityID(j.value("id", 0ULL));
         m_colony_id = j.value("colony_id", 0u);
-        if (j.contains("pos")) {
+        if (j.contains("pos_b")) {
+            auto arr = j["pos_b"];
+            uint64_t bx = arr[0], by = arr[1], bz = arr[2];
+            std::memcpy(&m_position.x, &bx, sizeof(double));
+            std::memcpy(&m_position.y, &by, sizeof(double));
+            std::memcpy(&m_position.z, &bz, sizeof(double));
+        } else if (j.contains("pos")) {
             m_position.x = j["pos"].value("x", 0.0);
             m_position.y = j["pos"].value("y", 0.0);
             m_position.z = j["pos"].value("z", 0.0);
         }
-        if (j.contains("vel")) {
+        if (j.contains("vel_b")) {
+            auto arr = j["vel_b"];
+            uint64_t bx = arr[0], by = arr[1], bz = arr[2];
+            std::memcpy(&m_velocity.x, &bx, sizeof(double));
+            std::memcpy(&m_velocity.y, &by, sizeof(double));
+            std::memcpy(&m_velocity.z, &bz, sizeof(double));
+        } else if (j.contains("vel")) {
             m_velocity.x = j["vel"].value("x", 0.0);
             m_velocity.y = j["vel"].value("y", 0.0);
             m_velocity.z = j["vel"].value("z", 0.0);

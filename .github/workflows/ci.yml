@@ -24,10 +24,10 @@ jobs:
       - name: Setup MSVC x64
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install Vulkan SDK via Chocolatey
+      - name: Install Vulkan SDK and Ninja via Chocolatey
         shell: powershell
         run: |
-          choco install vulkan-sdk -y --no-progress
+          choco install vulkan-sdk ninja -y --no-progress
           $vks = Get-ChildItem -Path "C:\VulkanSDK" -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
           if ($vks) {
             Write-Host "Found Vulkan SDK at $($vks.FullName)"
@@ -35,9 +35,9 @@ jobs:
             "$($vks.FullName)\Bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
           }
 
-      - name: Configure CMake (Visual Studio 2022)
+      - name: Configure CMake (Ninja Release)
         run: |
-          cmake -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DFLGOD_ENABLE_VULKAN=ON
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DFLGOD_ENABLE_VULKAN=ON
 
       - name: Compile flgod & Test Suite
         run: |
@@ -48,21 +48,21 @@ jobs:
           echo "[INFO] Running all CPU, Physics, Learning, Evolution, Agent, Language, Tech, and Brain tests..."
           echo "[INFO] Per GEMINI.md Section 103, physical GPU Vulkan execution requires dedicated hardware:"
           echo "[INFO] VULKAN GPU TEST = NOT AVAILABLE (Cloud runner has no physical Vulkan GPU device)"
-          ctest --test-dir build -C Release --output-on-failure -E "(VulkanInitTest|VulkanBufferTest|VulkanComputeTest|GodotFrontendSmokeTest)"
+          ctest --test-dir build --output-on-failure -E "(VulkanInitTest|VulkanBufferTest|VulkanComputeTest|GodotFrontendSmokeTest)"
 
       - name: Verify Headless CLI Modes
         run: |
-          .\build\Release\flgod.exe --version
-          .\build\Release\flgod.exe --self-test
-          .\build\Release\flgod.exe --validate
-          .\build\Release\flgod.exe --simulate 120
+          .\build\flgod.exe --version
+          .\build\flgod.exe --self-test
+          .\build\flgod.exe --validate
+          .\build\flgod.exe --simulate 120
 
       - name: Upload Windows Binaries & Artifacts (Section 104)
         uses: actions/upload-artifact@v4
         with:
           name: flgodtv-windows-x64
           path: |
-            build/Release/flgod.exe
+            build/flgod.exe
             evidence/
             docs/
 

@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <cstring>
 #include <nlohmann/json.hpp>
 
 namespace flgod {
@@ -16,18 +17,35 @@ struct AgentDrives {
     double health{100.0};    // 0 to 100
 
     [[nodiscard]] nlohmann::json to_json() const {
+        uint64_t eb=0, hb=0, fb=0, hyb=0, hlb=0;
+        std::memcpy(&eb, &energy, sizeof(double));
+        std::memcpy(&hb, &hunger, sizeof(double));
+        std::memcpy(&fb, &fatigue, sizeof(double));
+        std::memcpy(&hyb, &hydration, sizeof(double));
+        std::memcpy(&hlb, &health, sizeof(double));
         return {
             {"energy", energy}, {"hunger", hunger}, {"fatigue", fatigue},
-            {"hydration", hydration}, {"health", health}
+            {"hydration", hydration}, {"health", health},
+            {"drives_b", {eb, hb, fb, hyb, hlb}}
         };
     }
 
     void from_json(const nlohmann::json& j) {
-        energy = j.value("energy", 100.0);
-        hunger = j.value("hunger", 0.0);
-        fatigue = j.value("fatigue", 0.0);
-        hydration = j.value("hydration", 100.0);
-        health = j.value("health", 100.0);
+        if (j.contains("drives_b")) {
+            auto arr = j["drives_b"];
+            uint64_t eb = arr[0], hb = arr[1], fb = arr[2], hyb = arr[3], hlb = arr[4];
+            std::memcpy(&energy, &eb, sizeof(double));
+            std::memcpy(&hunger, &hb, sizeof(double));
+            std::memcpy(&fatigue, &fb, sizeof(double));
+            std::memcpy(&hydration, &hyb, sizeof(double));
+            std::memcpy(&health, &hlb, sizeof(double));
+        } else {
+            energy = j.value("energy", 100.0);
+            hunger = j.value("hunger", 0.0);
+            fatigue = j.value("fatigue", 0.0);
+            hydration = j.value("hydration", 100.0);
+            health = j.value("health", 100.0);
+        }
     }
 };
 
