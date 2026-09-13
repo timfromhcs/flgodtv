@@ -190,16 +190,32 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 10 — LLM
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Local GGUF LLM teacher and NPC runtime integration (GEMINI.md Sections 50, 51, 52, 53, 54, 55)
-- God Fly teacher agent with local GGUF model capability
-- NPC local model management (load, unload, memory budget, TTFT / token throughput measurement)
-- Sandboxed schema validation: parse -> schema validation -> capability validation -> world validation -> action execution
-- Event-driven NPC inference (no continuous busy inference)
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/llm/gguf_parser.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/llm/gguf_parser.hpp) (Binary GGUF parser, magic verification 0x46554747, metadata key-value inspection, architecture/context length extraction, deterministic content hash calculation, and synthetic GGUF generator)
+- [include/flgod/llm/model_manager.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/llm/model_manager.hpp) (`ModelManager` with `GodFly` instruct and `NPC` economical roles, `MemoryBudget` allocation/eviction, backend selection, health checks, TTFT and token throughput tracking)
+- [include/flgod/llm/action_security.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/llm/action_security.hpp) (Strict sandboxed 5-stage pipeline: parse -> schema validation -> capability validation -> world validation -> action execution; rejects shell/exec/system keywords, verifies target existence and range)
+- [include/flgod/llm/god_fly.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/llm/god_fly.hpp) (`GodFly` teacher agent; provides teaching outputs across 5 modes: speech, demonstration, concept, suggestion, explanation; enforces strict Section 54 rule: no unearned skills or free rewards)
+- [include/flgod/llm/npc_system.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/llm/npc_system.hpp) (`NPCAgent` with personality, goals, relationships/trust, knowledge levels, conversation history; event-driven inference gatekeeper with anti-polling cooldown suppression)
+- Unit and integration tests:
+  - [test_llm_gguf_parser.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_llm_gguf_parser.cpp): Synthetic GGUF creation, header inspection, metadata extraction, content hashing, and corruption rejection: Passed.
+  - [test_llm_model_manager.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_llm_model_manager.cpp): Model loading across roles, memory budget allocation, TTFT and throughput metrics, health checks, unloading, and budget overflow prevention: Passed.
+  - [test_llm_action_security.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_llm_action_security.cpp): Rejection of malformed JSON, sandbox breach exploit attempts, unauthorized NPC teacher actions, non-existent target entities, and dead targets: Passed.
+  - [test_llm_god_fly.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_llm_god_fly.cpp): Lesson generation across modes, student reception into working/social memory, hypothesis confidence (0.25), and strict absence of free rewards: Passed.
+  - [test_llm_npc_system.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_llm_npc_system.cpp): Personality/goals/knowledge configuration, event-driven triggers, and suppression of per-tick busy inference: Passed.
+  - [test_llm_integration.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/llm/test_llm_integration.cpp): Full end-to-end integration: God Fly generates lesson -> secure delivery -> physical simulation practice -> Q-learning TD step -> concept reinforcement (0.25 -> 0.85) -> event-driven dialogue response -> crash recovery match: Passed.
+- Benchmark:
+  - [evidence/windows/llm_benchmark.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/llm_benchmark.json): 170,387 security validations/sec across 5 stages, 1,000 inferences executed with full memory accounting.
+- CTest suite: **36/36 tests passed (100%)**.
+
+---
 
 ### STAGE 11 — LANGUAGE
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Signals, symbols, and meaning associations (GEMINI.md Section 56)
+- Vocabulary, sequence patterns, and grammar state
+- Social learning and cultural transmission tracking (individual vs social transfer vs God Fly vs cultural inheritance, Section 57)
 
 ### STAGE 12 — TECHNOLOGY
 **Status:** `PENDING`

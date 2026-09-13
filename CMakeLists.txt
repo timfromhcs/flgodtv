@@ -182,6 +182,35 @@ if(BUILD_TESTING)
     add_executable(test_multi_agent_simulation tests/integration/test_multi_agent_simulation.cpp)
     target_link_libraries(test_multi_agent_simulation PRIVATE flgod_core)
     add_test(NAME MultiAgentSimulationTest COMMAND test_multi_agent_simulation)
+
+    # LLM subsystem tests
+    add_executable(test_llm_gguf_parser tests/unit/test_llm_gguf_parser.cpp)
+    target_link_libraries(test_llm_gguf_parser PRIVATE flgod_core)
+    add_test(NAME LLMGGUFParserTest COMMAND test_llm_gguf_parser)
+
+    add_executable(test_llm_model_manager tests/unit/test_llm_model_manager.cpp)
+    target_link_libraries(test_llm_model_manager PRIVATE flgod_core)
+    add_test(NAME LLMModelManagerTest COMMAND test_llm_model_manager)
+
+    add_executable(test_llm_action_security tests/unit/test_llm_action_security.cpp)
+    target_link_libraries(test_llm_action_security PRIVATE flgod_core)
+    add_test(NAME LLMActionSecurityTest COMMAND test_llm_action_security)
+
+    add_executable(test_llm_god_fly tests/unit/test_llm_god_fly.cpp)
+    target_link_libraries(test_llm_god_fly PRIVATE flgod_core)
+    add_test(NAME LLMGodFlyTest COMMAND test_llm_god_fly)
+
+    add_executable(test_llm_npc_system tests/unit/test_llm_npc_system.cpp)
+    target_link_libraries(test_llm_npc_system PRIVATE flgod_core)
+    add_test(NAME LLMNPCSystemTest COMMAND test_llm_npc_system)
+
+    add_executable(test_llm_integration tests/llm/test_llm_integration.cpp)
+    target_link_libraries(test_llm_integration PRIVATE flgod_core)
+    add_test(NAME LLMIntegrationTest COMMAND test_llm_integration)
+
+    # LLM Benchmark
+    add_executable(benchmark_llm_throughput benchmarks/benchmark_llm_throughput.cpp)
+    target_link_libraries(benchmark_llm_throughput PRIVATE flgod_core)
 endif()
 
 

@@ -41,6 +41,7 @@ public:
     QLearner& learner() noexcept { return m_learner; }
 
     [[nodiscard]] bool is_alive() const noexcept { return m_is_alive; }
+    void kill() noexcept { m_is_alive = false; }
     [[nodiscard]] uint32_t age_ticks() const noexcept { return m_age_ticks; }
 
     AgentActuatorOutput step(double dt, const AgentSensoryInput& input, RNGStream& rng) {
