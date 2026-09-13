@@ -1,9 +1,9 @@
 {
   "active_neurons": 0,
-  "load_time_ms": 27.5205,
-  "simulation_time_ms": 77.5478,
+  "load_time_ms": 27.306,
+  "simulation_time_ms": 70.9913,
   "soma_count": 10000,
-  "soma_updates_per_second": 128952723.35256448,
-  "steps_per_second": 12895.272335256448,
+  "soma_updates_per_second": 140862331.01802617,
+  "steps_per_second": 14086.233101802616,
   "steps_simulated": 1000
 }

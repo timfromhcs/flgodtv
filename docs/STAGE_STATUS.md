@@ -301,15 +301,28 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 16 — GODOT
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Godot 4 Forward+ Vulkan frontend integration (GEMINI.md Sections 69 & 70)
-- Godot project structure in `godot/`
-- GDExtension C++ binding linking `flgod_core` backend to Godot 4
-- Headless export validation and verification
+**Status:** `VERIFIED`  
+**Evidence:**
+- Real installed Godot version detected and recorded: [evidence/toolchain/godot-version.txt](file:///C:/Users/hcsme/Desktop/Fly/evidence/toolchain/godot-version.txt) (`Godot Engine v4.7.2.stable.official.ed1daf0bf`).
+- Godot project configuration: [godot/project.godot](file:///C:/Users/hcsme/Desktop/Fly/godot/project.godot) targeting Godot 4 Forward+ Vulkan renderer (`renderer/rendering_method="forward_plus"` per GEMINI.md Section 70).
+- Presentation architecture:
+  - [godot/scripts/backend_bridge.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/backend_bridge.gd) receiving canonical world state, agent states, colony boundaries, weather, and telemetry from FLGOD backend per Section 69.
+  - [godot/scripts/flgod_tv_controller.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/flgod_tv_controller.gd) coordinating 4-camera presentation rig and MultiMesh fly rendering.
+  - [godot/scenes/main.tscn](file:///C:/Users/hcsme/Desktop/Fly/godot/scenes/main.tscn) with ProceduralSky, DirectionalLight3D sun, 4 Camera3D viewports (Global, God Fly, Colony, Event), MultiMeshInstance3D, GodFlyMesh, and telemetry HUD.
+- Automated Headless Smoke Test:
+  - [godot/scripts/test_headless_frontend.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/test_headless_frontend.gd) executed headlessly via `Godot_v4.7.2-stable_win64_console.exe --headless`: 4-camera rig, MultiMesh instance setup, backend bridge data, and frame simulation all passed with exit code 0.
+- Integrated CTest target: `GodotFrontendSmokeTest` passed in CTest suite.
+- CTest suite: **49/49 tests passed (100%)**.
+
+---
 
 ### STAGE 17 — WORLD RENDERING
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Terrain mesh generation from backend procedural elevation and biomes (GEMINI.md Sections 71 & 72).
+- Continuous field visualization: temperature, moisture, wind particle trails.
+- Water rendering and procedural vegetation instancing (GEMINI.md Sections 73 & 74).
+- Deterministic visual verification test.
 
 ### STAGE 18 — CAMERA
 **Status:** `PENDING`

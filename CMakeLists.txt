@@ -279,6 +279,20 @@ if(BUILD_TESTING)
     # Multi-Agent Benchmark
     add_executable(benchmark_multi_agent_ecosystem benchmarks/benchmark_multi_agent_ecosystem.cpp)
     target_link_libraries(benchmark_multi_agent_ecosystem PRIVATE flgod_core)
+
+    # Godot Frontend Smoke Test
+    find_program(GODOT_EXECUTABLE
+        NAMES godot godot_console Godot_v4.7.2-stable_win64_console.exe
+        PATHS
+            "$ENV{LOCALAPPDATA}/Microsoft/WinGet/Packages/GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe"
+            "C:/Users/hcsme/AppData/Local/Microsoft/WinGet/Packages/GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe"
+    )
+    if(GODOT_EXECUTABLE)
+        add_test(
+            NAME GodotFrontendSmokeTest
+            COMMAND ${GODOT_EXECUTABLE} --headless --path "${CMAKE_SOURCE_DIR}/godot" --script res://scripts/test_headless_frontend.gd
+        )
+    endif()
 endif()
 
 

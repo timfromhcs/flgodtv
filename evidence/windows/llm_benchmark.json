@@ -1,11 +1,11 @@
 {
   "allocated_ram_mb": 2284.0,
   "allocated_vram_mb": 706.0,
-  "average_latency_ms": 0.0002335,
+  "average_latency_ms": 0.0001967,
   "inference_iterations": 1000,
-  "load_time_ms": 0.16,
-  "tokens_per_second": 201284796.57387578,
+  "load_time_ms": 0.1482,
+  "tokens_per_second": 238942552.10981187,
   "total_tokens_generated": 47000,
   "validation_iterations": 10000,
-  "validations_per_second": 170387.3586210892
+  "validations_per_second": 191201.66421928536
 }
