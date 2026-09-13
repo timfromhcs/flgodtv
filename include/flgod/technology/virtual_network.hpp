@@ -169,6 +169,11 @@ public:
             {"queue_size", m_packet_queue.size()}
         };
     }
+
+    void from_json(const nlohmann::json& j) {
+        if (j.contains("packets_routed")) m_packets_routed = j["packets_routed"].get<uint64_t>();
+        if (j.contains("packets_dropped")) m_packets_dropped = j["packets_dropped"].get<uint64_t>();
+    }
 };
 
 } // namespace flgod::technology

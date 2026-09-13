@@ -67,7 +67,9 @@ struct KnowledgeProvenance {
             {"concept", concept_key},
             {"action", static_cast<int>(action)},
             {"origin", knowledge_origin_to_string(origin)},
+            {"origin_id", static_cast<int>(origin)},
             {"channel", transmission_channel_to_string(channel)},
+            {"channel_id", static_cast<int>(channel)},
             {"source_id", source_agent_id.raw()},
             {"gen_depth", generation_depth},
             {"fidelity", transmission_fidelity},
@@ -207,6 +209,31 @@ public:
             j[std::to_string(raw_id)] = agent_j;
         }
         return {{"transmissions", m_transmission_events}, {"knowledge", j}};
+    }
+
+    void from_json(const nlohmann::json& j) {
+        m_agent_knowledge.clear();
+        if (j.contains("transmissions")) {
+            m_transmission_events = j["transmissions"].get<uint64_t>();
+        }
+        if (j.contains("knowledge") && j["knowledge"].is_object()) {
+            for (const auto& [id_str, concepts_j] : j["knowledge"].items()) {
+                uint64_t raw_id = std::stoull(id_str);
+                for (const auto& item : concepts_j) {
+                    KnowledgeProvenance prov;
+                    prov.concept_key = item.value("concept", "");
+                    prov.action = static_cast<AgentActionType>(item.value("action", 0));
+                    prov.origin = static_cast<KnowledgeOrigin>(item.value("origin_id", 0));
+                    prov.channel = static_cast<TransmissionChannel>(item.value("channel_id", 0));
+                    prov.source_agent_id = EntityID(item.value("source_id", 0ULL));
+                    prov.generation_depth = item.value("gen_depth", 0U);
+                    prov.transmission_fidelity = item.value("fidelity", 1.0);
+                    prov.empirical_validation_score = item.value("empirical_score", 0.0);
+                    prov.acquisition_time = item.value("time", 0.0);
+                    m_agent_knowledge[raw_id][prov.concept_key] = prov;
+                }
+            }
+        }
     }
 };
 

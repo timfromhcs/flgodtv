@@ -288,10 +288,22 @@ public:
         return {
             {"pc", m_pc},
             {"status", vm_status_to_string(m_status)},
+            {"status_id", static_cast<int>(m_status)},
             {"total_cycles", m_total_cycles_executed},
             {"registers", m_registers},
             {"program_size", m_program.size()}
         };
+    }
+
+    void from_json(const nlohmann::json& j) {
+        if (j.contains("pc")) m_pc = j["pc"].get<uint32_t>();
+        if (j.contains("status_id")) m_status = static_cast<VMStatus>(j["status_id"].get<int>());
+        if (j.contains("total_cycles")) m_total_cycles_executed = j["total_cycles"].get<uint64_t>();
+        if (j.contains("registers") && j["registers"].is_array()) {
+            for (size_t i = 0; i < std::min<size_t>(NUM_REGISTERS, j["registers"].size()); ++i) {
+                m_registers[i] = j["registers"][i].get<int32_t>();
+            }
+        }
     }
 };
 

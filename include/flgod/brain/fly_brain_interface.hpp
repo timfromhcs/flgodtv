@@ -89,6 +89,7 @@ public:
 
     // State serialization
     [[nodiscard]] virtual nlohmann::json to_json() const = 0;
+    virtual void from_json(const nlohmann::json& j) = 0;
 };
 
 } // namespace flgod::brain

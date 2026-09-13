@@ -1,0 +1,9 @@
+{
+  "agent_count": 20,
+  "benchmark_ticks": 500,
+  "colony_count": 4,
+  "duration_ms": 53.0873,
+  "final_hash": 1835313486089811883,
+  "realtime_factor_60hz": 156.9741413357495,
+  "ticks_per_second": 9418.448480144969
+}

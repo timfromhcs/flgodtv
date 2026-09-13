@@ -87,6 +87,21 @@ public:
             {"vms", vms_json}
         };
     }
+
+    void from_json(const nlohmann::json& j) {
+        if (j.contains("network")) {
+            m_network.from_json(j["network"]);
+        }
+        if (j.contains("vms") && j["vms"].is_object()) {
+            for (const auto& [id_str, vm_j] : j["vms"].items()) {
+                uint32_t id = static_cast<uint32_t>(std::stoul(id_str));
+                auto it = m_vms.find(id);
+                if (it != m_vms.end()) {
+                    it->second.from_json(vm_j);
+                }
+            }
+        }
+    }
 };
 
 } // namespace flgod::technology

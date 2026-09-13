@@ -270,6 +270,15 @@ if(BUILD_TESTING)
     # Fly-Brain Benchmark
     add_executable(benchmark_brain_simulation benchmarks/benchmark_brain_simulation.cpp)
     target_link_libraries(benchmark_brain_simulation PRIVATE flgod_core)
+
+    # Multi-Agent ecosystem tests
+    add_executable(test_multi_agent_ecosystem tests/integration/test_multi_agent_ecosystem.cpp)
+    target_link_libraries(test_multi_agent_ecosystem PRIVATE flgod_core)
+    add_test(NAME MultiAgentEcosystemTest COMMAND test_multi_agent_ecosystem)
+
+    # Multi-Agent Benchmark
+    add_executable(benchmark_multi_agent_ecosystem benchmarks/benchmark_multi_agent_ecosystem.cpp)
+    target_link_libraries(benchmark_multi_agent_ecosystem PRIVATE flgod_core)
 endif()
 
 

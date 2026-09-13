@@ -8,6 +8,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <filesystem>
 #include "flgod/brain/fly_brain_interface.hpp"
 
 namespace flgod::brain {
@@ -37,7 +38,15 @@ public:
     }
 
     bool load_from_csv(const std::string& filepath, size_t max_somas) {
-        std::ifstream file(filepath);
+        std::string actual_path = filepath;
+        if (!std::filesystem::exists(actual_path)) {
+            if (std::filesystem::exists("../" + filepath)) {
+                actual_path = "../" + filepath;
+            } else if (std::filesystem::exists("../../" + filepath)) {
+                actual_path = "../../" + filepath;
+            }
+        }
+        std::ifstream file(actual_path);
         if (!file.is_open()) {
             return false;
         }
@@ -79,7 +88,11 @@ public:
         }
 
         file.close();
-        return !m_somas.empty();
+        if (!m_somas.empty()) {
+            init_state();
+            return true;
+        }
+        return false;
     }
 
     void generate_baseline_topology(size_t count) {
@@ -216,8 +229,22 @@ public:
             {"left_count", m_left_somas.size()},
             {"right_count", m_right_somas.size()},
             {"steps", m_step_count},
-            {"active_neurons", active_neuron_count()}
+            {"active_neurons", active_neuron_count()},
+            {"activations", m_activations},
+            {"potentials", m_potentials}
         };
+    }
+
+    void from_json(const nlohmann::json& j) override {
+        if (j.contains("steps")) {
+            m_step_count = j["steps"].get<uint64_t>();
+        }
+        if (j.contains("activations")) {
+            m_activations = j["activations"].get<std::vector<double>>();
+        }
+        if (j.contains("potentials")) {
+            m_potentials = j["potentials"].get<std::vector<double>>();
+        }
     }
 };
 
