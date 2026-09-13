@@ -60,4 +60,25 @@ if(BUILD_TESTING)
     add_executable(test_deterministic_simulation tests/deterministic/test_deterministic_simulation.cpp)
     target_link_libraries(test_deterministic_simulation PRIVATE flgod_core)
     add_test(NAME DeterministicSimulationTest COMMAND test_deterministic_simulation)
+
+    # World subsystem tests
+    add_executable(test_world_noise tests/unit/test_world_noise.cpp)
+    target_link_libraries(test_world_noise PRIVATE flgod_core)
+    add_test(NAME WorldNoiseTest COMMAND test_world_noise)
+
+    add_executable(test_world_chunk tests/unit/test_world_chunk.cpp)
+    target_link_libraries(test_world_chunk PRIVATE flgod_core)
+    add_test(NAME WorldChunkTest COMMAND test_world_chunk)
+
+    add_executable(test_world_fields tests/unit/test_world_fields.cpp)
+    target_link_libraries(test_world_fields PRIVATE flgod_core)
+    add_test(NAME WorldFieldsTest COMMAND test_world_fields)
+
+    add_executable(test_world_procedural tests/unit/test_world_procedural.cpp)
+    target_link_libraries(test_world_procedural PRIVATE flgod_core)
+    add_test(NAME WorldProceduralTest COMMAND test_world_procedural)
+
+    add_executable(test_deterministic_world tests/deterministic/test_deterministic_world.cpp)
+    target_link_libraries(test_deterministic_world PRIVATE flgod_core)
+    add_test(NAME DeterministicWorldTest COMMAND test_deterministic_world)
 endif()

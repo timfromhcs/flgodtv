@@ -1,15 +1,25 @@
-Test project C:/Users/hcsme/Desktop/Fly/build/vs2022
-    Start 1: CoreClockTest
-1/5 Test #1: CoreClockTest ....................   Passed    0.01 sec
-    Start 2: CoreRNGTest
-2/5 Test #2: CoreRNGTest ......................   Passed    0.01 sec
-    Start 3: CoreEntityTest
-3/5 Test #3: CoreEntityTest ...................   Passed    0.01 sec
-    Start 4: CoreEventBusTest
-4/5 Test #4: CoreEventBusTest .................   Passed    0.01 sec
-    Start 5: DeterministicSimulationTest
-5/5 Test #5: DeterministicSimulationTest ......   Passed    0.01 sec
+Test project C:/Users/hcsme/Desktop/Fly/build/ninja-release
+      Start  1: CoreClockTest
+ 1/10 Test  #1: CoreClockTest ....................   Passed    0.01 sec
+      Start  2: CoreRNGTest
+ 2/10 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
+      Start  3: CoreEntityTest
+ 3/10 Test  #3: CoreEntityTest ...................   Passed    0.02 sec
+      Start  4: CoreEventBusTest
+ 4/10 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
+      Start  5: DeterministicSimulationTest
+ 5/10 Test  #5: DeterministicSimulationTest ......   Passed    0.07 sec
+      Start  6: WorldNoiseTest
+ 6/10 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
+      Start  7: WorldChunkTest
+ 7/10 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
+      Start  8: WorldFieldsTest
+ 8/10 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
+      Start  9: WorldProceduralTest
+ 9/10 Test  #9: WorldProceduralTest ..............   Passed    0.01 sec
+      Start 10: DeterministicWorldTest
+10/10 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
 
-100% tests passed out of 5
+100% tests passed out of 10
 
-Total Test time (real) =   0.05 sec
+Total Test time (real) =   0.21 sec

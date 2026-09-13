@@ -52,17 +52,36 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 03 — WORLD
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Spatial chunks (`WorldChunk`, `ChunkID`, `ChunkSeed`, `ChunkState`, `ChunkDelta`)
-- Deterministic chunk procedural generation
-- Procedural terrain heightfield generation and hashing
-- World fields (`WindField`, `TemperatureField`, `HumidityField`, `MoistureField`, `WaterField`, `FireField`, `EcologyField`)
-- World state chunk persistence and delta serialization
-- Comprehensive procedural generation tests comparing deterministic hashes
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/world/chunk_id.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/world/chunk_id.hpp) (`ChunkCoord`, 64-bit `ChunkID` packing, deterministic `compute_chunk_seed()`)
+- [include/flgod/world/noise.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/world/noise.hpp) (`DeterministicNoise` 2D/3D Perlin, multi-octave fBm, ridged multifractal)
+- [include/flgod/world/fields.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/world/fields.hpp) (Continuous world fields: `ScalarField2D` with bilinear interpolation, `WindField`, `TemperatureField`, `HumidityField`, `MoistureField`, `WaterField`, `FireField`, `EcologyField`)
+- [include/flgod/world/chunk.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/world/chunk.hpp) (`WorldChunk`, `BiomeType` enum, `ChunkDelta` sparse modification tracking and JSON serialization)
+- [include/flgod/world/procedural_generator.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/world/procedural_generator.hpp) (Multi-stage pipeline: elevation, thermal erosion approximation, hydrology, Whittaker biome diagram, vegetation, and resources)
+- [include/flgod/world/weather_system.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/world/weather_system.hpp) (Time-stepped `WeatherState` with diurnal temperature cycles, atmospheric pressure, wind dynamics, precipitation, and visibility)
+- [include/flgod/world/world.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/world/world.hpp) (`World` subsystem managing dynamic chunks, continuous boundary sampling, fields step, deterministic world hashing, and full state serialization)
+- Unit tests:
+  - [test_world_noise.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_world_noise.cpp): Passed
+  - [test_world_chunk.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_world_chunk.cpp): Passed
+  - [test_world_fields.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_world_fields.cpp): Passed
+  - [test_world_procedural.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_world_procedural.cpp): Passed
+- Deterministic integration test:
+  - [test_deterministic_world.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/deterministic/test_deterministic_world.cpp): Passed
+- Build & Test verification:
+  - CTest suite: **10/10 tests passed (100%)** on both MSVC and Ninja Release configurations.
+  - Headless CLI: `--self-test` 4/4 passed, `--benchmark` executed at ~14,635 ticks/sec with continuous fields and weather.
+  - Evidence output saved in `evidence/windows/`.
+
+---
 
 ### STAGE 04 — PHYSICS
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Rigid body and collision physics abstraction (`PhysicsEngine`, `RigidBody`, `CollisionShape`)
+- Jolt Physics integration / backend adapter
+- Fall under gravity, ground collision, restitution, friction, impulses, and multi-fidelity simulation levels (L0 full, L1 reduced, L2 statistical)
+- Physical determinism and collision verification tests
 
 ### STAGE 05 — HEADLESS BACKEND
 **Status:** `PENDING`

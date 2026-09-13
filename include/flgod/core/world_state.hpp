@@ -4,6 +4,7 @@
 #include "flgod/core/clock.hpp"
 #include "flgod/core/rng.hpp"
 #include "flgod/core/entity_id.hpp"
+#include "flgod/world/world.hpp"
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
@@ -17,6 +18,7 @@ struct WorldStateConfig {
     double fixed_dt{1.0 / 60.0};
     uint64_t start_tick{0};
     double start_time{0.0};
+    WorldConfig world_config{};
 };
 
 class WorldState {
@@ -25,7 +27,8 @@ public:
     explicit WorldState(const WorldStateConfig& config)
         : m_version(config.version),
           m_clock(config.fixed_dt),
-          m_rng(config.seeds) {
+          m_rng(config.seeds),
+          m_world(config.world_config) {
         m_clock.reset(config.start_tick, config.start_time);
     }
 
@@ -36,6 +39,8 @@ public:
     [[nodiscard]] DeterministicRNG& rng() noexcept { return m_rng; }
     [[nodiscard]] const EntityIDAllocator& id_allocator() const noexcept { return m_id_allocator; }
     [[nodiscard]] EntityIDAllocator& id_allocator() noexcept { return m_id_allocator; }
+    [[nodiscard]] const World& world() const noexcept { return m_world; }
+    [[nodiscard]] World& world() noexcept { return m_world; }
 
     [[nodiscard]] uint64_t compute_hash() const noexcept {
         uint64_t h = 14695981039346656037ULL;
@@ -47,6 +52,7 @@ public:
         combine(m_clock.compute_hash());
         combine(m_rng.compute_hash());
         combine(m_id_allocator.compute_hash());
+        combine(m_world.compute_world_hash());
         return h;
     }
 
@@ -69,6 +75,7 @@ public:
             {"next_index", m_id_allocator.next_index()},
             {"current_generation", m_id_allocator.current_generation()}
         };
+        j["world"] = m_world.to_json();
         j["state_hash"] = compute_hash();
         return j;
     }
@@ -105,6 +112,9 @@ public:
             uint16_t gen = j["id_allocator"].value("current_generation", static_cast<uint16_t>(1));
             m_id_allocator.reset(next_idx, gen);
         }
+        if (j.contains("world")) {
+            m_world.from_json(j["world"]);
+        }
     }
 
     bool operator==(const WorldState& other) const noexcept {
@@ -120,6 +130,7 @@ private:
     SimulationClock m_clock;
     DeterministicRNG m_rng;
     EntityIDAllocator m_id_allocator;
+    World m_world;
 };
 
 } // namespace flgod

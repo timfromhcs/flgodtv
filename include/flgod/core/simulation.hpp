@@ -18,6 +18,7 @@ struct SimulationConfig {
     double fixed_dt{1.0 / 60.0};
     uint64_t start_tick{0};
     double start_time{0.0};
+    WorldConfig world_config{};
     std::string experiment_id{"default_experiment"};
 };
 
@@ -38,7 +39,8 @@ public:
             .seeds = config.seeds,
             .fixed_dt = config.fixed_dt,
             .start_tick = config.start_tick,
-            .start_time = config.start_time
+            .start_time = config.start_time,
+            .world_config = config.world_config
         };
         m_world_state = WorldState(ws_config);
         m_event_bus.clear_all();
@@ -64,16 +66,19 @@ public:
         // 1. Advance clock
         SimulationStep s = m_world_state.clock().step();
 
-        // 2. Publish TickStart
+        // 2. Advance procedural continuous world & weather
+        m_world_state.world().step(s.dt, s.elapsed_seconds);
+
+        // 3. Publish TickStart
         TickStartEvent start_ev;
         start_ev.tick = s.tick;
         start_ev.timestamp = s.elapsed_seconds;
         m_event_bus.publish_immediate(start_ev);
 
-        // 3. Process queued events
+        // 4. Process queued events
         m_event_bus.flush(s.tick);
 
-        // 4. Publish TickEnd
+        // 5. Publish TickEnd
         TickEndEvent end_ev;
         end_ev.tick = s.tick;
         end_ev.timestamp = s.elapsed_seconds + s.dt;
