@@ -2,6 +2,7 @@
 
 #include "flgod/gpu/vulkan_context.hpp"
 #include <chrono>
+#include <cstring>
 
 namespace flgod {
 

@@ -4,6 +4,7 @@
 #include "flgod/world/noise.hpp"
 #include <cstdint>
 #include <cmath>
+#include <cstring>
 #include <string>
 #include <nlohmann/json.hpp>
 

@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <cmath>
+#include <cstring>
 #include <algorithm>
 #include <nlohmann/json.hpp>
 

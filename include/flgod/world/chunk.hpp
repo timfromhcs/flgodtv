@@ -2,6 +2,7 @@
 
 #include "flgod/world/chunk_id.hpp"
 #include <cstdint>
+#include <cstring>
 #include <vector>
 #include <array>
 #include <string>

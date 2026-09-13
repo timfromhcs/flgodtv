@@ -4,6 +4,7 @@
 #include "flgod/world/fields.hpp"
 #include <vector>
 #include <string>
+#include <cstring>
 #include <algorithm>
 #include <nlohmann/json.hpp>
 

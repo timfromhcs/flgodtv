@@ -7,6 +7,7 @@
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <filesystem>
 #include "flgod/brain/fly_brain_interface.hpp"
