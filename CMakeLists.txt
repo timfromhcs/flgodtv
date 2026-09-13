@@ -152,6 +152,23 @@ if(BUILD_TESTING)
     # Benchmarks
     add_executable(benchmark_learning_sample_efficiency benchmarks/benchmark_learning_sample_efficiency.cpp)
     target_link_libraries(benchmark_learning_sample_efficiency PRIVATE flgod_core)
+
+    # Evolution subsystem tests
+    add_executable(test_evolution_genome tests/unit/test_evolution_genome.cpp)
+    target_link_libraries(test_evolution_genome PRIVATE flgod_core)
+    add_test(NAME EvolutionGenomeTest COMMAND test_evolution_genome)
+
+    add_executable(test_evolution_speciation tests/unit/test_evolution_speciation.cpp)
+    target_link_libraries(test_evolution_speciation PRIVATE flgod_core)
+    add_test(NAME EvolutionSpeciationTest COMMAND test_evolution_speciation)
+
+    add_executable(test_evolution_coevolution tests/unit/test_evolution_coevolution.cpp)
+    target_link_libraries(test_evolution_coevolution PRIVATE flgod_core)
+    add_test(NAME EvolutionCoevolutionTest COMMAND test_evolution_coevolution)
+
+    add_executable(test_evolution_population tests/deterministic/test_evolution_population.cpp)
+    target_link_libraries(test_evolution_population PRIVATE flgod_core)
+    add_test(NAME EvolutionPopulationTest COMMAND test_evolution_population)
 endif()
 
 

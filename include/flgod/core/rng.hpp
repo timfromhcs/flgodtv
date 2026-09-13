@@ -114,6 +114,10 @@ public:
         return mean + z0 * stddev;
     }
 
+    double next_gaussian(double mean = 0.0, double stddev = 1.0) noexcept {
+        return gaussian(mean, stddev);
+    }
+
     bool coin_flip(double probability = 0.5) noexcept {
         return next_double() < probability;
     }

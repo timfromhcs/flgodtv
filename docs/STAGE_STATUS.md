@@ -158,19 +158,29 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 08 — EVOLUTION
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Evolution engine (Sections 40, 41, 42, 43, 44, 45, 46, 47, 48, 49)
-- Genome structure (body, metabolism, sensory traits, brain development, plasticity, reproduction)
-- Mutation operators (point, insertion, deletion, duplication, structural)
-- Recombination (two-parent crossover with deterministic RNG)
-- Selection & fitness calculation from world outcomes (energy balance, survival, offspring)
-- Genetic drift and spatial migration gene flow
-- Speciation detection (separation, genetic/phenotypic divergence, mating compatibility)
-- Body/brain co-evolution (brain volume vs energy cost)
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/evolution/genome.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/evolution/genome.hpp) (`Genome` comprising 8 trait categories: `BodyGenes`, `MetabolismGenes`, `SensoryGenes`, `BrainDevelopmentGenes`, `LearningGenes`, `MemoryGenes`, `SocialGenes`, `ReproductiveGenes`, regulatory bitflags, genetic distance metric, and full JSON serialization)
+- [include/flgod/evolution/mutation.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/evolution/mutation.hpp) (`MutationOperator` supporting 6 operators: point, insertion, deletion, duplication, regulatory, and structural mutations)
+- [include/flgod/evolution/recombination.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/evolution/recombination.hpp) (`RecombinationOperator` supporting chromosome assortment, homologous uniform blending, and single-point crossover)
+- [include/flgod/evolution/speciation.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/evolution/speciation.hpp) (`SpeciationSystem` calculating genetic divergence, phenotypic divergence, mating compatibility, offspring viability, and emergent speciation detection)
+- [include/flgod/evolution/population.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/evolution/population.hpp) (`Individual`, real-world fitness calculation from survival/energy/offspring, body/brain co-evolution metabolic constraint, genetic drift stochastic selection, regional migration gene flow tracking, and multi-generation stepping)
+- Unit and deterministic tests:
+  - [test_evolution_genome.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_evolution_genome.cpp): Serialization roundtrip, execution of all 6 mutation operators, and two-parent recombination: Passed.
+  - [test_evolution_speciation.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_evolution_speciation.cpp): Mating compatibility isolation (0.999 vs 0.013) and speciation branching into new species: Passed.
+  - [test_evolution_coevolution.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_evolution_coevolution.cpp): Metabolic constraint ($1.6\text{ W}$ vs $3.6\text{ W}$) where unadapted large brains suffer energetic deficits unless accompanied by foraging morphology: Passed.
+  - [test_evolution_population.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/deterministic/test_evolution_population.cpp): 25-generation bit-exact determinism across independent runs, 100% midpoint crash recovery match, and 34 migration gene flow events recorded: Passed.
+- CTest suite: **27/27 tests passed (100%)**.
+
+---
 
 ### STAGE 09 — AGENTS
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Agent architecture and lifecycle (metabolism, energy budget, sensors, actuators, hunger, fatigue)
+- Agent colonies and multi-agent colony structures
+- Social interactions, cooperation, communication signals, and territorial interactions
+- Headless multi-agent continuous simulation loop
 
 ### STAGE 10 — LLM
 **Status:** `PENDING`
