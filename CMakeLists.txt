@@ -169,6 +169,19 @@ if(BUILD_TESTING)
     add_executable(test_evolution_population tests/deterministic/test_evolution_population.cpp)
     target_link_libraries(test_evolution_population PRIVATE flgod_core)
     add_test(NAME EvolutionPopulationTest COMMAND test_evolution_population)
+
+    # Agent and colony subsystem tests
+    add_executable(test_agent_lifecycle tests/unit/test_agent_lifecycle.cpp)
+    target_link_libraries(test_agent_lifecycle PRIVATE flgod_core)
+    add_test(NAME AgentLifecycleTest COMMAND test_agent_lifecycle)
+
+    add_executable(test_agent_colony tests/unit/test_agent_colony.cpp)
+    target_link_libraries(test_agent_colony PRIVATE flgod_core)
+    add_test(NAME AgentColonyTest COMMAND test_agent_colony)
+
+    add_executable(test_multi_agent_simulation tests/integration/test_multi_agent_simulation.cpp)
+    target_link_libraries(test_multi_agent_simulation PRIVATE flgod_core)
+    add_test(NAME MultiAgentSimulationTest COMMAND test_multi_agent_simulation)
 endif()
 
 

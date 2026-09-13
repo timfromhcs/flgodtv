@@ -175,15 +175,28 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 09 — AGENTS
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Agent architecture and lifecycle (metabolism, energy budget, sensors, actuators, hunger, fatigue)
-- Agent colonies and multi-agent colony structures
-- Social interactions, cooperation, communication signals, and territorial interactions
-- Headless multi-agent continuous simulation loop
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/agents/agent_types.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/agents/agent_types.hpp) (`AgentDrives` energy/hunger/fatigue/hydration/health, `AgentSensoryInput`, `AgentActionType`, `AgentActuatorOutput`)
+- [include/flgod/agents/agent.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/agents/agent.hpp) (`Agent` with genome integration, multi-tier memory, metabolic energy drain, starvation, fatigue recovery, and autonomous behavioral arbitration)
+- [include/flgod/agents/colony.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/agents/colony.hpp) (`Colony` managing territory boundaries, nest location, collective resource storage, and population membership)
+- [include/flgod/agents/agent_manager.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/agents/agent_manager.hpp) (`AgentManager` coordinating multi-agent spatial steps, peer perception, foraging deposition into colony storage, dead agent removal, and deterministic state hashing)
+- Unit and integration tests:
+  - [test_agent_lifecycle.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_agent_lifecycle.cpp): Metabolic drain, hunger accumulation, near-food foraging response with energy replenishment, and serialization roundtrip: Passed.
+  - [test_agent_colony.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_agent_colony.cpp): Colony territory management, collective resource deposit & withdrawal, population census, and serialization: Passed.
+  - [test_multi_agent_simulation.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/integration/test_multi_agent_simulation.cpp): Multi-colony, 10-agent continuous simulation over 200 ticks, bit-exact determinism across runs, and 100% checkpoint crash recovery match: Passed.
+- CTest suite: **30/30 tests passed (100%)**.
+
+---
 
 ### STAGE 10 — LLM
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Local GGUF LLM teacher and NPC runtime integration (GEMINI.md Sections 50, 51, 52, 53, 54, 55)
+- God Fly teacher agent with local GGUF model capability
+- NPC local model management (load, unload, memory budget, TTFT / token throughput measurement)
+- Sandboxed schema validation: parse -> schema validation -> capability validation -> world validation -> action execution
+- Event-driven NPC inference (no continuous busy inference)
 
 ### STAGE 11 — LANGUAGE
 **Status:** `PENDING`
