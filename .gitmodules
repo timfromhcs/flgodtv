@@ -1,0 +1,3 @@
+[submodule "malecns"]
+	path = malecns
+	url = https://github.com/natverse/malecns.git

@@ -21,8 +21,8 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Ninja
-        uses: ashley-hand/action-ninja@v1
+      - name: Setup MSVC x64
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Setup Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.2.0
@@ -31,41 +31,34 @@ jobs:
           vulkan-components: Vulkan-Headers, Vulkan-Loader, glslc
           vulkan-use-cache: true
 
-      - name: Configure CMake (Ninja Release)
-        shell: cmd
+      - name: Configure CMake (Visual Studio 2022)
         run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DFLGOD_ENABLE_VULKAN=ON
+          cmake -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DFLGOD_ENABLE_VULKAN=ON
 
       - name: Compile flgod & Test Suite
-        shell: cmd
         run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          cmake --build build --config Release
+          cmake --build build --config Release --parallel
 
       - name: Execute CTest Suite (GEMINI.md Section 103 Compliant)
-        shell: cmd
         run: |
-          echo [INFO] Running all CPU, Physics, Learning, Evolution, Agent, Language, Tech, and Brain tests...
-          echo [INFO] Per GEMINI.md Section 103, physical GPU Vulkan execution requires dedicated hardware:
-          echo [INFO] VULKAN GPU TEST = NOT AVAILABLE (Cloud runner has no physical Vulkan GPU device)
-          ctest --test-dir build --output-on-failure -E "(VulkanInitTest|VulkanBufferTest|VulkanComputeTest|GodotFrontendSmokeTest)"
+          echo "[INFO] Running all CPU, Physics, Learning, Evolution, Agent, Language, Tech, and Brain tests..."
+          echo "[INFO] Per GEMINI.md Section 103, physical GPU Vulkan execution requires dedicated hardware:"
+          echo "[INFO] VULKAN GPU TEST = NOT AVAILABLE (Cloud runner has no physical Vulkan GPU device)"
+          ctest --test-dir build -C Release --output-on-failure -E "(VulkanInitTest|VulkanBufferTest|VulkanComputeTest|GodotFrontendSmokeTest)"
 
       - name: Verify Headless CLI Modes
-        shell: cmd
         run: |
-          .\build\flgod.exe --version
-          .\build\flgod.exe --self-test
-          .\build\flgod.exe --validate
-          .\build\flgod.exe --simulate 120
+          .\build\Release\flgod.exe --version
+          .\build\Release\flgod.exe --self-test
+          .\build\Release\flgod.exe --validate
+          .\build\Release\flgod.exe --simulate 120
 
       - name: Upload Windows Binaries & Artifacts (Section 104)
         uses: actions/upload-artifact@v4
         with:
           name: flgodtv-windows-x64
           path: |
-            build/flgod.exe
-            build/flgod_core.lib
+            build/Release/flgod.exe
             evidence/
             docs/
 
@@ -93,7 +86,7 @@ jobs:
 
       - name: Compile flgod & Test Suite
         run: |
-          cmake --build build --config Release
+          cmake --build build --config Release --parallel
 
       - name: Execute CTest Suite (GEMINI.md Section 103 Compliant)
         run: |
