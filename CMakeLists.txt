@@ -131,5 +131,27 @@ if(BUILD_TESTING)
     add_executable(test_vulkan_compute tests/gpu/test_vulkan_compute.cpp)
     target_link_libraries(test_vulkan_compute PRIVATE flgod_core)
     add_test(NAME VulkanComputeTest COMMAND test_vulkan_compute)
+
+    # Learning subsystem tests
+    add_executable(test_learning_experience tests/unit/test_learning_experience.cpp)
+    target_link_libraries(test_learning_experience PRIVATE flgod_core)
+    add_test(NAME LearningExperienceTest COMMAND test_learning_experience)
+
+    add_executable(test_learning_memory tests/unit/test_learning_memory.cpp)
+    target_link_libraries(test_learning_memory PRIVATE flgod_core)
+    add_test(NAME LearningMemoryTest COMMAND test_learning_memory)
+
+    add_executable(test_learning_loop tests/unit/test_learning_loop.cpp)
+    target_link_libraries(test_learning_loop PRIVATE flgod_core)
+    add_test(NAME LearningLoopTest COMMAND test_learning_loop)
+
+    add_executable(test_learning_parallel tests/integration/test_learning_parallel.cpp)
+    target_link_libraries(test_learning_parallel PRIVATE flgod_core)
+    add_test(NAME LearningParallelTest COMMAND test_learning_parallel)
+
+    # Benchmarks
+    add_executable(benchmark_learning_sample_efficiency benchmarks/benchmark_learning_sample_efficiency.cpp)
+    target_link_libraries(benchmark_learning_sample_efficiency PRIVATE flgod_core)
 endif()
+
 

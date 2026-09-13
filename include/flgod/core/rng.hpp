@@ -19,6 +19,9 @@ inline uint64_t splitmix64(uint64_t& state) noexcept {
 }
 
 // Xoshiro256++ generator - fast, high quality 256-bit PRNG
+class RNGStream;
+using Xoshiro256PlusPlus = RNGStream;
+
 class RNGStream {
 public:
     explicit RNGStream(uint64_t seed = 0x853C49E6748FEA9BULL) {

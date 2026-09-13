@@ -136,17 +136,38 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 07 — LEARNING
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Learning engine decoupled from fly brain (Sections 29, 30, 31, 32, 33, 34)
-- Observation, Action, Outcome, Reward, Prediction, PredictionError abstractions
-- Experience model and ReplayBuffer
-- Multi-tier memory architecture (working, episodic, semantic, procedural, social)
-- Parallel environment workers and experience collectors
-- Benchmark measuring experiences_to_success on a toy environment
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/learning/experience.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/learning/experience.hpp) (`Observation`, `Action`, `Outcome`, `ExperienceRecord`, and `ReplayBuffer` with FIFO eviction, deterministic sampling, JSON serialization, and state hashing)
+- [include/flgod/learning/memory.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/learning/memory.hpp) (`WorkingMemory` 7-item capacity, `EpisodicMemory` with valence tagging and state queries, `SemanticMemory` concept facts, `ProceduralMemory` motor habits, `SocialMemory` peer trust score EMA, and `MemorySystem::consolidate()`)
+- [include/flgod/learning/learner.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/learning/learner.hpp) (`QLearner` with TD prediction error calculation $\delta = r + \gamma \max_a Q(s', a) - Q(s, a)$, step updates, batch replay training, policy versioning, and state serialization)
+- [include/flgod/learning/parallel_worker.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/learning/parallel_worker.hpp) (`ToyEnvironment`, `EnvironmentWorker`, `AgentWorker`, `ExperienceCollector` thread-safe experience queue)
+- [benchmarks/benchmark_learning_sample_efficiency.cpp](file:///C:/Users/hcsme/Desktop/Fly/benchmarks/benchmark_learning_sample_efficiency.cpp) (Benchmark measuring sample efficiency, retention, and transfer adaptation)
+- Unit and integration tests:
+  - [test_learning_experience.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_learning_experience.cpp): JSON roundtrip, capacity eviction, and deterministic batch sampling: Passed.
+  - [test_learning_memory.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_learning_memory.cpp): Working memory 7-item limit, episodic state queries, social trust scores, memory consolidation, and full serialization: Passed.
+  - [test_learning_loop.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_learning_loop.cpp): End-to-end loop (observe->predict->act->observe outcome->calculate error->store experience->update policy), optimal policy learned to reach goal state in $\le 5$ steps: Passed.
+  - [test_learning_parallel.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/integration/test_learning_parallel.cpp): 4 parallel workers streaming experiences to central learner, memory consolidation across workers, evaluation passed: Passed.
+- Benchmark results:
+  - [evidence/windows/learning_benchmark.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/learning_benchmark.json):
+    - `experiences_to_success`: **96 steps (9 episodes)**
+    - `retention_rate`: **100%** (10/10 successful trials after 100 intervening random steps)
+    - `transfer_adaptation_experiences`: **277 steps** to adapt from state 9 to state 4
+- CTest suite: **23/23 tests passed (100%)**.
+
+---
 
 ### STAGE 08 — EVOLUTION
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Evolution engine (Sections 40, 41, 42, 43, 44, 45, 46, 47, 48, 49)
+- Genome structure (body, metabolism, sensory traits, brain development, plasticity, reproduction)
+- Mutation operators (point, insertion, deletion, duplication, structural)
+- Recombination (two-parent crossover with deterministic RNG)
+- Selection & fitness calculation from world outcomes (energy balance, survival, offspring)
+- Genetic drift and spatial migration gene flow
+- Speciation detection (separation, genetic/phenotypic divergence, mating compatibility)
+- Body/brain co-evolution (brain volume vs energy cost)
 
 ### STAGE 09 — AGENTS
 **Status:** `PENDING`

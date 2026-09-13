@@ -1,0 +1,15 @@
+{
+  "benchmark": "SampleEfficiencyBenchmark",
+  "environment": "ToyEnvironment(10 states)",
+  "metrics": {
+    "episodes_to_success": 9,
+    "experiences_to_success": 96,
+    "retention_rate": 1.0,
+    "transfer_adaptation_experiences": 277
+  },
+  "model_version": "QLearner-v1.0",
+  "seed": 888001,
+  "status": "PASSED",
+  "task": "1D discrete goal navigation with sprint dynamics",
+  "training_budget_episodes": 500
+}
