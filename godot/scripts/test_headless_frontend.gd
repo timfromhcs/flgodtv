@@ -1,7 +1,9 @@
 extends SceneTree
 
 # Headless smoke test verifying Godot 4 project parsing, scene instantiation,
-# 4-camera rig, MultiMesh instance setup, and backend bridge data.
+# 4-camera rig, MultiMesh instance setup, backend bridge data, and Stage 17
+# world rendering (terrain LOD/streaming, vegetation instancing, water level,
+# weather consequences, lighting profiles). All checks run headless.
 
 func _init() -> void:
 	print("[Godot Headless Test] Starting FLGODTV Frontend smoke test...")
@@ -18,6 +20,7 @@ func _init() -> void:
 		return
 
 	root.add_child(main_node)
+	current_scene = main_node
 
 	# Verify 4-Camera Rig
 	var rig = main_node.get_node_or_null("CameraRig")
@@ -41,6 +44,85 @@ func _init() -> void:
 	assert(bridge.get_agent_count() > 0, "Agents must be initialized")
 	assert(bridge.get_colony_count() > 0, "Colonies must be initialized")
 	print("  - BackendBridge verified: " + str(bridge.get_agent_count()) + " agents, " + str(bridge.get_colony_count()) + " colonies.")
+
+	# --- Stage 17: World Rendering ---
+	var terrain = main_node.get_node_or_null("Terrain")
+	assert(terrain != null, "Terrain renderer node must exist in main scene")
+	terrain.ensure_initialized()
+	assert(terrain.mesh_instance != null, "Terrain mesh instance must be built")
+	assert(terrain.mesh_instance.mesh != null, "Terrain ArrayMesh must be generated")
+	assert(terrain.vertex_count > 0, "Terrain must emit vertices")
+	var verts_full: int = terrain.vertex_count
+	# Determinism: regenerating the mesh must yield the same vertex count.
+	terrain.generate_terrain_mesh()
+	assert(terrain.vertex_count == verts_full, "Terrain generation must be deterministic")
+	# LOD: higher LOD level must not emit more vertices than full resolution.
+	terrain.set_lod(2)
+	assert(terrain.vertex_count <= verts_full, "LOD2 must reduce or equal vertex output")
+	assert(terrain.effective_resolution() < terrain.chunk_size, "LOD2 resolution must drop below full")
+	terrain.set_lod(0)
+	assert(terrain.vertex_count == verts_full, "LOD0 restore must reproduce full mesh")
+	# Streaming: far focus hides mesh, near focus shows it (state preserved, never mutated).
+	terrain.update_streaming(Vector3(0, 0, 0))
+	assert(terrain.mesh_instance.visible, "Terrain must be visible near origin")
+	terrain.update_streaming(Vector3(10000, 0, 10000))
+	assert(not terrain.mesh_instance.visible, "Terrain must hide beyond stream radius")
+	terrain.update_streaming(Vector3(0, 0, 0))
+	# Backend grid wiring: canonical grid overrides visual approximation.
+	var grid := {"rows": 2, "cols": 2, "elevations": PackedFloat32Array([1.0, 2.0, 3.0, 4.0])}
+	assert(terrain.apply_backend_state(grid), "Terrain must accept canonical backend grid")
+	assert(terrain.is_using_backend_grid(), "Terrain must report backend grid usage")
+	print("  - TerrainRenderer verified (verts=%d, LOD, streaming, backend grid)." % verts_full)
+
+	var veg = main_node.get_node_or_null("Vegetation")
+	assert(veg != null, "Vegetation renderer node must exist in main scene")
+	veg.ensure_initialized()
+	assert(veg.multimesh_instance != null, "Vegetation MultiMeshInstance must exist")
+	assert(veg.multimesh_instance.multimesh != null, "Vegetation MultiMesh must be built")
+	assert(veg.get_placed_count() > 0, "Vegetation must place instances")
+	# Determinism: same seed regenerates the same placement count.
+	var n0: int = veg.get_placed_count()
+	veg.setup_vegetation_instances()
+	assert(veg.get_placed_count() == n0, "Vegetation fallback distribution must be deterministic")
+	# Backend wiring: canonical positions override fallback.
+	var backend_items := [
+		{"pos": Vector3(1, 0.5, 1), "scale": 1.0, "kind": "shrub"},
+		{"pos": Vector3(-2, 0.5, 3), "scale": 1.2, "kind": "flower"},
+	]
+	assert(veg.apply_backend_instances(backend_items) == 2, "Vegetation must mirror backend items")
+	assert(veg.is_using_backend_data(), "Vegetation must report backend data usage")
+	veg.setup_vegetation_instances() # restore fallback for live scene
+	print("  - VegetationRenderer verified (placed=%d, GPU instancing, backend wiring)." % n0)
+
+	var water = main_node.get_node_or_null("Water")
+	assert(water != null, "Water renderer node must exist in main scene")
+	water.ensure_initialized()
+	assert(water.mesh_instance != null and water.mesh_instance.mesh != null, "Water plane must be built")
+	assert(water.apply_backend_state({"height": 0.75}), "Water must accept backend height")
+	assert(abs(water.get_water_level() - 0.75) < 0.0001, "Water level must mirror backend height")
+	assert(water.is_using_backend_data(), "Water must report backend data usage")
+	assert(not water.apply_backend_state({}), "Water must reject empty backend state")
+	print("  - WaterRenderer verified (level=0.75, backend wiring).")
+
+	var weather = main_node.get_node_or_null("Weather")
+	assert(weather != null, "Weather renderer node must exist in main scene")
+	weather.ensure_initialized()
+	weather.apply_backend_weather(bridge.world_weather)
+	assert(weather.is_weather_known(), "Weather must be known when bridge supplies data")
+	weather.apply_backend_weather({})
+	assert(not weather.is_weather_known(), "Weather must report N/A when backend data missing")
+	assert(weather.get_summary() == "N/A", "Weather summary must be N/A, never invented")
+	weather.apply_backend_weather(bridge.world_weather) # restore live weather
+	print("  - WeatherRenderer verified (backend consequences, N/A-safe).")
+
+	var lighting = main_node.get_node_or_null("LightingProfiles")
+	assert(lighting != null, "LightingProfiles node must exist in main scene")
+	for p in [0, 1, 2, 3]:
+		lighting.apply_profile(p)
+	assert(lighting.profile_name() == "CINEMATIC", "Profile 3 must be CINEMATIC")
+	lighting.apply_profile(1) # restore MEDIUM default for live scene
+	assert(lighting.profile_name() == "MEDIUM", "Default live profile must be MEDIUM")
+	print("  - LightingProfiles verified (LOW/MEDIUM/HIGH/CINEMATIC).")
 
 	# Simulate 10 frames
 	for i in range(10):

@@ -1,0 +1,121 @@
+extends Node3D
+class_name VegetationRenderer
+
+# VegetationRenderer renders vegetation using GPU-friendly MultiMesh instancing
+# per GEMINI.md Section 73 ("Do not instantiate every blade/tree as an
+# independent heavy scene node"). Backend owns species/position/growth/health;
+# Godot only mirrors. Positions come from apply_backend_instances() when the
+# bridge supplies canonical vegetation state, otherwise from the deterministic
+# fallback distribution (seed fixed, no visual randomness as proof of anything).
+
+@export var instance_count: int = 200
+@export var distribution_radius: float = 40.0
+@export var distribution_seed: int = 424242
+
+var multimesh_instance: MultiMeshInstance3D
+var placed_count: int = 0
+var _using_backend_data: bool = false
+
+func ensure_initialized() -> void:
+	if multimesh_instance != null:
+		return
+	multimesh_instance = MultiMeshInstance3D.new()
+	multimesh_instance.name = "VegetationMultiMesh"
+	add_child(multimesh_instance)
+	setup_vegetation_instances()
+
+func _ready() -> void:
+	ensure_initialized()
+
+func setup_vegetation_instances() -> void:
+	_using_backend_data = false
+	var positions := deterministic_positions(instance_count, distribution_radius, distribution_seed)
+	apply_positions(positions)
+
+func deterministic_positions(count: int, radius: float, seed_value: int) -> Array:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var out: Array = []
+	for i in range(count):
+		var angle: float = rng.randf_range(0, TAU)
+		var dist: float = rng.randf_range(5.0, radius)
+		var x: float = cos(angle) * dist
+		var z: float = sin(angle) * dist
+		var y: float = sample_height(x, z)
+		if y < -0.3:
+			continue # Don't place underwater
+		var scale_factor: float = rng.randf_range(0.6, 1.4)
+		out.append({"pos": Vector3(x, y + 0.6, z), "scale": scale_factor, "index": i})
+	return out
+
+func apply_positions(items: Array) -> void:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = true
+	mm.instance_count = maxi(instance_count, items.size())
+
+	var cylinder := CylinderMesh.new()
+	cylinder.top_radius = 0.25
+	cylinder.bottom_radius = 0.08
+	cylinder.height = 1.2
+
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.roughness = 0.7
+	cylinder.material = mat
+	mm.mesh = cylinder
+
+	placed_count = 0
+	for slot in range(mm.instance_count):
+		var t := Transform3D()
+		if slot < items.size():
+			var item: Dictionary = items[slot]
+			t.origin = item["pos"]
+			var s: float = float(item.get("scale", 1.0))
+			t.basis = t.basis.scaled(Vector3(s, s, s))
+			mm.set_instance_transform(slot, t)
+			var idx: int = int(item.get("index", slot))
+			var is_flower: bool = (idx % 5 == 0)
+			var col := Color(1.0, 0.4, 0.6) if is_flower else Color(0.25, 0.6, 0.2)
+			mm.set_instance_color(slot, col)
+			placed_count += 1
+		else:
+			t.origin = Vector3(0, -1000, 0) # park unused instances underground
+			t.basis = t.basis.scaled(Vector3(0.001, 0.001, 0.001))
+			mm.set_instance_transform(slot, t)
+			mm.set_instance_color(slot, Color(0, 0, 0, 0))
+
+	multimesh_instance.multimesh = mm
+	print("[VegetationRenderer] Instances: placed=%d/%d backend=%s." % [placed_count, mm.instance_count, str(_using_backend_data)])
+
+## Consume canonical backend vegetation state.
+## Expected: Array of Dictionaries with at least "pos" (Vector3); optional
+## "scale" (float) and "kind" ("flower"/"shrub"). Returns placed count.
+func apply_backend_instances(items: Array) -> int:
+	_using_backend_data = true
+	var normalized: Array = []
+	for i in range(items.size()):
+		var e: Dictionary = items[i]
+		if not e.has("pos"):
+			continue
+		normalized.append({
+			"pos": e["pos"],
+			"scale": float(e.get("scale", 1.0)),
+			"index": i if str(e.get("kind", "shrub")) != "flower" else 0,
+		})
+	apply_positions(normalized)
+	return placed_count
+
+func is_using_backend_data() -> bool:
+	return _using_backend_data
+
+static func sample_height(x: float, z: float) -> float:
+	# Same visual approximation constants as TerrainRenderer.sample_height().
+	# Duplicated (not cross-referenced) so each renderer parses standalone
+	# without depending on global class resolution order.
+	var h1: float = sin(x * 0.05) * cos(z * 0.05) * 4.0
+	var h2: float = sin(x * 0.12 + 1.2) * cos(z * 0.12 + 0.8) * 1.5
+	return h1 + h2
+
+func get_placed_count() -> int:
+	return placed_count

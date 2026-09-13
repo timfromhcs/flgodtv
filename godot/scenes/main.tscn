@@ -1,7 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://flgodtv_main_scene"]
+[gd_scene load_steps=13 format=3 uid="uid://flgodtv_main_scene"]
 
 [ext_resource type="Script" path="res://scripts/flgod_tv_controller.gd" id="1_controller"]
 [ext_resource type="Script" path="res://scripts/backend_bridge.gd" id="2_bridge"]
+[ext_resource type="Script" path="res://scripts/terrain_renderer.gd" id="3_terrain"]
+[ext_resource type="Script" path="res://scripts/vegetation_renderer.gd" id="4_vegetation"]
+[ext_resource type="Script" path="res://scripts/water_renderer.gd" id="5_water"]
+[ext_resource type="Script" path="res://scripts/weather_renderer.gd" id="6_weather"]
+[ext_resource type="Script" path="res://scripts/lighting_profiles.gd" id="7_lighting"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.2, 0.45, 0.8, 1)
@@ -62,6 +67,21 @@ transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 4, 6)
 
 [node name="FlyMultiMesh" type="MultiMeshInstance3D" parent="."]
+
+[node name="Terrain" type="Node3D" parent="."]
+script = ExtResource("3_terrain")
+
+[node name="Vegetation" type="Node3D" parent="."]
+script = ExtResource("4_vegetation")
+
+[node name="Water" type="Node3D" parent="."]
+script = ExtResource("5_water")
+
+[node name="Weather" type="Node3D" parent="."]
+script = ExtResource("6_weather")
+
+[node name="LightingProfiles" type="Node" parent="."]
+script = ExtResource("7_lighting")
 
 [node name="GodFlyMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 8, 30)
