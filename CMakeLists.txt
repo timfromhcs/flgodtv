@@ -102,5 +102,10 @@ if(BUILD_TESTING)
     add_executable(test_deterministic_physics tests/deterministic/test_deterministic_physics.cpp)
     target_link_libraries(test_deterministic_physics PRIVATE flgod_core)
     add_test(NAME DeterministicPhysicsTest COMMAND test_deterministic_physics)
+
+    # Headless backend integration tests
+    add_executable(test_headless_modes tests/integration/test_headless_modes.cpp)
+    target_link_libraries(test_headless_modes PRIVATE flgod_core)
+    add_test(NAME HeadlessModesTest COMMAND test_headless_modes)
 endif()
 

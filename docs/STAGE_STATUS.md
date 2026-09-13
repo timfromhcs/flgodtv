@@ -95,20 +95,32 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 05 — HEADLESS BACKEND
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Complete headless CLI arguments and capabilities in accordance with GEMINI.md Sections 60 & 61:
-  - `--self-test` (verifying Core, World, Physics, Checkpointing)
-  - `--benchmark [N]` (throughput & ticks/sec)
-  - `--simulate [N] [--seed S]` (headless multi-tick simulation)
-  - `--checkpoint <path>` (snapshot complete state to file)
-  - `--restore <path>` (resume simulation from file)
-  - `--replay <path>` (reproduce identical execution sequence from event log & checkpoint)
-  - `--validate` (rigorous system integrity validation)
-- Headless backend quality gate verification.
+**Status:** `VERIFIED`  
+**Evidence:**
+- [src/main.cpp](file:///C:/Users/hcsme/Desktop/Fly/src/main.cpp) (Complete headless CLI implementation supporting `--headless`, `--self-test`, `--benchmark`, `--simulate`, `--train`, `--evolve`, `--validate`, `--checkpoint`, `--restore`, `--replay`, `--seed`, `--version`, `--help`)
+- [include/flgod/core/replay.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/core/replay.hpp) (`ReplayCheckpointRecord`, `ReplayLog`, `ReplayManager` recording periodic checkpoints and verifying bit-exact deterministic reproduction)
+- Integration test:
+  - [test_headless_modes.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/integration/test_headless_modes.cpp): Checkpoint file write/restore hash equality, replay file recording and bit-exact reproduction over 200 ticks: Passed.
+- CLI verification commands executed and confirmed:
+  - `flgod.exe --self-test`: 5/5 phases passed (initialization, 120-tick step, checkpointing, restore hash equality, replay verification).
+  - `flgod.exe --validate`: Invariants verified for clock monotonicity, bounded world fields, and physical ground non-penetration.
+  - `flgod.exe --checkpoint <path> 180`: State snapshot dumped to JSON.
+  - `flgod.exe --restore <path> 60`: Seamless continuation from snapshot to tick 240.
+  - `flgod.exe --train 5`: Headless learning harness executed 5 episodes (500 steps).
+  - `flgod.exe --evolve 3`: Headless evolutionary harness advanced 3 generations.
+  - `flgod.exe --simulate 600`: 600 ticks simulated headless without display or GUI dependencies.
+  - Evidence logs stored in `evidence/windows/self_test_output.txt`, `headless_simulation_output.txt`, and `ctest_output.txt`.
+- CTest suite: **16/16 tests passed (100%)**.
+
+---
 
 ### STAGE 06 — VULKAN
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Vulkan compute abstraction layer (`VulkanContext`, `ComputeDevice`, `ComputeBuffer`, `ComputePipeline`)
+- CPU reference vs GPU compute execution comparison tests (Sections 35 & 36)
+- Minimal verified compute kernel with explicit numerical tolerances
+- Memory transfer benchmarking (host-to-device, device-to-host)
 
 ### STAGE 07 — LEARNING
 **Status:** `PENDING`

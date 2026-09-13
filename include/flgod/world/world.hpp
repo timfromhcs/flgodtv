@@ -46,14 +46,28 @@ public:
     [[nodiscard]] const TemperatureField& temperature() const noexcept { return m_temperature; }
     TemperatureField& temperature() noexcept { return m_temperature; }
 
+    [[nodiscard]] const HumidityField& humidity() const noexcept { return m_humidity; }
+    HumidityField& humidity() noexcept { return m_humidity; }
+
     [[nodiscard]] const MoistureField& moisture() const noexcept { return m_moisture; }
     MoistureField& moisture() noexcept { return m_moisture; }
+
+    [[nodiscard]] const WaterField& water() const noexcept { return m_water; }
+    WaterField& water() noexcept { return m_water; }
 
     [[nodiscard]] const FireField& fire() const noexcept { return m_fire; }
     FireField& fire() noexcept { return m_fire; }
 
     [[nodiscard]] const EcologyField& ecology() const noexcept { return m_ecology; }
     EcologyField& ecology() noexcept { return m_ecology; }
+
+    [[nodiscard]] double sample_temperature(double x, double z) const noexcept {
+        return m_temperature.sample(x, z);
+    }
+
+    [[nodiscard]] double sample_humidity(double x, double z) const noexcept {
+        return m_humidity.sample(x, z);
+    }
 
     WorldChunk& get_or_create_chunk(const ChunkCoord& coord) {
         auto it = m_chunks.find(coord);
