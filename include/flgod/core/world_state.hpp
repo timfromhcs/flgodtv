@@ -5,6 +5,7 @@
 #include "flgod/core/rng.hpp"
 #include "flgod/core/entity_id.hpp"
 #include "flgod/world/world.hpp"
+#include "flgod/physics/physics_engine.hpp"
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
@@ -41,6 +42,8 @@ public:
     [[nodiscard]] EntityIDAllocator& id_allocator() noexcept { return m_id_allocator; }
     [[nodiscard]] const World& world() const noexcept { return m_world; }
     [[nodiscard]] World& world() noexcept { return m_world; }
+    [[nodiscard]] const PhysicsEngine& physics() const noexcept { return m_physics; }
+    [[nodiscard]] PhysicsEngine& physics() noexcept { return m_physics; }
 
     [[nodiscard]] uint64_t compute_hash() const noexcept {
         uint64_t h = 14695981039346656037ULL;
@@ -53,6 +56,7 @@ public:
         combine(m_rng.compute_hash());
         combine(m_id_allocator.compute_hash());
         combine(m_world.compute_world_hash());
+        combine(m_physics.compute_physics_hash());
         return h;
     }
 
@@ -76,6 +80,7 @@ public:
             {"current_generation", m_id_allocator.current_generation()}
         };
         j["world"] = m_world.to_json();
+        j["physics"] = m_physics.to_json();
         j["state_hash"] = compute_hash();
         return j;
     }
@@ -115,6 +120,9 @@ public:
         if (j.contains("world")) {
             m_world.from_json(j["world"]);
         }
+        if (j.contains("physics")) {
+            m_physics.from_json(j["physics"]);
+        }
     }
 
     bool operator==(const WorldState& other) const noexcept {
@@ -131,6 +139,7 @@ private:
     DeterministicRNG m_rng;
     EntityIDAllocator m_id_allocator;
     World m_world;
+    PhysicsEngine m_physics;
 };
 
 } // namespace flgod

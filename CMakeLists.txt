@@ -81,4 +81,26 @@ if(BUILD_TESTING)
     add_executable(test_deterministic_world tests/deterministic/test_deterministic_world.cpp)
     target_link_libraries(test_deterministic_world PRIVATE flgod_core)
     add_test(NAME DeterministicWorldTest COMMAND test_deterministic_world)
+
+    # Physics subsystem tests
+    add_executable(test_physics_fall tests/unit/test_physics_fall.cpp)
+    target_link_libraries(test_physics_fall PRIVATE flgod_core)
+    add_test(NAME PhysicsFallTest COMMAND test_physics_fall)
+
+    add_executable(test_physics_collision tests/unit/test_physics_collision.cpp)
+    target_link_libraries(test_physics_collision PRIVATE flgod_core)
+    add_test(NAME PhysicsCollisionTest COMMAND test_physics_collision)
+
+    add_executable(test_physics_constraint tests/unit/test_physics_constraint.cpp)
+    target_link_libraries(test_physics_constraint PRIVATE flgod_core)
+    add_test(NAME PhysicsConstraintTest COMMAND test_physics_constraint)
+
+    add_executable(test_physics_fidelity tests/unit/test_physics_fidelity.cpp)
+    target_link_libraries(test_physics_fidelity PRIVATE flgod_core)
+    add_test(NAME PhysicsFidelityTest COMMAND test_physics_fidelity)
+
+    add_executable(test_deterministic_physics tests/deterministic/test_deterministic_physics.cpp)
+    target_link_libraries(test_deterministic_physics PRIVATE flgod_core)
+    add_test(NAME DeterministicPhysicsTest COMMAND test_deterministic_physics)
 endif()
+

@@ -4,6 +4,7 @@ build-*/
 out/
 bin/
 .cache/
+third_party/JoltPhysics/
 
 # Visual Studio / MSVC
 .vs/

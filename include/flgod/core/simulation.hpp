@@ -69,7 +69,10 @@ public:
         // 2. Advance procedural continuous world & weather
         m_world_state.world().step(s.dt, s.elapsed_seconds);
 
-        // 3. Publish TickStart
+        // 3. Advance physics simulation
+        m_world_state.physics().step(s.dt);
+
+        // 4. Publish TickStart
         TickStartEvent start_ev;
         start_ev.tick = s.tick;
         start_ev.timestamp = s.elapsed_seconds;

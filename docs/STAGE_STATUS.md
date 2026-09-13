@@ -76,15 +76,36 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 04 — PHYSICS
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Rigid body and collision physics abstraction (`PhysicsEngine`, `RigidBody`, `CollisionShape`)
-- Jolt Physics integration / backend adapter
-- Fall under gravity, ground collision, restitution, friction, impulses, and multi-fidelity simulation levels (L0 full, L1 reduced, L2 statistical)
-- Physical determinism and collision verification tests
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/physics/physics_types.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/physics/physics_types.hpp) (`SimulationFidelity` L0/L1/L2, `ShapeType`, `CollisionShape`, `RigidBodyState`, `PhysicsConstraint`, `RaycastHit`)
+- [include/flgod/physics/physics_engine.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/physics/physics_engine.hpp) (Multi-fidelity integration, continuous collision detection [CCD], ground and dynamic pair collision resolution with restitution/friction, distance constraint solver with structural failure break force, raycasting, bit-exact physics hashing, and full JSON serialization)
+- Unit tests:
+  - [test_physics_fall.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_physics_fall.cpp): Free fall under gravity, ground collision, restitution bounce, settling on ground plane: Passed.
+  - [test_physics_collision.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_physics_collision.cpp): Head-on dynamic pair collision, velocity reversal, non-penetration, and raycast detection: Passed.
+  - [test_physics_constraint.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_physics_constraint.cpp): Distance constraint preservation and structural failure when force exceeds threshold: Passed.
+  - [test_physics_fidelity.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_physics_fidelity.cpp): L0 Full, L1 Reduced, L2 Statistical levels and promotion/demotion lifecycle without state loss: Passed.
+- Deterministic integration test:
+  - [test_deterministic_physics.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/deterministic/test_deterministic_physics.cpp): 500-step bit-exact determinism across independent runs, 100% midpoint crash recovery and checkpoint replay hash match: Passed.
+- Build & Test verification:
+  - CTest suite: **15/15 tests passed (100%)** on MSVC and Ninja Release configurations.
+  - Headless CLI benchmark: **~14,158 ticks/sec (~236x realtime at 60 Hz)** with integrated physics simulation and state hashing.
+  - Evidence output saved in `evidence/windows/ctest_output.txt` and `evidence/windows/benchmark_output.txt`.
+
+---
 
 ### STAGE 05 — HEADLESS BACKEND
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Complete headless CLI arguments and capabilities in accordance with GEMINI.md Sections 60 & 61:
+  - `--self-test` (verifying Core, World, Physics, Checkpointing)
+  - `--benchmark [N]` (throughput & ticks/sec)
+  - `--simulate [N] [--seed S]` (headless multi-tick simulation)
+  - `--checkpoint <path>` (snapshot complete state to file)
+  - `--restore <path>` (resume simulation from file)
+  - `--replay <path>` (reproduce identical execution sequence from event log & checkpoint)
+  - `--validate` (rigorous system integrity validation)
+- Headless backend quality gate verification.
 
 ### STAGE 06 — VULKAN
 **Status:** `PENDING`

@@ -27,4 +27,5 @@ This document records all external dependencies used in FLGODTV, in accordance w
 | Name | Source URL | Version/Commit | SHA256 Hash | License | Platform Support | Build Method | Purpose | Verification Command |
 |---|---|---|---|---|---|---|---|---|
 | **nlohmann/json** | https://github.com/nlohmann/json | v3.11.3 | `9bea4c8066ef4a1c206b2be5a36302f8926f7fdc6087af5d20b417d0cf103ea6` | MIT | Cross-platform | Header-only | Serialization of state, checkpoints, manifests | C++ include check |
+| **JoltPhysics** | https://github.com/jrouwe/JoltPhysics | v5.6.0 (`e77f175595e64cb44218cc9d9d56fc365ad0e36a`) | Git commit hash | MIT | Windows, Linux, macOS | CMake / C++ Library | Real-time multi-core rigid body physics simulation | CMake target & physics unit test |
 

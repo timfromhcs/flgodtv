@@ -1,25 +1,169 @@
+UpdateCTestConfiguration  from :C:/Users/hcsme/Desktop/Fly/build/ninja-release/DartConfiguration.tcl
 Test project C:/Users/hcsme/Desktop/Fly/build/ninja-release
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
       Start  1: CoreClockTest
- 1/10 Test  #1: CoreClockTest ....................   Passed    0.01 sec
+
+1: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_core_clock.exe
+1: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+1: Test timeout computed to be: 10000000
+1: [TEST] Running test_core_clock...
+1: [PASS] test_core_clock passed successfully.
+ 1/15 Test  #1: CoreClockTest ....................   Passed    0.01 sec
+test 2
       Start  2: CoreRNGTest
- 2/10 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
+
+2: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_core_rng.exe
+2: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+2: Test timeout computed to be: 10000000
+2: [TEST] Running test_core_rng...
+2: [PASS] test_core_rng passed successfully.
+ 2/15 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
+test 3
       Start  3: CoreEntityTest
- 3/10 Test  #3: CoreEntityTest ...................   Passed    0.02 sec
+
+3: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_core_entity.exe
+3: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+3: Test timeout computed to be: 10000000
+3: [TEST] Running test_core_entity...
+3: [PASS] test_core_entity passed successfully.
+ 3/15 Test  #3: CoreEntityTest ...................   Passed    0.01 sec
+test 4
       Start  4: CoreEventBusTest
- 4/10 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
+
+4: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_core_event_bus.exe
+4: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+4: Test timeout computed to be: 10000000
+4: [TEST] Running test_core_event_bus...
+4: [PASS] test_core_event_bus passed successfully.
+ 4/15 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
+test 5
       Start  5: DeterministicSimulationTest
- 5/10 Test  #5: DeterministicSimulationTest ......   Passed    0.07 sec
+
+5: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_deterministic_simulation.exe
+5: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+5: Test timeout computed to be: 10000000
+5: [TEST] Running test_deterministic_simulation...
+5: [CHECK 1/2] Uninterrupted parallel runs produced identical hash: 2326199170333143766
+5: [CHECK 2/2] Restored checkpoint run matched reference final hash: 2326199170333143766
+5: [PASS] test_deterministic_simulation passed successfully.
+ 5/15 Test  #5: DeterministicSimulationTest ......   Passed    0.06 sec
+test 6
       Start  6: WorldNoiseTest
- 6/10 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
+
+6: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_world_noise.exe
+6: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+6: Test timeout computed to be: 10000000
+6: [TEST] Running test_world_noise...
+6: [PASS] test_world_noise passed successfully.
+ 6/15 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
+test 7
       Start  7: WorldChunkTest
- 7/10 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
+
+7: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_world_chunk.exe
+7: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+7: Test timeout computed to be: 10000000
+7: [TEST] Running test_world_chunk...
+7: [STEP 1 PASS]
+7: [STEP 2 PASS]
+7: [STEP 3 PASS]
+7: [JSON]: {"coord":{"x":3,"y":0,"z":-7},"delta":{"biomass":[],"biomes":[{"idx":85,"val":4}],"heights":[{"idx":85,"val":-3.5}]},"id":26388281163769,"seed":13665729913251135165}
+7: [STEP 4 PASS]
+7: [PASS] test_world_chunk passed successfully.
+ 7/15 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
+test 8
       Start  8: WorldFieldsTest
- 8/10 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
+
+8: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_world_fields.exe
+8: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+8: Test timeout computed to be: 10000000
+8: [TEST] Running test_world_fields...
+8: [PASS] test_world_fields passed successfully.
+ 8/15 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
+test 9
       Start  9: WorldProceduralTest
- 9/10 Test  #9: WorldProceduralTest ..............   Passed    0.01 sec
+
+9: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_world_procedural.exe
+9: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+9: Test timeout computed to be: 10000000
+9: [TEST] Running test_world_procedural...
+9: [INFO] Observed 4 distinct biomes across region.
+9: [PASS] test_world_procedural passed successfully.
+ 9/15 Test  #9: WorldProceduralTest ..............   Passed    0.01 sec
+test 10
       Start 10: DeterministicWorldTest
-10/10 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
 
-100% tests passed out of 10
+10: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_deterministic_world.exe
+10: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+10: Test timeout computed to be: 10000000
+10: [TEST] Running test_deterministic_world...
+10: [CHECK 1/2] Parallel identical world runs matched final hash: 1179954163374705284
+10: [CHECK 2/2] Restored checkpoint run matched reference final hash: 1179954163374705284
+10: [PASS] test_deterministic_world passed successfully.
+10/15 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
+test 11
+      Start 11: PhysicsFallTest
 
-Total Test time (real) =   0.21 sec
+11: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_physics_fall.exe
+11: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+11: Test timeout computed to be: 10000000
+11: [TEST] Running test_physics_fall...
+11:   Free fall at 1.0s: y = 45.1291, vy = -9.56634
+11:   Restitution bounce observed successfully.
+11:   Ball settled on ground at y = 0.5, vy = 0
+11: [TEST] test_physics_fall PASSED
+11/15 Test #11: PhysicsFallTest ..................   Passed    0.01 sec
+test 12
+      Start 12: PhysicsCollisionTest
+
+12: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_physics_collision.exe
+12: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+12: Test timeout computed to be: 10000000
+12: [TEST] Running test_physics_collision...
+12:   Head-on collision reversal verified.
+12:   Raycast hit body 10 at dist 7.62084, point (-2.37916, 5, 0)
+12: [TEST] test_physics_collision PASSED
+12/15 Test #12: PhysicsCollisionTest .............   Passed    0.01 sec
+test 13
+      Start 13: PhysicsConstraintTest
+
+13: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_physics_constraint.exe
+13: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+13: Test timeout computed to be: 10000000
+13: [TEST] Running test_physics_constraint...
+13:   Constraint maintained distance under gravity: cur_dist = 2.09473
+13:   Structural failure successfully triggered when force exceeded threshold.
+13:   Bodies separated after failure: dist = 7.48367
+13: [TEST] test_physics_constraint PASSED
+13/15 Test #13: PhysicsConstraintTest ............   Passed    0.01 sec
+test 14
+      Start 14: PhysicsFidelityTest
+
+14: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_physics_fidelity.exe
+14: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+14: Test timeout computed to be: 10000000
+14: [TEST] Running test_physics_fidelity...
+14:   L2 statistical behavior verified (ground equilibrium: y = 0.5)
+14:   Promotion and demotion lifecycle verified cleanly without data loss.
+14: [TEST] test_physics_fidelity PASSED
+14/15 Test #14: PhysicsFidelityTest ..............   Passed    0.01 sec
+test 15
+      Start 15: DeterministicPhysicsTest
+
+15: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_deterministic_physics.exe
+15: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+15: Test timeout computed to be: 10000000
+15: [TEST] Running test_deterministic_physics...
+15:   Passed 500 steps bit-exact determinism check. Final hash: 0x7fe83107ca6891d4
+15:   Passed 100% crash recovery and checkpoint replay test. Hash: 0x7fe83107ca6891d4
+15: [TEST] test_deterministic_physics PASSED
+15/15 Test #15: DeterministicPhysicsTest .........   Passed    0.01 sec
+
+100% tests passed out of 15
+
+Total Test time (real) =   0.25 sec
