@@ -1,0 +1,8 @@
+{
+  "network_time_ms": 18.4563,
+  "packets_per_second": 5418204.082074956,
+  "packets_routed": 100000,
+  "vm_cycles_executed": 5000000.0,
+  "vm_mips": 121.61041374294965,
+  "vm_time_ms": 41.1149
+}

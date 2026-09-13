@@ -228,14 +228,30 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 12 — TECHNOLOGY
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Sandboxed programmable technology layer (GEMINI.md Sections 58 & 59)
-- Primitive capabilities: inspect, manipulate, combine, connect, operate, construct
-- Sandboxed virtual execution layer: virtual programs, devices, machines, networks (never arbitrary host privileges)
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/technology/tool_system.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/technology/tool_system.hpp) (Section 58 primitive capabilities: `Inspect`, `Manipulate`, `Combine`, `Connect`, `Operate`, `Construct`; material classification, crafting recipes, wear and durability degradation)
+- [include/flgod/technology/virtual_machine.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/technology/virtual_machine.hpp) (Section 59 sandboxed virtual machine: 8 virtual registers, 256 words memory, bounded execution `max_cycles = 1000` anti-hang cycle limit, safe divide-by-zero protection, memory fault boundary protection; strictly isolated from host execution)
+- [include/flgod/technology/virtual_network.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/technology/virtual_network.hpp) (Sandboxed virtual devices: thermometer sensors, motor/valve actuators, VM node; unicast and broadcast virtual packet routing, power state control, queue drop limits)
+- [include/flgod/technology/programmable_world.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/technology/programmable_world.hpp) (Unified technology layer linking tools, VMs, and networks; step coordination, state hashing, and full JSON serialization)
+- Unit and integration tests:
+  - [test_technology_tools.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_technology_tools.cpp): Tool creation, property inspection, position manipulation with wear, physical connection constraints, toggle operation, recipe crafting combination, and macro-construction: Passed.
+  - [test_technology_vm.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_technology_vm.cpp): Arithmetic instruction execution, safe divide-by-zero handling, memory boundary fault rejection, and infinite loop termination at 1000 cycles: Passed.
+  - [test_technology_network.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_technology_network.cpp): Virtual device attachment, unicast and broadcast packet delivery, actuator state latching, unpowered device ignoring, and dead address dropping: Passed.
+  - [test_technology_integration.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/integration/test_technology_integration.cpp): End-to-end automated regulation station: structure construction -> sensor/actuator deployment -> sandboxed VM control program -> threshold detection -> network command dispatch -> actuator latching -> state recovery match: Passed.
+- Benchmark:
+  - [evidence/windows/technology_benchmark.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/technology_benchmark.json): 121.61 MIPS virtual machine performance, 5,418,204 packets/sec virtual network routing speed.
+- CTest suite: **44/44 tests passed (100%)**.
+
+---
 
 ### STAGE 13 — FLY-BRAIN ADAPTER
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Connectome / fly-brain adapter boundary (GEMINI.md Sections 7 & 8)
+- Protect existing baseline in `malecns/` (read-only baseline interface)
+- Isolate fly-brain adapter from world, physics, learning, evolution, and rendering
+- Connectome sensory input and motor output mapping
 
 ### STAGE 14 — MULTI-AGENT
 **Status:** `PENDING`

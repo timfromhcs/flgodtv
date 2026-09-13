@@ -232,6 +232,27 @@ if(BUILD_TESTING)
     # Language Benchmark
     add_executable(benchmark_language_transmission benchmarks/benchmark_language_transmission.cpp)
     target_link_libraries(benchmark_language_transmission PRIVATE flgod_core)
+
+    # Technology subsystem tests
+    add_executable(test_technology_tools tests/unit/test_technology_tools.cpp)
+    target_link_libraries(test_technology_tools PRIVATE flgod_core)
+    add_test(NAME TechnologyToolsTest COMMAND test_technology_tools)
+
+    add_executable(test_technology_vm tests/unit/test_technology_vm.cpp)
+    target_link_libraries(test_technology_vm PRIVATE flgod_core)
+    add_test(NAME TechnologyVMTest COMMAND test_technology_vm)
+
+    add_executable(test_technology_network tests/unit/test_technology_network.cpp)
+    target_link_libraries(test_technology_network PRIVATE flgod_core)
+    add_test(NAME TechnologyNetworkTest COMMAND test_technology_network)
+
+    add_executable(test_technology_integration tests/integration/test_technology_integration.cpp)
+    target_link_libraries(test_technology_integration PRIVATE flgod_core)
+    add_test(NAME TechnologyIntegrationTest COMMAND test_technology_integration)
+
+    # Technology Benchmark
+    add_executable(benchmark_technology_vm benchmarks/benchmark_technology_vm.cpp)
+    target_link_libraries(benchmark_technology_vm PRIVATE flgod_core)
 endif()
 
 
