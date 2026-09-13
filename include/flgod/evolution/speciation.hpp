@@ -38,14 +38,16 @@ struct SpeciesInfo {
     }
 };
 
+struct SpeciationThresholds {
+    double genetic_divergence_threshold{2.0};
+    double phenotypic_divergence_threshold{1.5};
+    double mating_compatibility_cutoff{0.25}; // Below this, reproduction is blocked
+    double viability_scale{2.5};
+};
+
 class SpeciationSystem {
 public:
-    struct SpeciationThresholds {
-        double genetic_divergence_threshold{2.0};
-        double phenotypic_divergence_threshold{1.5};
-        double mating_compatibility_cutoff{0.25}; // Below this, reproduction is blocked
-        double viability_scale{2.5};
-    };
+    using SpeciationThresholds = flgod::SpeciationThresholds;
 
     explicit SpeciationSystem(const SpeciationThresholds& thresholds = SpeciationThresholds{})
         : m_thresholds(thresholds) {
