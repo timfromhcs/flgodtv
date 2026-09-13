@@ -1,0 +1,119 @@
+name: FLGODTV CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # --------------------------------------------------------------------------
+  # Windows Build & Test Job
+  # --------------------------------------------------------------------------
+  build-windows:
+    name: Windows x64 MSVC
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Ninja
+        uses: ashley-hand/action-ninja@v1
+
+      - name: Setup Vulkan SDK
+        uses: humbletim/setup-vulkan-sdk@v1.2.0
+        with:
+          vulkan-query-version: 1.3.280.0
+          vulkan-components: Vulkan-Headers, Vulkan-Loader, glslc
+          vulkan-use-cache: true
+
+      - name: Configure CMake (Ninja Release)
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DFLGOD_ENABLE_VULKAN=ON
+
+      - name: Compile flgod & Test Suite
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          cmake --build build --config Release
+
+      - name: Execute CTest Suite (GEMINI.md Section 103 Compliant)
+        shell: cmd
+        run: |
+          echo [INFO] Running all CPU, Physics, Learning, Evolution, Agent, Language, Tech, and Brain tests...
+          echo [INFO] Per GEMINI.md Section 103, physical GPU Vulkan execution requires dedicated hardware:
+          echo [INFO] VULKAN GPU TEST = NOT AVAILABLE (Cloud runner has no physical Vulkan GPU device)
+          ctest --test-dir build --output-on-failure -E "(VulkanInitTest|VulkanBufferTest|VulkanComputeTest|GodotFrontendSmokeTest)"
+
+      - name: Verify Headless CLI Modes
+        shell: cmd
+        run: |
+          .\build\flgod.exe --version
+          .\build\flgod.exe --self-test
+          .\build\flgod.exe --validate
+          .\build\flgod.exe --simulate 120
+
+      - name: Upload Windows Binaries & Artifacts (Section 104)
+        uses: actions/upload-artifact@v4
+        with:
+          name: flgodtv-windows-x64
+          path: |
+            build/flgod.exe
+            build/flgod_core.lib
+            evidence/
+            docs/
+
+  # --------------------------------------------------------------------------
+  # Linux Build & Test Job
+  # --------------------------------------------------------------------------
+  build-linux:
+    name: Linux x64 GCC
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build cmake libvulkan-dev vulkan-tools glslc
+
+      - name: Configure CMake (Ninja Release)
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DFLGOD_ENABLE_VULKAN=ON
+
+      - name: Compile flgod & Test Suite
+        run: |
+          cmake --build build --config Release
+
+      - name: Execute CTest Suite (GEMINI.md Section 103 Compliant)
+        run: |
+          echo "[INFO] Running all CPU, Physics, Learning, Evolution, Agent, Language, Tech, and Brain tests..."
+          echo "[INFO] Per GEMINI.md Section 103, physical GPU Vulkan execution requires dedicated hardware:"
+          echo "[INFO] VULKAN GPU TEST = NOT AVAILABLE (Cloud runner has no physical Vulkan GPU device)"
+          ctest --test-dir build --output-on-failure -E "(VulkanInitTest|VulkanBufferTest|VulkanComputeTest|GodotFrontendSmokeTest)"
+
+      - name: Verify Headless CLI Modes
+        run: |
+          ./build/flgod --version
+          ./build/flgod --self-test
+          ./build/flgod --validate
+          ./build/flgod --simulate 120
+
+      - name: Upload Linux Binaries & Artifacts (Section 104)
+        uses: actions/upload-artifact@v4
+        with:
+          name: flgodtv-linux-x64
+          path: |
+            build/flgod
+            evidence/
+            docs/
