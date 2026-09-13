@@ -211,14 +211,28 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 11 — LANGUAGE
-**Status:** `NEXT`  
-**Planned Implementation:**
-- Signals, symbols, and meaning associations (GEMINI.md Section 56)
-- Vocabulary, sequence patterns, and grammar state
-- Social learning and cultural transmission tracking (individual vs social transfer vs God Fly vs cultural inheritance, Section 57)
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/language/signal_symbol.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/language/signal_symbol.hpp) (Physical signals: Pheromone, AcousticWingBuzz, VisualDance, DirectTactile; discrete symbol grounding, referent mapping, confidence reinforcement/penalty on empirical outcomes)
+- [include/flgod/language/vocabulary.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/language/vocabulary.hpp) (Lexicon with grammatical categories: Action, Object, Qualifier, Direction; bigram transition probability learning $P(W_{t+1} \mid W_t)$, canonical syntax validation, deterministic vocabulary hashing, and serialization)
+- [include/flgod/language/social_learning.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/language/social_learning.hpp) (Transmission channels: Observation, Imitation, Demonstration, Teaching, Communication; Section 57 provenance tracking: IndividualExperience, SocialTransfer, GodFly, CulturalInheritance; generational depth and transmission fidelity degradation)
+- Unit and integration tests:
+  - [test_language_symbol.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_language_symbol.cpp): Foundational symbol registration, referent lookup, physical signal generation, and confidence learning: Passed.
+  - [test_language_vocabulary.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_language_vocabulary.cpp): Vocabulary registration, syntax validation, bigram transition probabilities (P(OBJ_NECTAR | ACT_FORAGE) = 66.7%), and state hashing: Passed.
+  - [test_language_social_learning.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_language_social_learning.cpp): Provenance tracking across all 4 origins, transmission channels, fidelity decay, and empirical validation updates: Passed.
+  - [test_language_transmission.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/integration/test_language_transmission.cpp): End-to-end multi-generational cultural transmission (God Fly gen 0 -> Social Peer gen 1 -> Cultural Student gen 2 -> Cultural Tradition gen 3), vocabulary consensus convergence > 0.95, and crash recovery match: Passed.
+- Benchmark:
+  - [evidence/windows/language_benchmark.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/language_benchmark.json): 16,706,762 utterances/sec, 1,260,677 social transmission hops/sec.
+- CTest suite: **40/40 tests passed (100%)**.
+
+---
 
 ### STAGE 12 — TECHNOLOGY
-**Status:** `PENDING`
+**Status:** `NEXT`  
+**Planned Implementation:**
+- Sandboxed programmable technology layer (GEMINI.md Sections 58 & 59)
+- Primitive capabilities: inspect, manipulate, combine, connect, operate, construct
+- Sandboxed virtual execution layer: virtual programs, devices, machines, networks (never arbitrary host privileges)
 
 ### STAGE 13 — FLY-BRAIN ADAPTER
 **Status:** `PENDING`

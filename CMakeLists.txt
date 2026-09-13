@@ -211,6 +211,27 @@ if(BUILD_TESTING)
     # LLM Benchmark
     add_executable(benchmark_llm_throughput benchmarks/benchmark_llm_throughput.cpp)
     target_link_libraries(benchmark_llm_throughput PRIVATE flgod_core)
+
+    # Language and social learning subsystem tests
+    add_executable(test_language_symbol tests/unit/test_language_symbol.cpp)
+    target_link_libraries(test_language_symbol PRIVATE flgod_core)
+    add_test(NAME LanguageSymbolTest COMMAND test_language_symbol)
+
+    add_executable(test_language_vocabulary tests/unit/test_language_vocabulary.cpp)
+    target_link_libraries(test_language_vocabulary PRIVATE flgod_core)
+    add_test(NAME LanguageVocabularyTest COMMAND test_language_vocabulary)
+
+    add_executable(test_language_social_learning tests/unit/test_language_social_learning.cpp)
+    target_link_libraries(test_language_social_learning PRIVATE flgod_core)
+    add_test(NAME LanguageSocialLearningTest COMMAND test_language_social_learning)
+
+    add_executable(test_language_transmission tests/integration/test_language_transmission.cpp)
+    target_link_libraries(test_language_transmission PRIVATE flgod_core)
+    add_test(NAME LanguageTransmissionTest COMMAND test_language_transmission)
+
+    # Language Benchmark
+    add_executable(benchmark_language_transmission benchmarks/benchmark_language_transmission.cpp)
+    target_link_libraries(benchmark_language_transmission PRIVATE flgod_core)
 endif()
 
 

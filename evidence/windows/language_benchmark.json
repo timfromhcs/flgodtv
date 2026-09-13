@@ -1,0 +1,10 @@
+{
+  "symbol_count": 6,
+  "transmission_time_ms": 39.6612,
+  "transmissions_per_second": 1260677.9421701813,
+  "transmissions_tested": 50000,
+  "utterance_time_ms": 5.9856,
+  "utterances_per_second": 16706762.897620957,
+  "utterances_tested": 100000,
+  "vocabulary_word_count": 11
+}
