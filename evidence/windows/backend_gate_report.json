@@ -1,0 +1,128 @@
+{
+  "source_builds_cleanly": {
+    "passed": true,
+    "duration_sec": 1.7790133953094482,
+    "details": "Ninja build succeeded with zero compilation errors."
+  },
+  "unit_and_integration_tests": {
+    "passed": true,
+    "total_tests": 48,
+    "duration_sec": 3.811292886734009,
+    "details": "48/48 tests passed (100%) via CTest."
+  },
+  "deterministic_tests": {
+    "passed": true,
+    "tests": [
+      "DeterministicSimulationTest",
+      "DeterministicWorldTest",
+      "DeterministicPhysicsTest",
+      "EvolutionPopulationTest",
+      "MultiAgentEcosystemTest"
+    ],
+    "details": "All deterministic tests produced bit-exact hash parity across runs."
+  },
+  "cpu_execution": {
+    "passed": true,
+    "ticks": 600,
+    "duration_sec": 1.1179547309875488,
+    "details": "600 ticks simulated headless on CPU."
+  },
+  "vulkan_execution": {
+    "passed": true,
+    "gpu_device": "AMD Radeon(TM) Graphics (Device ID 0x1681)",
+    "duration_sec": 0.13835430145263672
+  },
+  "cpu_gpu_comparison": {
+    "passed": true,
+    "max_abs_difference_vector_add": 0.0,
+    "max_abs_difference_field_diffusion": 0.0,
+    "tolerance": 1e-05,
+    "details": "Bit-exact 0.0 absolute difference between CPU and Vulkan GPU output."
+  },
+  "physics_tests": {
+    "passed": true,
+    "tests": [
+      "PhysicsFallTest",
+      "PhysicsCollisionTest",
+      "PhysicsConstraintTest",
+      "PhysicsFidelityTest",
+      "DeterministicPhysicsTest"
+    ],
+    "details": "Gravity free fall, ground non-penetration, CCD collision, distance constraint failure, multi-fidelity L0/L1/L2 passed."
+  },
+  "world_generation_tests": {
+    "passed": true,
+    "tests": [
+      "WorldNoiseTest",
+      "WorldChunkTest",
+      "WorldFieldsTest",
+      "WorldProceduralTest",
+      "DeterministicWorldTest"
+    ],
+    "details": "Procedural elevation, erosion, hydrology, Whittaker biomes, continuous fields passed."
+  },
+  "learning_tests": {
+    "passed": true,
+    "tests": [
+      "LearningExperienceTest",
+      "LearningMemoryTest",
+      "LearningLoopTest",
+      "LearningParallelTest"
+    ],
+    "details": "TD error calculation, multi-tier memory, optimal policy convergence, parallel experience streaming passed."
+  },
+  "evolution_tests": {
+    "passed": true,
+    "tests": [
+      "EvolutionGenomeTest",
+      "EvolutionSpeciationTest",
+      "EvolutionCoevolutionTest",
+      "EvolutionPopulationTest"
+    ],
+    "details": "8 genome categories, 6 mutation operators, recombination, reproductive isolation speciation, body/brain metabolic coevolution passed."
+  },
+  "persistence_and_recovery": {
+    "passed": true,
+    "checkpoint_file": "C:\\Users\\hcsme\\Desktop\\Fly\\evidence\\windows\\gate_checkpoint.json",
+    "details": "Checkpoint state snapshot written, validated, and seamlessly restored with exact hash match."
+  },
+  "replay_tests": {
+    "passed": true,
+    "details": "HeadlessModesTest and MultiAgentEcosystemTest validated replay reproduction with bit-exact hash equality."
+  },
+  "headless_execution": {
+    "passed": true,
+    "self_test": true,
+    "validate": true,
+    "train": true,
+    "evolve": true
+  },
+  "benchmarks": {
+    "brain": {
+      "passed": true,
+      "duration_sec": 0.12582850456237793
+    },
+    "multi_agent": {
+      "passed": true,
+      "duration_sec": 0.19915461540222168
+    },
+    "learning": {
+      "passed": true,
+      "duration_sec": 0.026174068450927734
+    },
+    "llm": {
+      "passed": true,
+      "duration_sec": 0.08658885955810547
+    },
+    "language": {
+      "passed": true,
+      "duration_sec": 0.09599447250366211
+    },
+    "technology": {
+      "passed": true,
+      "duration_sec": 0.0895392894744873
+    }
+  },
+  "overall_backend_quality_gate": "PASS",
+  "timestamp": "2026-09-13 16:26:08"
+}
