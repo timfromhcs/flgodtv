@@ -1,0 +1,100 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-default",
+      "displayName": "Windows x64 MSVC 2022 (Default)",
+      "description": "Default configure preset using Visual Studio 17 2022 generator",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/vs2022",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_TESTING": "ON",
+        "FLGOD_ENABLE_VULKAN": "ON"
+      }
+    },
+    {
+      "name": "windows-ninja-release",
+      "displayName": "Windows x64 Ninja Release",
+      "description": "Fast release build using Ninja",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_TESTING": "ON",
+        "FLGOD_ENABLE_VULKAN": "ON"
+      }
+    },
+    {
+      "name": "windows-ninja-debug",
+      "displayName": "Windows x64 Ninja Debug",
+      "description": "Debug build using Ninja",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BUILD_TESTING": "ON",
+        "FLGOD_ENABLE_VULKAN": "ON"
+      }
+    },
+    {
+      "name": "linux-gcc-release",
+      "displayName": "Linux x64 GCC Release",
+      "description": "Linux Release build using GCC",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux-gcc-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_TESTING": "ON",
+        "FLGOD_ENABLE_VULKAN": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-default-release",
+      "configurePreset": "windows-default",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-default-debug",
+      "configurePreset": "windows-default",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-ninja-release",
+      "configurePreset": "windows-ninja-release"
+    },
+    {
+      "name": "windows-ninja-debug",
+      "configurePreset": "windows-ninja-debug"
+    },
+    {
+      "name": "linux-gcc-release",
+      "configurePreset": "linux-gcc-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-default-release",
+      "configurePreset": "windows-default",
+      "configuration": "Release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "windows-ninja-release",
+      "configurePreset": "windows-ninja-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

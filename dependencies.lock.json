@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "dependencies": {
+    "toolchain": {
+      "msvc": {
+        "version": "19.44.35228",
+        "source": "Visual Studio 2022 Community 17.14.34",
+        "status": "VERIFIED"
+      },
+      "cmake": {
+        "version": "4.4.0",
+        "source": "Kitware",
+        "status": "VERIFIED"
+      },
+      "ninja": {
+        "version": "1.13.2",
+        "source": "Ninja-build",
+        "status": "VERIFIED"
+      },
+      "vulkan_sdk": {
+        "version": "1.4.357.0",
+        "source": "LunarG",
+        "status": "VERIFIED"
+      },
+      "python": {
+        "version": "3.14.6",
+        "source": "Python Software Foundation",
+        "status": "VERIFIED"
+      },
+      "ffmpeg": {
+        "version": "9.0",
+        "source": "gyan.dev",
+        "status": "VERIFIED"
+      },
+      "blender": {
+        "version": "5.1",
+        "source": "Blender Foundation",
+        "status": "VERIFIED"
+      }
+    },
+    "external_baseline": {
+      "malecns": {
+        "repository": "https://github.com/natverse/malecns.git",
+        "commit": "daf8e2a9849cc77695b14bb6b9d4c02456cd3b3c",
+        "license": "GPL-3.0",
+        "status": "PROTECTED_BASELINE"
+      }
+    },
+    "third_party": {
+      "nlohmann_json": {
+        "version": "3.11.3",
+        "source": "https://raw.githubusercontent.com/nlohmann/json/v3.11.3/single_include/nlohmann/json.hpp",
+        "sha256": "9bea4c8066ef4a1c206b2be5a36302f8926f7fdc6087af5d20b417d0cf103ea6",
+        "license": "MIT",
+        "status": "VERIFIED"
+      }
+    }
+  }
+}

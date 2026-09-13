@@ -1,0 +1,51 @@
+# Build and output directories
+build/
+build-*/
+out/
+bin/
+.cache/
+
+# Visual Studio / MSVC
+.vs/
+*.obj
+*.o
+*.exe
+*.dll
+*.so
+*.dylib
+*.pdb
+*.ilk
+*.lib
+*.exp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Godot temporary files
+.godot/
+*.translation
+
+# Data cache and scratch
+data/cache/*
+!data/cache/.gitkeep
+scratch/
+
+# R / package temp
+.Rhistory
+.RData
+.Rproj.user/
+
+# Evidence / renders / video output binaries (keep manifests and logs)
+videos/*.mp4
+videos/*.avi
+videos/*.mkv
+renders/*.png
+renders/*.jpg
+!evidence/**/*.txt
+!evidence/**/*.json
+!evidence/**/*.md

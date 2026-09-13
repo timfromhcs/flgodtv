@@ -1,0 +1,15 @@
+Test project C:/Users/hcsme/Desktop/Fly/build/vs2022
+    Start 1: CoreClockTest
+1/5 Test #1: CoreClockTest ....................   Passed    0.01 sec
+    Start 2: CoreRNGTest
+2/5 Test #2: CoreRNGTest ......................   Passed    0.01 sec
+    Start 3: CoreEntityTest
+3/5 Test #3: CoreEntityTest ...................   Passed    0.01 sec
+    Start 4: CoreEventBusTest
+4/5 Test #4: CoreEventBusTest .................   Passed    0.01 sec
+    Start 5: DeterministicSimulationTest
+5/5 Test #5: DeterministicSimulationTest ......   Passed    0.01 sec
+
+100% tests passed out of 5
+
+Total Test time (real) =   0.05 sec

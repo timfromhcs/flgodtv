@@ -1,0 +1,5 @@
+=== FLGODTV CORE BENCHMARK ===
+Executed 100000 ticks in 0.0036077 seconds.
+Throughput: 27718491 ticks/sec (461975x realtime at 60 Hz)
+State Hash: 0x4df2a708139e0983
+=== BENCHMARK COMPLETE ===
