@@ -1,0 +1,43 @@
+{
+  "commit": "11e398cdde7d4775b00e5967e4a9d7aa5f6d7d7e",
+  "tag": "v1.0.0",
+  "version": "1.0.0",
+  "build": {
+    "targets": 128,
+    "status": "PASS",
+    "note": "clean-room rebuild, zero errors"
+  },
+  "tests": {
+    "total": 61,
+    "passed": 61,
+    "status": "PASS"
+  },
+  "edge_tests": {
+    "checks": 13,
+    "status": "PASS"
+  },
+  "determinism": "PASS",
+  "packages": {
+    "windows_setup": "release/windows/FLGODTV-1.0.0-Setup.exe",
+    "windows_portable": "release/windows/FLGODTV-1.0.0-windows-x64-portable.zip",
+    "linux_portable": "release/linux/FLGODTV-1.0.0-linux-x64-portable.tar.gz"
+  },
+  "installer": "PASS (installed + executed from clean target)",
+  "python_package": {
+    "version": "1.0.0",
+    "install": "PASS",
+    "import": "PASS"
+  },
+  "inventory_counts": {
+    "headers": 63,
+    "src_files": 1,
+    "test_files": 57,
+    "benchmark_files": 6,
+    "script_files": 7,
+    "godot_scripts": 15,
+    "doc_files": 19,
+    "cmake_add_test": 61,
+    "cmake_add_executable": 64
+  },
+  "release_url": "https://github.com/timfromhcs/flgodtv/releases/tag/v1.0.0"
+}
