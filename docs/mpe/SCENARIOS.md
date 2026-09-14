@@ -15,10 +15,13 @@ Defining a scenario MUST NOT require modifying C++ source.
 ## Planned scenarios (Phase 13)
 
 01_drosophila_ecosystem, 02_predator_prey, 03_ant_colony, 04_artificial_life,
-05_robot_society, 06_evolution_lab, 07_neural_lab, 08_custom_research.
+05_robot_society — all RUNNING on the same core without source changes
+(`MPEEngineTest` executes every `scenarios/*.json` + `scenarios/profiles/*`).
+06_evolution_lab, 07_neural_lab, 08_custom_research are future work requiring
+the evolution/specialist generalization phases.
 
-Several MUST run on the same core without source changes. Fly behavior is
-scenario data + the MaleCNS adapter, never engine code.
+Reusable profiles in `scenarios/profiles/`: minimal, social, benchmark
+(500 entities × 200 ticks in ~0.4 s, deterministic).
 
 ## Current state
 

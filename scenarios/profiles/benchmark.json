@@ -1,0 +1,1 @@
+{"name":"profile_benchmark","scenario_version":1,"simulation_version":"0.1.0","master_seed":99,"ticks":200,"populations":[{"archetype":"robot","count":500}],"rules":["survival"],"presentation":{"camera":"quad","layers":[]}}

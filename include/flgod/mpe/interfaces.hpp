@@ -99,14 +99,7 @@ private:
     bool m_enabled{true};
 };
 
-// ---- Rule: configurable scenario logic evaluated per tick. ----
-class IRule {
-public:
-    virtual ~IRule() = default;
-    [[nodiscard]] virtual std::string name() const = 0;
-    // Returns number of intents/events produced; must be deterministic.
-    virtual uint64_t evaluate(uint64_t tick, nlohmann::json& state_view) = 0;
-};
+// ---- Rule: see rules.hpp for the full replaceable rule layer. ----
 
 // ---- Scheduler: explicit, inspectable, deterministic system order. ----
 class SimulationScheduler {

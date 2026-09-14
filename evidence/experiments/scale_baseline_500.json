@@ -1,0 +1,56 @@
+{
+  "experiment_id": "scale_baseline_500",
+  "scenario": "scenarios/profiles/benchmark.json",
+  "ticks": 200,
+  "repeats": 2,
+  "deterministic": true,
+  "state_hash": 1509814024967306097,
+  "runs": [
+    {
+      "run": 0,
+      "wall_seconds": 0.41491919998952653,
+      "stdout_tail": "[MPE] Telemetry written to C:\\Users\\hcsme\\Desktop\\Fly\\evidence\\experiments\\.scale_baseline_500_run0.json",
+      "telemetry": {
+        "alive": 500,
+        "communicates": 0,
+        "died_total": 0,
+        "eats": 0,
+        "mean_energy": 90.00000000000013,
+        "moves": 0,
+        "rules_fired": {
+          "survival": 0
+        },
+        "schema_version": 1,
+        "spawned_total": 500,
+        "tick": 200
+      },
+      "state_hash": 1509814024967306097
+    },
+    {
+      "run": 1,
+      "wall_seconds": 0.4261057000112487,
+      "stdout_tail": "[MPE] Telemetry written to C:\\Users\\hcsme\\Desktop\\Fly\\evidence\\experiments\\.scale_baseline_500_run1.json",
+      "telemetry": {
+        "alive": 500,
+        "communicates": 0,
+        "died_total": 0,
+        "eats": 0,
+        "mean_energy": 90.00000000000013,
+        "moves": 0,
+        "rules_fired": {
+          "survival": 0
+        },
+        "schema_version": 1,
+        "spawned_total": 500,
+        "tick": 200
+      },
+      "state_hash": 1509814024967306097
+    }
+  ],
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "cpu": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+    "flgod_sha256": "b6b1cd180d0e19ebd33c9f230bf5f6c5fb88862009cff59680be7862b53dd9df"
+  },
+  "timestamp": "2026-09-14T12:37:21.483655+00:00"
+}

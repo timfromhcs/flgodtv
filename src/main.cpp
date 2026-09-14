@@ -598,10 +598,13 @@ int main(int argc, char* argv[]) {
         }
         std::string scenario_path = args[1];
         std::string archetype_dir = "scenarios/archetypes";
+        std::string telemetry_path;
         uint64_t ticks = 0; // 0 = scenario default
         for (size_t i = 2; i < args.size(); ++i) {
             if (args[i] == "--archetypes" && i + 1 < args.size()) {
                 archetype_dir = args[++i];
+            } else if (args[i] == "--telemetry-out" && i + 1 < args.size()) {
+                telemetry_path = args[++i];
             } else {
                 try { ticks = std::stoull(args[i]); } catch (...) {}
             }
@@ -618,6 +621,18 @@ int main(int argc, char* argv[]) {
                       << " spawned=" << t.spawned_total << " died=" << t.died_total
                       << " moves=" << t.moves << " eats=" << t.eats
                       << " hash=" << eng.compute_hash() << "\n";
+            if (!telemetry_path.empty()) {
+                nlohmann::json out = {{"scenario", eng.scenario().name},
+                                      {"telemetry", t.to_json()},
+                                      {"state_hash", eng.compute_hash()}};
+                std::ofstream tf(telemetry_path);
+                if (!tf.is_open()) {
+                    std::cerr << "[MPE] Error: cannot write telemetry to " << telemetry_path << "\n";
+                    return 1;
+                }
+                tf << out.dump(2);
+                std::cout << "[MPE] Telemetry written to " << telemetry_path << "\n";
+            }
         } catch (const std::exception& e) {
             std::cerr << "[MPE] Scenario FAILED: " << e.what() << "\n";
             return 1;

@@ -1,5 +1,6 @@
 #include "flgod/mpe/engine.hpp"
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -32,9 +33,20 @@ int main() {
     std::string pre = repo_prefix();
     CHECK(!pre.empty(), "must locate scenarios/ from test CWD");
 
-    // All three shipped scenarios run on the same core without source changes.
-    for (const std::string& f : {"01_drosophila_ecosystem.json", "02_predator_prey.json",
-                                 "03_ant_colony.json"}) {
+    // All shipped scenarios + profiles run on the same core without source changes.
+    std::vector<std::string> docs;
+    for (const auto& entry : std::filesystem::directory_iterator(pre + "scenarios")) {
+        if (entry.is_regular_file() && entry.path().extension() == ".json") {
+            docs.push_back(entry.path().filename().string());
+        }
+    }
+    for (const auto& entry : std::filesystem::directory_iterator(pre + "scenarios/profiles")) {
+        if (entry.is_regular_file() && entry.path().extension() == ".json") {
+            docs.push_back(std::string("profiles/") + entry.path().filename().string());
+        }
+    }
+    CHECK(docs.size() >= 6, "at least 6 runnable scenario documents ship");
+    for (const std::string& f : docs) {
         MPEEngine eng;
         eng.load(pre + "scenarios/" + f, pre + "scenarios/archetypes");
         eng.initialize();
@@ -87,6 +99,31 @@ int main() {
         bad.load(pre + "scenarios/01_drosophila_ecosystem.json", pre + "nonexistent_dir");
     } catch (const std::runtime_error&) { badarch = true; }
     CHECK(badarch, "missing archetype dir must throw");
+    // Unknown rule rejected at load.
+    const std::string badrule = "build_mpe_badrule.json";
+    {
+        std::ofstream f(badrule);
+        f << "{\"name\":\"bad\",\"scenario_version\":1,\"master_seed\":1,"
+             "\"populations\":[{\"archetype\":\"ant\",\"count\":1}],"
+             "\"rules\":[\"warp_drive\"]}";
+    }
+    bool badrule_err = false;
+    try {
+        MPEEngine bad;
+        bad.load(badrule, pre + "scenarios/archetypes");
+    } catch (const std::runtime_error&) { badrule_err = true; }
+    CHECK(badrule_err, "unknown rule must throw");
+    std::filesystem::remove(badrule);
+    // Reproduction produces offspring end-to-end (robot society, 150 ticks).
+    {
+        MPEEngine repro;
+        repro.load(pre + "scenarios/05_robot_society.json", pre + "scenarios/archetypes");
+        repro.initialize();
+        repro.run_ticks(repro.scenario().ticks);
+        EngineTelemetry t = repro.telemetry();
+        CHECK(t.spawned_total > 10, "reproduction births occurred");
+        CHECK(t.rules_fired.count("reproduction") > 0, "reproduction rule fired");
+    }
 
     std::cout << "[PASS] test_mpe_engine passed successfully." << std::endl;
     return 0;

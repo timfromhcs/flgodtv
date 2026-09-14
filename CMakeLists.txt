@@ -318,6 +318,24 @@ if(BUILD_TESTING)
     target_link_libraries(test_mpe_engine PRIVATE flgod_core)
     add_test(NAME MPEEngineTest COMMAND test_mpe_engine)
 
+    # MPE rules tests (V1 replaceable rule layer)
+    add_executable(test_mpe_rules tests/unit/test_mpe_rules.cpp)
+    target_link_libraries(test_mpe_rules PRIVATE flgod_core)
+    add_test(NAME MPERulesTest COMMAND test_mpe_rules)
+
+    # Edge harness + Python API (black-box, subprocess-driven)
+    find_package(Python3 COMPONENTS Interpreter)
+    if(Python3_FOUND)
+        add_test(
+            NAME EdgeHarnessTest
+            COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/scripts/edge_tests.py"
+        )
+        add_test(
+            NAME PythonApiTest
+            COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/tests/python/test_api.py"
+        )
+    endif()
+
     # Godot Frontend Smoke Test
     find_program(GODOT_EXECUTABLE
         NAMES godot godot_console Godot_v4.7.2-stable_win64_console.exe

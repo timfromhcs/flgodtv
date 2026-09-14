@@ -1,15 +1,15 @@
 {
   "generated_by": "scripts/generate_v1_inventory.py",
   "counts": {
-    "headers": 62,
+    "headers": 63,
     "src_files": 1,
-    "test_files": 56,
+    "test_files": 57,
     "benchmark_files": 6,
-    "script_files": 5,
+    "script_files": 7,
     "godot_scripts": 15,
-    "doc_files": 18,
-    "cmake_add_test": 58,
-    "cmake_add_executable": 63
+    "doc_files": 19,
+    "cmake_add_test": 61,
+    "cmake_add_executable": 64
   },
   "headers": [
     "include/flgod/agents/agent.hpp",
@@ -58,6 +58,7 @@
     "include/flgod/mpe/interfaces.hpp",
     "include/flgod/mpe/mpe_types.hpp",
     "include/flgod/mpe/observation.hpp",
+    "include/flgod/mpe/rules.hpp",
     "include/flgod/mpe/scenario.hpp",
     "include/flgod/physics/physics_engine.hpp",
     "include/flgod/physics/physics_types.hpp",
@@ -121,6 +122,7 @@
     "tests/unit/test_llm_model_manager.cpp",
     "tests/unit/test_llm_npc_system.cpp",
     "tests/unit/test_mpe_foundation.cpp",
+    "tests/unit/test_mpe_rules.cpp",
     "tests/unit/test_mpe_scenario.cpp",
     "tests/unit/test_physics_collision.cpp",
     "tests/unit/test_physics_constraint.cpp",
@@ -146,9 +148,11 @@
   ],
   "scripts": [
     "scripts/blender_asset_generator.py",
+    "scripts/edge_tests.py",
     "scripts/generate_v1_inventory.py",
     "scripts/package_release.py",
     "scripts/render_cinematic_video.py",
+    "scripts/run_experiment.py",
     "scripts/verify_backend_gate.py"
   ],
   "godot_scripts": [
@@ -183,6 +187,7 @@
     "docs/mpe/MODULES.md",
     "docs/mpe/PERFORMANCE.md",
     "docs/mpe/SCENARIOS.md",
+    "docs/mpe/TELEMETRY.md",
     "docs/mpe/VERSIONING.md",
     "docs/STAGE_STATUS.md",
     "docs/VISUAL_V2_AUDIT.md",
@@ -203,6 +208,7 @@
     "DeterministicPhysicsTest",
     "DeterministicSimulationTest",
     "DeterministicWorldTest",
+    "EdgeHarnessTest",
     "EvolutionCoevolutionTest",
     "EvolutionGenomeTest",
     "EvolutionPopulationTest",
@@ -227,6 +233,7 @@
     "LearningParallelTest",
     "MPEEngineTest",
     "MPEFoundationTest",
+    "MPERulesTest",
     "MPEScenarioTest",
     "MultiAgentEcosystemTest",
     "MultiAgentSimulationTest",
@@ -234,6 +241,7 @@
     "PhysicsConstraintTest",
     "PhysicsFallTest",
     "PhysicsFidelityTest",
+    "PythonApiTest",
     "TechnologyIntegrationTest",
     "TechnologyNetworkTest",
     "TechnologyToolsTest",
@@ -292,6 +300,7 @@
     "test_llm_npc_system",
     "test_mpe_engine",
     "test_mpe_foundation",
+    "test_mpe_rules",
     "test_mpe_scenario",
     "test_multi_agent_ecosystem",
     "test_multi_agent_simulation",
@@ -377,7 +386,7 @@
   ],
   "v1_gaps": {
     "scenarios_dir": true,
-    "python_package": false,
+    "python_package": true,
     "tests_edge": false,
     "cmake_install_rules": false,
     "cpack": false

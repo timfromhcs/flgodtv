@@ -93,6 +93,11 @@ struct Archetype {
     }
 };
 
+struct ScenarioRule {
+    std::string name;
+    nlohmann::json config = nlohmann::json::object();
+};
+
 struct Scenario {
     std::string name;
     uint32_t scenario_version{1};
@@ -100,7 +105,7 @@ struct Scenario {
     uint64_t master_seed{1};
     uint64_t ticks{100};
     std::vector<ArchetypePopulation> populations;
-    std::vector<std::string> rules;
+    std::vector<ScenarioRule> rules;
     nlohmann::json presentation = nlohmann::json::object();
 
     static Scenario load(const std::string& path) {
@@ -145,10 +150,26 @@ struct Scenario {
                 throw std::runtime_error("Scenario: 'rules' must be an array in " + path);
             }
             for (const auto& r : j["rules"]) {
-                if (!r.is_string()) {
-                    throw std::runtime_error("Scenario: 'rules' entries must be strings in " + path);
+                ScenarioRule sr;
+                if (r.is_string()) {
+                    sr.name = r.get<std::string>();
+                } else if (r.is_object() && r.contains("name") && r["name"].is_string()) {
+                    sr.name = r["name"].get<std::string>();
+                    if (r.contains("config")) {
+                        if (!r["config"].is_object()) {
+                            throw std::runtime_error(
+                                "Scenario: rule 'config' must be an object in " + path);
+                        }
+                        sr.config = r["config"];
+                    }
+                } else {
+                    throw std::runtime_error(
+                        "Scenario: 'rules' entries must be strings or {name, config} in " + path);
                 }
-                s.rules.push_back(r.get<std::string>());
+                if (sr.name.empty()) {
+                    throw std::runtime_error("Scenario: rule name must not be empty in " + path);
+                }
+                s.rules.push_back(std::move(sr));
             }
         }
         if (j.contains("presentation")) s.presentation = j["presentation"];

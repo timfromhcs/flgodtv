@@ -1,0 +1,1 @@
+{"name":"artificial_life","scenario_version":1,"simulation_version":"0.1.0","master_seed":777,"ticks":150,"populations":[{"archetype":"robot","count":6},{"archetype":"ant","count":6}],"rules":["survival","cooperation",{"name":"territory","config":{"max_radius":30.0}}],"presentation":{"camera":"quad","layers":["agents"]}}

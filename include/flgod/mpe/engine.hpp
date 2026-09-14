@@ -7,6 +7,7 @@
 #include "flgod/mpe/adapters/malecns_brain.hpp"
 #include "flgod/mpe/entity.hpp"
 #include "flgod/mpe/interfaces.hpp"
+#include "flgod/mpe/rules.hpp"
 #include "flgod/mpe/scenario.hpp"
 #include <cmath>
 #include <cstdint>
@@ -30,6 +31,7 @@ struct EngineEvent {
 };
 
 struct EngineTelemetry {
+    uint32_t schema_version{1};
     uint64_t tick{0};
     uint64_t alive{0};
     uint64_t spawned_total{0};
@@ -38,10 +40,18 @@ struct EngineTelemetry {
     uint64_t eats{0};
     uint64_t communicates{0};
     double mean_energy{0.0};
+    std::map<std::string, uint64_t> rules_fired;
     [[nodiscard]] nlohmann::json to_json() const {
-        return {{"tick", tick}, {"alive", alive}, {"spawned_total", spawned_total},
-                {"died_total", died_total}, {"moves", moves}, {"eats", eats},
-                {"communicates", communicates}, {"mean_energy", mean_energy}};
+        return {{"schema_version", schema_version},
+                {"tick", tick},
+                {"alive", alive},
+                {"spawned_total", spawned_total},
+                {"died_total", died_total},
+                {"moves", moves},
+                {"eats", eats},
+                {"communicates", communicates},
+                {"mean_energy", mean_energy},
+                {"rules_fired", rules_fired}};
     }
 };
 
@@ -63,6 +73,16 @@ public:
         }
         m_tick = 0;
         m_rng.seed(m_scenario.master_seed);
+        build_rules(); // validate rule names at load; unknown rule throws here
+    }
+
+    void build_rules() {
+        m_rules.clear();
+        m_rule_configs.clear();
+        for (const auto& r : m_scenario.rules) {
+            m_rules.push_back(m_rule_registry.create(r.name)); // throws if unknown
+            m_rule_configs.push_back(r.config);
+        }
     }
 
     void initialize() {
@@ -75,6 +95,8 @@ public:
         m_moves = 0;
         m_eats = 0;
         m_comms = 0;
+        m_rule_counts.clear();
+        build_rules(); // fresh rule state per run
         uint64_t index = 1;
         for (const auto& pop : m_scenario.populations) {
             const Archetype& a = m_archetypes.at(pop.archetype);
@@ -99,6 +121,7 @@ public:
                 m_spawned++;
             }
         }
+        m_next_index = index;
     }
 
     void step() {
@@ -147,6 +170,8 @@ public:
             m_events.push_back(EngineEvent{m_tick, "EntityDied", raw});
             m_died++;
         }
+        // Rules: scenario-ordered, deterministic, with write-back + births.
+        run_rules();
         m_tick++;
     }
 
@@ -168,6 +193,7 @@ public:
         t.moves = m_moves;
         t.eats = m_eats;
         t.communicates = m_comms;
+        t.rules_fired = m_rule_counts;
         double sum = 0.0;
         // NOTE: ordered() is non-const; telemetry recomputed on a copy-free path.
         for (Entity* e : const_cast<EntityRegistry&>(m_entities).ordered()) {
@@ -181,8 +207,13 @@ public:
     [[nodiscard]] uint64_t compute_hash() const {
         uint64_t h = m_entities.compute_hash();
         h ^= fnv1a64("tick:" + std::to_string(m_tick)) + 0x9e3779b97f4a7c15ULL;
+        h ^= fnv1a64("next:" + std::to_string(m_next_index)) + 0x9e3779b97f4a7c15ULL;
         for (const auto& [raw, b] : m_brains) {
             h ^= b->compute_hash() + raw;
+            h *= 1099511628211ULL;
+        }
+        for (const auto& r : m_rules) {
+            h ^= fnv1a64(r->name() + ":" + r->to_json().dump());
             h *= 1099511628211ULL;
         }
         return h;
@@ -193,12 +224,25 @@ public:
         for (const auto& [raw, b] : m_brains) {
             brains[std::to_string(raw)] = b->to_json();
         }
+        nlohmann::json rules = nlohmann::json::array();
+        for (const auto& r : m_rules) {
+            rules.push_back({{"name", r->name()}, {"state", r->to_json()}});
+        }
         return {{"scenario", m_scenario.name},
                 {"scenario_version", m_scenario.scenario_version},
                 {"master_seed", m_scenario.master_seed},
                 {"tick", m_tick},
+                {"next_index", m_next_index},
+                {"counters",
+                 {{"spawned", m_spawned},
+                  {"died", m_died},
+                  {"moves", m_moves},
+                  {"eats", m_eats},
+                  {"comms", m_comms},
+                  {"rules_fired", m_rule_counts}}},
                 {"entities", m_entities.to_json()},
                 {"brains", brains},
+                {"rules", rules},
                 {"state_hash", compute_hash()}};
     }
 
@@ -236,6 +280,35 @@ public:
             m_brains[id.raw()] = std::move(brain);
         }
         m_tick = cp["tick"].get<uint64_t>();
+        if (cp.contains("counters")) {
+            const auto& c = cp["counters"];
+            m_spawned = c.value("spawned", m_spawned);
+            m_died = c.value("died", m_died);
+            m_moves = c.value("moves", m_moves);
+            m_eats = c.value("eats", m_eats);
+            m_comms = c.value("comms", m_comms);
+            m_rule_counts.clear();
+            if (c.contains("rules_fired")) {
+                for (auto& [k, v] : c["rules_fired"].items()) {
+                    m_rule_counts[k] = v.get<uint64_t>();
+                }
+            }
+        }
+        m_next_index = cp.value("next_index", uint64_t{1});
+        for (Entity* e : m_entities.ordered()) {
+            if (e->id.index() >= m_next_index) m_next_index = e->id.index() + 1;
+        }
+        if (cp.contains("rules")) {
+            if (cp["rules"].size() != m_rules.size()) {
+                throw std::runtime_error("MPEEngine: checkpoint rule set mismatch");
+            }
+            for (size_t i = 0; i < m_rules.size(); ++i) {
+                if (cp["rules"][i].value("name", std::string{}) != m_rules[i]->name()) {
+                    throw std::runtime_error("MPEEngine: checkpoint rule order mismatch");
+                }
+                m_rules[i]->from_json(cp["rules"][i].value("state", nlohmann::json::object()));
+            }
+        }
         // Rebuild event log deterministically is out of scope; record restore marker.
         m_events.push_back(EngineEvent{m_tick, "CheckpointRestored", 0});
     }
@@ -259,6 +332,98 @@ private:
         return false;
     }
 
+    void run_rules() {
+        if (m_rules.empty()) return;
+        RuleContext ctx;
+        ctx.tick = m_tick;
+        for (Entity* e : m_entities.ordered()) {
+            RuleEntity r;
+            r.raw = e->id.raw();
+            r.archetype = e->archetype;
+            const auto* n = e->get<NeedsComponent>("Needs");
+            const auto* t = e->get<TransformComponent>("Transform");
+            if (n) {
+                r.energy = n->energy;
+                r.fatigue = n->fatigue;
+            }
+            if (t) {
+                r.x = t->x;
+                r.y = t->y;
+                r.z = t->z;
+            }
+            ctx.entities.push_back(r);
+        }
+        for (size_t i = 0; i < m_rules.size(); ++i) {
+            uint64_t fired = m_rules[i]->evaluate(ctx, m_rule_configs[i]);
+            m_rule_counts[m_rules[i]->name()] += fired;
+        }
+        // Write back + births (deterministic order).
+        for (const auto& r : ctx.entities) {
+            Entity* e = find_entity(r.raw);
+            if (!e) continue; // died this tick before rules
+            auto* n = e->get<NeedsComponent>("Needs");
+            auto* t = e->get<TransformComponent>("Transform");
+            if (n) {
+                n->energy = r.energy;
+                n->fatigue = r.fatigue;
+                if (n->energy <= 0.0) {
+                    n->energy = 0.0;
+                    kill_entity(e->id.raw(), "EntityDied");
+                }
+            }
+            if (t) {
+                t->x = r.x;
+                t->y = r.y;
+                t->z = r.z;
+            }
+        }
+        for (const auto& [type, raw] : ctx.events) {
+            if (type.rfind("Birth:", 0) == 0) {
+                spawn_offspring(type.substr(6));
+            } else {
+                m_events.push_back(EngineEvent{m_tick, type, raw});
+                if (type == "FoodConsumed") m_eats++;
+            }
+        }
+    }
+
+    Entity* find_entity(uint64_t raw) {
+        for (Entity* e : m_entities.ordered()) {
+            if (e->id.raw() == raw) return e;
+        }
+        return nullptr;
+    }
+
+    void kill_entity(uint64_t raw, const std::string& cause) {
+        EntityID id(raw);
+        try {
+            m_entities.despawn(id);
+        } catch (const std::runtime_error&) {
+            return;
+        }
+        m_brains.erase(raw);
+        m_events.push_back(EngineEvent{m_tick, cause, raw});
+        m_died++;
+    }
+
+    void spawn_offspring(const std::string& archetype) {
+        auto it = m_archetypes.find(archetype);
+        if (it == m_archetypes.end()) return; // unknown: ignore, never crash
+        const Archetype& a = it->second;
+        EntityID id(EntityType::Agent, 0, m_next_index++);
+        Entity& e = m_entities.spawn(id, a.name);
+        auto t = std::make_unique<TransformComponent>();
+        e.attach(std::move(t));
+        auto n = std::make_unique<NeedsComponent>();
+        if (a.components.contains("needs")) n->from_json(a.components["needs"]);
+        n->energy *= 0.5; // newborns start weaker
+        e.attach(std::move(n));
+        std::unique_ptr<IBrain> brain = make_brain(a);
+        brain->initialize(a.brain_config);
+        m_brains[id.raw()] = std::move(brain);
+        m_events.push_back(EngineEvent{m_tick, "Birth", id.raw()});
+        m_spawned++;
+    }
     void apply(Entity* e, const ActionIntent& in) {
         if (in.action == "Move") {
             auto* t = e->get<TransformComponent>("Transform");
@@ -301,9 +466,14 @@ private:
     std::map<std::string, Archetype> m_archetypes;
     EntityRegistry m_entities;
     std::map<uint64_t, std::unique_ptr<IBrain>> m_brains; // sorted => deterministic
+    RuleRegistry m_rule_registry;
+    std::vector<std::unique_ptr<IRule>> m_rules; // scenario order
+    std::vector<nlohmann::json> m_rule_configs;
+    std::map<std::string, uint64_t> m_rule_counts;
     std::vector<EngineEvent> m_events;
     std::mt19937_64 m_rng;
     uint64_t m_tick{0};
+    uint64_t m_next_index{1};
     uint64_t m_spawned{0}, m_died{0}, m_moves{0}, m_eats{0}, m_comms{0};
 };
 

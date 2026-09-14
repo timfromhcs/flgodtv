@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flgodtv"
+version = "0.1.0"
+description = "FLGODTV universal Multi-Agent Simulation Platform: scenario runner, telemetry, and experiment client"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0 OR MIT" }
+
+[project.scripts]
+flgodtv-experiment = "flgodtv.experiment:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["flgodtv*"]
