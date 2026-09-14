@@ -47,16 +47,22 @@ int main() {
     }
     CHECK(docs.size() >= 6, "at least 6 runnable scenario documents ship");
     for (const std::string& f : docs) {
-        MPEEngine eng;
-        eng.load(pre + "scenarios/" + f, pre + "scenarios/archetypes");
-        eng.initialize();
-        CHECK(eng.alive() > 0, std::string("scenario spawns entities: ") + f);
-        eng.run_ticks(eng.scenario().ticks);
-        CHECK(eng.tick() == eng.scenario().ticks, "scenario completes ticks");
-        EngineTelemetry t = eng.telemetry();
-        CHECK(t.spawned_total == t.alive + t.died_total, "telemetry census consistent");
-        std::cout << "  - " << f << " ticks=" << eng.tick() << " alive=" << eng.alive()
-                  << " hash=" << eng.compute_hash() << std::endl;
+        std::cout << "  - running " << f << "..." << std::endl;
+        try {
+            MPEEngine eng;
+            eng.load(pre + "scenarios/" + f, pre + "scenarios/archetypes");
+            eng.initialize();
+            CHECK(eng.alive() > 0, std::string("scenario spawns entities: ") + f);
+            eng.run_ticks(eng.scenario().ticks);
+            CHECK(eng.tick() == eng.scenario().ticks, "scenario completes ticks");
+            EngineTelemetry t = eng.telemetry();
+            CHECK(t.spawned_total == t.alive + t.died_total, "telemetry census consistent");
+            std::cout << "  - " << f << " ticks=" << eng.tick() << " alive=" << eng.alive()
+                      << " hash=" << eng.compute_hash() << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "FAILED: scenario '" << f << "' threw: " << e.what() << std::endl;
+            return 1;
+        }
     }
 
     // Determinism: same scenario twice => identical hash.

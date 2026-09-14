@@ -14,8 +14,19 @@ import time
 from datetime import datetime, timezone
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-BUILD = os.path.join(ROOT, "build", "ninja-release")
-FLGOD = os.path.join(BUILD, "flgod.exe" if os.name == "nt" else "flgod")
+
+
+def locate_binary():
+    exe = "flgod.exe" if os.name == "nt" else "flgod"
+    for d in ("build/ninja-release", "build", os.path.join("build", "linux-gcc-release")):
+        p = os.path.join(ROOT, d, exe)
+        if os.path.isfile(p):
+            return p
+    return os.path.join(ROOT, "build", "ninja-release", exe)
+
+
+BUILD = os.path.dirname(locate_binary())
+FLGOD = locate_binary()
 EVEXP = os.path.join(ROOT, "evidence", "experiments")
 
 
