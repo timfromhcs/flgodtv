@@ -10,8 +10,9 @@ class_name TerrainRenderer
 # (rows/cols/cell/elevations PackedFloat32Array in row-major order), the mesh
 # is built from that canonical grid instead (see apply_backend_state()).
 
-@export var chunk_size: int = 32
-@export var cell_size: float = 2.0
+@export var chunk_size: int = 48
+@export var cell_size: float = 2.5
+@export var center_offset: Vector3 = Vector3(30.0, 0.0, 30.0)
 ## LOD level: 0 = full (chunk_size), 1 = half, 2 = quarter resolution.
 @export var lod_level: int = 0
 ## Streaming radius in world units; mesh hides when camera target is beyond it.
@@ -58,10 +59,10 @@ func generate_terrain_mesh() -> void:
 		for x in range(0, chunk_size - 1, step):
 			var x1i: int = mini(x + step, chunk_size - 1)
 			var z1i: int = mini(z + step, chunk_size - 1)
-			var x0: float = x * cell_size - half_size
-			var x1: float = x1i * cell_size - half_size
-			var z0: float = z * cell_size - half_size
-			var z1: float = z1i * cell_size - half_size
+			var x0: float = center_offset.x + x * cell_size - half_size
+			var x1: float = center_offset.x + x1i * cell_size - half_size
+			var z0: float = center_offset.z + z * cell_size - half_size
+			var z1: float = center_offset.z + z1i * cell_size - half_size
 
 			var y00: float = sample_height_grid(x, z, x0, z0)
 			var y10: float = sample_height_grid(x1i, z, x1, z0)
@@ -124,11 +125,11 @@ func set_lod(level: int) -> void:
 ## Streaming: hide mesh when the focus point is outside stream_radius, and
 ## record the cell so callers can skip redundant rebuilds.
 func update_streaming(focus_pos: Vector3) -> bool:
-	var d: float = Vector2(focus_pos.x, focus_pos.z).length()
+	var d: float = Vector2(focus_pos.x - center_offset.x, focus_pos.z - center_offset.z).length()
 	var visible_now: bool = d <= stream_radius
 	if mesh_instance:
 		mesh_instance.visible = visible_now
-	var cell := Vector2i(int(floor(focus_pos.x / 64.0)), int(floor(focus_pos.z / 64.0)))
+	var cell := Vector2i(int(floor((focus_pos.x - center_offset.x) / 64.0)), int(floor((focus_pos.z - center_offset.z) / 64.0)))
 	var changed: bool = cell != _last_stream_cell
 	_last_stream_cell = cell
 	return changed

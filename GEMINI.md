@@ -2182,6 +2182,29 @@ invented for visual appearance.
 
 ---
 
+# 85B. FRONTEND RUNTIME RENDERING PIPELINE PLAN
+
+Based on repository diagnosis (Root cause of grey screen: camera frustum pointing into unpopulated void, single-viewport limitation disabling 3 cameras, 62x62 terrain undersized for colony positions at (60,60), and hardcoded nonexistent IPC paths), the frontend is engineered and verified in 16 strict sequential phases:
+
+1. **Runtime / Environment Validation:** Detect Godot 4.7.2 Forward+ Vulkan runtime, verify physical GPU device (AMD Radeon RDNA2), and validate windowed vs headless operation.
+2. **Minimal Godot Rendering Smoke Test:** Verify smallest possible 3D rendering pipeline (WorldEnvironment, DirectionalLight3D, Camera3D, MeshInstance3D) producing objectively verifiable non-grey pixel output.
+3. **Deterministic Fallback Camera:** Establish known-good fallback camera (known position, known target, known FOV, valid near/far clipping, current=true) that guarantees the scene is always framed and visible, even if backend camera data is absent or malformed.
+4. **WorldEnvironment & Lighting:** Procedural sky, sun directional light, ambient fill, and tone mapping ensuring that background space never renders as an unlit grey void.
+5. **Terrain Rendering:** Expand procedural terrain mesh coverage to fully encompass all colony nests (192x192 extent) with Whittaker biome coloration and dynamic LOD streaming.
+6. **Vegetation, Water & Weather Rendering:** Scale water plane (240x240) and vegetation distribution to match world bounds; enable GPU rain particles and fog cues.
+7. **Agent MultiMesh Rendering:** Render agent flies across all colonies using Blender 3D procedural meshes or fallback spheres with colony color differentiation.
+8. **God Fly Visual Mesh:** Render the God Fly with golden emissive material and distinct transform synchronization.
+9. **BackendBridge Integration:** Implement canonical IPC snapshot reader with multi-path resolution (app directory, working directory, CLI argument) and strict "Disconnected / N/A" reporting when offline.
+10. **Canonical State Visualization:** Update world, agent, and weather visual state dynamically upon receipt of real backend simulation frames.
+11. **Telemetry Stream:** Extract real simulation clock, tick rate, connectome soma rate, and memory records without mock numbers.
+12. **Broadcast HUD / UI:** Comprehensive FLGODTV interface with LIVE status, 4-camera badges, population counters, weather panel, and collapsible research metrics.
+13. **Four-Camera Presentation System:** Multi-viewport quad-view presentation (or full-screen toggleable view modes: QuadView, GodFly, LearningAgent, Colony, Event) with independent camera tracking.
+14. **User Input & Interaction:** Keyboard controls (Keys 1-5 for camera modes, R for research toggle, H for HUD toggle, Space for pause).
+15. **Performance & Frame Stability:** Verify smooth 60 FPS operation with bounded GPU memory and zero unhandled script errors.
+16. **Complete Local Verification:** Automated visual screenshot capture, CTest test suite pass (52/52), and persistent evidence logging.
+
+---
+
 # 86. VIDEO ENGINE
 
 Video generation is separate from normal gameplay.

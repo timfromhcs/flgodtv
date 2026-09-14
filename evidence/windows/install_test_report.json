@@ -1,7 +1,7 @@
 {
   "timestamp": "2026-09-14T10:52:00+02:00",
   "installer": "C:\\Users\\hcsme\\Desktop\\Fly\\release\\windows\\FLGODTV-0.1.0-Setup.exe",
-  "installer_sha256": "7b161203ae4d6edc7cb840a3948f39435b0ecce13842c7ca046a158d9a649865",
+  "installer_sha256": "c1d16a04815db4a3904db191273dcd81902da25728401f57979ab124ca5c78ff",
   "install_dir": "C:\\Users\\hcsme\\Desktop\\Fly\\build\\test_install_target",
   "install_exit_code": 0,
   "backend_self_test": true,

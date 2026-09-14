@@ -9,8 +9,9 @@ class_name VegetationRenderer
 # fallback distribution (seed fixed, no visual randomness as proof of anything).
 
 @export var instance_count: int = 200
-@export var distribution_radius: float = 40.0
+@export var distribution_radius: float = 65.0
 @export var distribution_seed: int = 424242
+@export var center_position: Vector3 = Vector3(30.0, 0.0, 30.0)
 
 var multimesh_instance: MultiMeshInstance3D
 var placed_count: int = 0
@@ -39,8 +40,8 @@ func deterministic_positions(count: int, radius: float, seed_value: int) -> Arra
 	for i in range(count):
 		var angle: float = rng.randf_range(0, TAU)
 		var dist: float = rng.randf_range(5.0, radius)
-		var x: float = cos(angle) * dist
-		var z: float = sin(angle) * dist
+		var x: float = center_position.x + cos(angle) * dist
+		var z: float = center_position.z + sin(angle) * dist
 		var y: float = sample_height(x, z)
 		if y < -0.3:
 			continue # Don't place underwater

@@ -13,8 +13,12 @@ class_name FLGODTVController
 @onready var fly_multimesh: MultiMeshInstance3D = $FlyMultiMesh
 @onready var god_fly_mesh: MeshInstance3D = $GodFlyMesh
 
-# Active camera presentation mode: 0=QuadView (4-cam), 1=Global, 2=GodFly, 3=Colony, 4=Cinematic
-var current_view_mode: int = 0
+# View mode: 0=QuadView (4-cam presentation), 1=GodFly Solo, 2=Colony Solo, 3=Event Solo, 4=Global Wide
+var current_view_mode: int = 4
+
+# QuadView Presentation overlay container and sub-viewports
+var quad_container: Control = null
+var quad_sub_cams: Array[Camera3D] = []
 
 func ensure_initialized() -> void:
 	if not bridge:
@@ -35,6 +39,8 @@ func _ready() -> void:
 	ensure_initialized()
 	if bridge:
 		bridge.state_updated.connect(_on_state_updated)
+	setup_quad_view_presentation()
+	set_view_mode(current_view_mode)
 
 func load_mesh_from_scene(path: String, fallback_mesh: Mesh) -> Mesh:
 	if ResourceLoader.exists(path):
@@ -65,20 +71,141 @@ func setup_fly_multimesh() -> void:
 	
 	# Load Blender-generated biological fly mesh, or fallback to primitive sphere
 	var sphere := SphereMesh.new()
-	sphere.radius = 0.2
-	sphere.height = 0.5
+	sphere.radius = 0.25
+	sphere.height = 0.6
 	var mesh_to_use = load_mesh_from_scene("res://assets/models/fly_agent.glb", sphere)
 	mm.mesh = mesh_to_use
 	fly_multimesh.multimesh = mm
 	if god_fly_mesh:
 		god_fly_mesh.mesh = mesh_to_use
 
+func setup_quad_view_presentation() -> void:
+	# Programmatic QuadView setup to display 4 camera viewports simultaneously
+	var ui_node = get_node_or_null("UI")
+	if not ui_node or quad_container != null:
+		return
+
+	quad_container = Control.new()
+	quad_container.name = "QuadViewPresentation"
+	quad_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	quad_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui_node.add_child(quad_container)
+	ui_node.move_child(quad_container, 0) # Place behind HUD controls
+
+	var grid = GridContainer.new()
+	grid.name = "QuadGrid"
+	grid.columns = 2
+	grid.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("v_separation", 4)
+	quad_container.add_child(grid)
+
+	var labels := [
+		"CAM 1: GOD FLY [TRACKING]",
+		"CAM 2: COLONY POV [NEST]",
+		"CAM 3: EVENT FOCUS [ACTION]",
+		"CAM 4: WORLD OVERVIEW [WIDE]"
+	]
+
+	quad_sub_cams.clear()
+	for i in range(4):
+		var cont = SubViewportContainer.new()
+		cont.name = "ViewportCont_%d" % i
+		cont.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cont.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		cont.stretch = true
+
+		var vp = SubViewport.new()
+		vp.name = "SubViewport"
+		vp.own_world_3d = false # Shares main world 3D scene
+		cont.add_child(vp)
+
+		var sub_cam = Camera3D.new()
+		sub_cam.name = "SubCam_%d" % i
+		sub_cam.current = true
+		vp.add_child(sub_cam)
+		quad_sub_cams.append(sub_cam)
+
+		# Camera channel badge overlay
+		var badge = Label.new()
+		badge.text = " " + labels[i] + " "
+		badge.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		badge.position = Vector2(8, 8)
+		cont.add_child(badge)
+
+		grid.add_child(cont)
+
+func set_view_mode(mode: int) -> void:
+	current_view_mode = clampi(mode, 0, 4)
+	if quad_container:
+		quad_container.visible = (current_view_mode == 0)
+
+	# In solo modes (1-4), activate the corresponding camera in CameraRig
+	if current_view_mode == 1 and camera_godfly:
+		camera_godfly.current = true
+	elif current_view_mode == 2 and camera_colony:
+		camera_colony.current = true
+	elif current_view_mode == 3 and camera_event:
+		camera_event.current = true
+	elif (current_view_mode == 4 or current_view_mode == 0) and camera_global:
+		camera_global.current = true
+
+	print("[FLGODTVController] View Mode switched to: ", get_view_mode_name(current_view_mode))
+
+func get_view_mode_name(mode: int) -> String:
+	match mode:
+		0: return "Quad-View (4-Camera)"
+		1: return "Cam 1 (God Fly Solo)"
+		2: return "Cam 2 (Colony Solo)"
+		3: return "Cam 3 (Event Solo)"
+		4: return "Cam 4 (Global Wide Solo)"
+		_: return "Unknown"
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		match event.keycode:
+			KEY_0, KEY_QUOTELEFT:
+				set_view_mode(0)
+			KEY_1:
+				set_view_mode(1)
+			KEY_2:
+				set_view_mode(2)
+			KEY_3:
+				set_view_mode(3)
+			KEY_4:
+				set_view_mode(4)
+			KEY_R:
+				var hud = get_node_or_null("UI")
+				if hud and hud.has_method("toggle_research_panel"):
+					hud.toggle_research_panel()
+			KEY_H:
+				var hud = get_node_or_null("UI")
+				if hud:
+					var p = hud.get_node_or_null("Panel")
+					if p: p.visible = not p.visible
+
 func _process(delta: float) -> void:
 	update_cameras(delta)
 	update_fly_instances()
+	update_quad_sub_cameras()
+
+func update_quad_sub_cameras() -> void:
+	if not quad_container or not quad_container.visible or quad_sub_cams.size() < 4:
+		return
+	if camera_godfly and quad_sub_cams[0]:
+		quad_sub_cams[0].global_transform = camera_godfly.global_transform
+		quad_sub_cams[0].fov = camera_godfly.fov
+	if camera_colony and quad_sub_cams[1]:
+		quad_sub_cams[1].global_transform = camera_colony.global_transform
+		quad_sub_cams[1].fov = camera_colony.fov
+	if camera_event and quad_sub_cams[2]:
+		quad_sub_cams[2].global_transform = camera_event.global_transform
+		quad_sub_cams[2].fov = camera_event.fov
+	if camera_global and quad_sub_cams[3]:
+		quad_sub_cams[3].global_transform = camera_global.global_transform
+		quad_sub_cams[3].fov = camera_global.fov
 
 func _on_state_updated(_state: Dictionary) -> void:
-	# Receives continuous state updates from backend bridge
 	pass
 
 func update_cameras(delta: float) -> void:
@@ -95,8 +222,8 @@ func update_cameras(delta: float) -> void:
 			var pose: Dictionary = ch.get("current_pose", {})
 			if pose.is_empty():
 				continue
-			var pos_arr: Array = pose.get("pos", [0, 10, 20])
-			var look_arr: Array = pose.get("look_at", [0, 0, 0])
+			var pos_arr: Array = pose.get("pos", [30, 55, 115])
+			var look_arr: Array = pose.get("look_at", [30, 5, 25])
 			var fov_val: float = pose.get("fov", 60.0)
 
 			var target_pos := Vector3(pos_arr[0], pos_arr[1], pos_arr[2])
@@ -108,8 +235,11 @@ func update_cameras(delta: float) -> void:
 						var new_pos = camera_godfly.position.lerp(target_pos, delta * 5.0)
 						camera_godfly.look_at_from_position(new_pos, target_look, Vector3.UP)
 						camera_godfly.fov = fov_val
-				1: # Cam2_LearningAgent
-					pass
+				1: # Cam2_Colony / Learner
+					if camera_colony:
+						var new_pos = camera_colony.position.lerp(target_pos, delta * 3.5)
+						camera_colony.look_at_from_position(new_pos, target_look, Vector3.UP)
+						camera_colony.fov = fov_val
 				2: # Cam3_Event
 					if camera_event:
 						var new_pos = camera_event.position.lerp(target_pos, delta * 4.0)
@@ -121,9 +251,10 @@ func update_cameras(delta: float) -> void:
 						camera_global.fov = fov_val
 		return
 
-	# Fallback camera positioning if backend camera stream is absent
+	# Deterministic safe fallback camera framing
 	if camera_global:
-		camera_global.look_at_from_position(Vector3(30, 45, 85), Vector3(30, 0, 30), Vector3.UP)
+		camera_global.look_at_from_position(Vector3(30, 55, 115), Vector3(30, 5, 25), Vector3.UP)
+		camera_global.fov = 60.0
 
 	if camera_godfly and bridge.god_fly_data.has("position"):
 		var gf_pos: Vector3 = bridge.god_fly_data["position"]
@@ -131,14 +262,16 @@ func update_cameras(delta: float) -> void:
 		var new_pos = camera_godfly.position.lerp(target_pos, delta * 4.0)
 		camera_godfly.look_at_from_position(new_pos, gf_pos, Vector3.UP)
 
-	if camera_colony and bridge.colonies_data.size() > 0:
-		var nest_pos: Vector3 = bridge.colonies_data[0].get("nest", Vector3.ZERO)
-		camera_colony.look_at_from_position(nest_pos + Vector3(10, 8, 12), nest_pos, Vector3.UP)
+	if camera_colony:
+		var nest_pos: Vector3 = bridge.colonies_data[0].get("nest", Vector3.ZERO) if bridge.colonies_data.size() > 0 else Vector3.ZERO
+		camera_colony.look_at_from_position(nest_pos + Vector3(12, 10, 16), nest_pos + Vector3(0, 1, 0), Vector3.UP)
 
-	if camera_event and bridge.agents_data.size() > 0:
-		var agent_pos: Vector3 = bridge.agents_data[0].get("position", Vector3.ZERO)
-		var new_pos = camera_event.position.lerp(agent_pos + Vector3(2.0, 1.5, 3.0), delta * 2.5)
-		camera_event.look_at_from_position(new_pos, agent_pos, Vector3.UP)
+	if camera_event:
+		var focus: Vector3 = Vector3(20, 2, 20)
+		if bridge.agents_data.size() > 0:
+			focus = bridge.agents_data[0].get("position", focus)
+		var new_pos = camera_event.position.lerp(focus + Vector3(3.0, 2.5, 4.5), delta * 2.5)
+		camera_event.look_at_from_position(new_pos, focus, Vector3.UP)
 
 func update_fly_instances() -> void:
 	if not fly_multimesh or not fly_multimesh.multimesh or not bridge:
@@ -149,9 +282,19 @@ func update_fly_instances() -> void:
 	for i in range(count):
 		var a: Dictionary = agents[i]
 		var pos: Vector3 = a.get("position", Vector3.ZERO)
+		var vel: Vector3 = a.get("velocity", Vector3.ZERO)
+		
 		var t := Transform3D()
+		# Orient mesh towards flight direction
+		if vel.length_squared() > 0.05:
+			var forward := vel.normalized()
+			var up := Vector3.UP
+			var right := forward.cross(up).normalized()
+			up = right.cross(forward).normalized()
+			t.basis = Basis(right, up, -forward)
 		t.origin = pos
 		mm.set_instance_transform(i, t)
+		
 		var col := Color(0.2, 0.8, 1.0) if a.get("colony_id", 1) == 1 else Color(1.0, 0.6, 0.2)
 		mm.set_instance_color(i, col)
 

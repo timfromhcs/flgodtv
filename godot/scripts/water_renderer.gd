@@ -8,7 +8,8 @@ class_name WaterRenderer
 # fallback and must be reported as such in telemetry.
 
 @export var water_level: float = -0.5
-@export var surface_size: float = 120.0
+@export var surface_size: float = 350.0
+@export var center_position: Vector3 = Vector3(30.0, 0.0, 30.0)
 
 var mesh_instance: MeshInstance3D
 var _using_backend_data: bool = false
@@ -28,8 +29,8 @@ func _ready() -> void:
 func setup_water_plane() -> void:
 	var plane := PlaneMesh.new()
 	plane.size = Vector2(surface_size, surface_size)
-	plane.subdivide_width = 16
-	plane.subdivide_depth = 16
+	plane.subdivide_width = 32
+	plane.subdivide_depth = 32
 
 	var mat := StandardMaterial3D.new()
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -41,7 +42,7 @@ func setup_water_plane() -> void:
 	plane.material = mat
 
 	mesh_instance.mesh = plane
-	mesh_instance.position = Vector3(0, water_level, 0)
+	mesh_instance.position = Vector3(center_position.x, water_level, center_position.z)
 	print("[WaterRenderer] Water surface at Y=" + str(water_level) + " backend=" + str(_using_backend_data) + ".")
 
 func set_water_level(h: float) -> void:

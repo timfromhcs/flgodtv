@@ -294,9 +294,9 @@ The following cryptographic SHA-256 hashes correspond to the standalone distribu
 
 | Package Artifact | Platform | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `7b161203ae4d6edc7cb840a3948f39435b0ecce13842c7ca046a158d9a649865` |
-| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `4ba6d853e5e215da80523578cbd13b9f2b2d1397a094eb7545f960a4b649dea4` |
-| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `ab5630afc068f2a255894ead3c196cd6633f22c87ce389ce571bfa1a0c7a074b` |
+| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `c1d16a04815db4a3904db191273dcd81902da25728401f57979ab124ca5c78ff` |
+| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `cf0ece0dc4cbeec0e75ed37409595dc9562baaf2afd11fdf2a8b95bcbd14d0df` |
+| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `c1100186425e0e356aaee825e3b445431bffcc1e7906623b29bd7dd087f4d5b6` |
 
 ---
 

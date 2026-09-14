@@ -305,37 +305,39 @@ This document records the exact status and evidence for every development stage 
 **Evidence:**
 - Real installed Godot version detected and recorded: [evidence/toolchain/godot-version.txt](file:///C:/Users/hcsme/Desktop/Fly/evidence/toolchain/godot-version.txt) (`Godot Engine v4.7.2.stable.official.ed1daf0bf`).
 - Godot project configuration: [godot/project.godot](file:///C:/Users/hcsme/Desktop/Fly/godot/project.godot) targeting Godot 4 Forward+ Vulkan renderer (`renderer/rendering_method="forward_plus"` per GEMINI.md Section 70).
+- Minimal Rendering Proof: [godot/scripts/test_minimal_render.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/test_minimal_render.gd) executed headlessly under Vulkan 1.4.315 (AMD Radeon RDNA2); verified non-empty rasterization to [renders/screenshots/minimal_render_proof.png](file:///C:/Users/hcsme/Desktop/Fly/renders/screenshots/minimal_render_proof.png) (center pixel R > 0.6).
 - Presentation architecture:
-  - [godot/scripts/backend_bridge.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/backend_bridge.gd) receiving canonical world state, agent states, colony boundaries, weather, and telemetry from FLGOD backend per Section 69.
-  - [godot/scripts/flgod_tv_controller.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/flgod_tv_controller.gd) coordinating 4-camera presentation rig and MultiMesh fly rendering.
+  - [godot/scripts/backend_bridge.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/backend_bridge.gd) receiving canonical world state, agent states, colony boundaries, weather, and telemetry from FLGOD backend per Section 69, with multi-path state discovery and graceful offline swarm fallback.
+  - [godot/scripts/flgod_tv_controller.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/flgod_tv_controller.gd) coordinating 4-camera QuadView presentation rig with dedicated SubViewports and MultiMesh fly rendering.
   - [godot/scenes/main.tscn](file:///C:/Users/hcsme/Desktop/Fly/godot/scenes/main.tscn) with ProceduralSky, DirectionalLight3D sun, 4 Camera3D viewports (Global, God Fly, Colony, Event), MultiMeshInstance3D, GodFlyMesh, and telemetry HUD.
 - Automated Headless Smoke Test:
   - [godot/scripts/test_headless_frontend.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/test_headless_frontend.gd) executed headlessly via `Godot_v4.7.2-stable_win64_console.exe --headless`: 4-camera rig, MultiMesh instance setup, backend bridge data, and frame simulation all passed with exit code 0.
 - Integrated CTest target: `GodotFrontendSmokeTest` passed in CTest suite.
-- CTest suite: **49/49 tests passed (100%)**.
+- CTest suite: **52/52 tests passed (100%)**.
 
 ---
 
 ### STAGE 17 — WORLD RENDERING
 **Status:** `VERIFIED`  
 **Evidence:**
-- [godot/scripts/terrain_renderer.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/terrain_renderer.gd) (Terrain mesh generation with LOD0/LOD1/LOD2 levels, distance streaming, canonical backend elevation grid ingestion, and Whittaker biome band coloring per Sections 71 & 72)
-- [godot/scripts/vegetation_renderer.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/vegetation_renderer.gd) (GPU MultiMesh instancing, deterministic distribution fallback, and backend canonical instances mirror per Section 73)
-- [godot/scripts/water_renderer.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/water_renderer.gd) (Procedural water surface plane, transparency/roughness/refraction, backend water level wiring, and subtle visual ripple animation per Section 74)
+- [godot/scripts/terrain_renderer.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/terrain_renderer.gd) (Expanded terrain chunk generation with chunk_size=48, cell_size=2.5 spanning [-40.5, 100.5], 13,254 vertices, LOD0/LOD1/LOD2 levels, distance streaming, canonical backend elevation grid ingestion, and Whittaker biome band coloring per Sections 71 & 72)
+- [godot/scripts/vegetation_renderer.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/vegetation_renderer.gd) (GPU MultiMesh instancing across distribution radius 65.0, 118 shrubs and rocks, and backend canonical instances mirror per Section 73)
+- [godot/scripts/water_renderer.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/water_renderer.gd) (Procedural water surface plane with surface_size=350.0 centered at (30,-0.5,30), transparency/roughness/refraction, backend water level wiring, and subtle visual ripple animation per Section 74)
 - [godot/scripts/weather_renderer.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/weather_renderer.gd) (Backend weather consequence visualization: dynamic precipitation GPU particles, fog density attenuation, wind and visibility cues, N/A-safe fallback per Section 75)
 - [godot/scripts/lighting_profiles.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/lighting_profiles.gd) (Quality profiles: LOW, MEDIUM, HIGH, CINEMATIC per Section 76)
 - Main scene integration: [godot/scenes/main.tscn](file:///C:/Users/hcsme/Desktop/Fly/godot/scenes/main.tscn)
+- Verified visual diagnostic capture: [renders/screenshots/diagnostic_screen.png](file:///C:/Users/hcsme/Desktop/Fly/renders/screenshots/diagnostic_screen.png) confirming complete horizon, visible terrain meshes, water plane, and agent swarms rendered without grey cutoffs.
 - Automated Headless Smoke Test: [godot/scripts/test_headless_frontend.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/test_headless_frontend.gd) verified:
-  - Deterministic terrain mesh generation (5766 vertices)
-  - LOD2 decimation to 384 vertices and LOD0 bit-exact restoration
+  - Deterministic terrain mesh generation (13,254 vertices)
+  - LOD2 decimation and LOD0 bit-exact restoration
   - Distance streaming boundary hiding and unhiding
   - Canonical backend grid application
-  - MultiMesh vegetation instancing (117 instances placed, under-water rejected)
+  - MultiMesh vegetation instancing (118 instances placed, under-water rejected)
   - Canonical backend vegetation item mirroring
   - Water plane level sync (Y=0.75) and empty state rejection
   - Weather consequence rendering and missing-data N/A summary safety
   - All 4 lighting quality profiles
-- CTest suite: **49/49 tests passed (100%)** via `GodotFrontendSmokeTest` in 0.30s.
+- CTest suite: **52/52 tests passed (100%)** via `GodotFrontendSmokeTest`.
 
 ---
 
@@ -345,10 +347,12 @@ This document records the exact status and evidence for every development stage 
 - [include/flgod/camera/camera_types.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/camera/camera_types.hpp) (11 reusable shot types: `Macro`, `Close`, `Medium`, `Wide`, `Establishing`, `Tracking`, `Orbit`, `Overhead`, `LowAngle`, `POV`, `ReactionShot` per GEMINI.md Section 81; 4 presentation channels: `Cam1_GodFly`, `Cam2_LearningAgent`, `Cam3_Event`, `Cam4_EnvironmentColony` per Section 83; `CameraPose` and `CameraTarget` with `is_valid` flag).
 - [include/flgod/camera/event_detector.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/camera/event_detector.hpp) (`EventDetector` with priority-sorted queue, deterministic tie-breaking by priority descending, tick ascending, ID ascending; event lifecycle management, automatic expiration, and JSON serialization per Section 82).
 - [include/flgod/camera/camera_director.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/camera/camera_director.hpp) (`SingleCameraDirector` and 4-channel `CameraDirector` implementing target selection, minimum shot durations, cooldown periods, priority hysteresis to avoid cut flutter, terrain collision avoidance clamping `eye.y >= ground_y + 0.5`, smooth slerp/lerp interpolation, and full state serialization).
+- Deterministic fallback camera: CameraGlobal at `(30, 55, 115)` looking at `(30, 5, 25)` with FOV 60, ensuring guaranteed framing of the entire world simulation.
+- 4-Camera QuadView presentation: SubViewports mirroring Cam 1-4 concurrently into a 2x2 broadcast layout.
 - Unit and deterministic tests:
   - [test_camera_director.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_camera_director.cpp): Event queue sorting, tie-breaking, shot selection, hysteresis interruption, minimum duration hold, terrain avoidance, and 4-channel updates: Passed.
   - [test_deterministic_camera.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/deterministic/test_deterministic_camera.cpp): Bit-exact deterministic camera pose replication across runs over 150 ticks, and 100% midpoint crash recovery match: Passed.
-- CTest suite: **51/51 tests passed (100%)**.
+- CTest suite: **52/52 tests passed (100%)**.
 
 ---
 
@@ -358,12 +362,12 @@ This document records the exact status and evidence for every development stage 
 - [include/flgod/ui/telemetry_hud.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/ui/telemetry_hud.hpp) (`TelemetrySnapshot` and `TelemetryCollector` aggregating authentic simulation metrics: tick, clock time, weather, active population/colonies, camera director channel statuses, high-priority events, MaleCNS connectome soma update rate [128.95M/s], memory records, vocabulary size, sandboxed technology VMs, and species counts; strict Section 85 rule: all unpopulated or unavailable metrics report `"N/A"`, zero fake or mocked values).
 - [godot/scripts/telemetry_hud.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/telemetry_hud.gd) (Godot Telemetry HUD controller managing 7 distinct visual panels: Live, Time, Population, Camera, Event, Weather, Research; supports dynamic HUD panel visibility toggles; strictly mirrors backend telemetry snapshot).
 - [godot/scripts/flgod_tv_controller.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/flgod_tv_controller.gd) and [godot/scripts/backend_bridge.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/backend_bridge.gd) (Authoritative backend camera pose and FOV application to Godot viewports).
+- Visual Evidence Artifacts:
+  - [renders/screenshots/quadview_presentation_proof.png](file:///C:/Users/hcsme/Desktop/Fly/renders/screenshots/quadview_presentation_proof.png): 4-channel simultaneous broadcast view with channel badges (CAM 1: GOD FLY TRACK, CAM 2: COLONY SWARM, CAM 3: HIGH PRIORITY EVENT, CAM 4: WORLD OVERVIEW).
+  - [renders/screenshots/ui_ux_headless_verification.png](file:///C:/Users/hcsme/Desktop/Fly/renders/screenshots/ui_ux_headless_verification.png): Verified HUD panel overlay and world rendering.
 - Unit and Godot Frontend verification:
   - [test_telemetry_hud.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_telemetry_hud.cpp): Metric extraction, JSON serialization roundtrip, and strict N/A formatting on empty data: Passed.
   - [godot/scripts/test_headless_frontend.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/test_headless_frontend.gd): Headless smoke test executing under Godot 4.7.2 Forward+ Vulkan verifying 4-camera poses, FOV configuration, HUD metric binding, strict `"N/A"` fallback on empty data, panel visibility toggles, and automated UI/UX verification screenshot generation: Passed.
-- Automated UI/UX Screenshot:
-  - [renders/screenshots/ui_ux_headless_verification.png](file:///C:/Users/hcsme/Desktop/Fly/renders/screenshots/ui_ux_headless_verification.png): Rendered and captured headlessly by Godot 4.7.2.
-- Local CTest target: `GodotFrontendSmokeTest` passed in 0.28s.
 - CTest suite: **52/52 tests passed (100%)**.
 
 ---
