@@ -1,0 +1,64 @@
+{
+  "artifacts": [
+    {
+      "artifact": "visual_v2_horizon_overview.png",
+      "content_valid": true,
+      "height": 749,
+      "pixel_variance": 1192.38956289113,
+      "sha256": "5ad30cc37291a82a6d495d4ff512115265f4b6c8be391c34764e34ed1da13621",
+      "unique_sampled_colors": 2561,
+      "validation": "PASS",
+      "width": 1370
+    },
+    {
+      "artifact": "visual_v2_quadview_broadcast.png",
+      "content_valid": true,
+      "height": 749,
+      "pixel_variance": 1935.70503030562,
+      "sha256": "b1ef76207b3e9907c4875aa3753982b3eb2a62154fa26a3582099eefb8594b7f",
+      "unique_sampled_colors": 3137,
+      "validation": "PASS",
+      "width": 1370
+    },
+    {
+      "artifact": "visual_v2_godfly_tracking.png",
+      "content_valid": true,
+      "height": 749,
+      "pixel_variance": 772.593503742788,
+      "sha256": "59fb28217f3b06742ab087717dae5f01422fa7107d1cf3d94423a99a6bda1dae",
+      "unique_sampled_colors": 1968,
+      "validation": "PASS",
+      "width": 1370
+    },
+    {
+      "artifact": "visual_v2_colony_nest.png",
+      "content_valid": true,
+      "height": 749,
+      "pixel_variance": 2303.16466851905,
+      "sha256": "23c04e707a00a71195898d707cddd0808b7dad398320b0c773bcb6ebc8f5b455",
+      "unique_sampled_colors": 3573,
+      "validation": "PASS",
+      "width": 1370
+    },
+    {
+      "artifact": "visual_v2_sunset_golden_hour.png",
+      "content_valid": true,
+      "height": 749,
+      "pixel_variance": 1191.21437204282,
+      "sha256": "c3b20704c5d38569967ee5a11ebc2592850a3d3d732232316593bd28052b0a5e",
+      "unique_sampled_colors": 2562,
+      "validation": "PASS",
+      "width": 1370
+    },
+    {
+      "artifact": "visual_v2_night_moonlight.png",
+      "content_valid": true,
+      "height": 749,
+      "pixel_variance": 1192.59090785294,
+      "sha256": "35984f5cf002d91b72031fe212406ed0dcfaa4ba074a815c5a23b84ed0a837d2",
+      "unique_sampled_colors": 2562,
+      "validation": "PASS",
+      "width": 1370
+    }
+  ]
+}

@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Vulkan-1.4-red.svg" alt="Vulkan 1.4">
   <img src="https://img.shields.io/badge/Godot-4.7.2%20Forward%2B-478cbf.svg" alt="Godot 4.7.2">
   <img src="https://img.shields.io/badge/Blender-5.1%20Procedural-f5792a.svg" alt="Blender 5.1">
-  <img src="https://img.shields.io/badge/CTest-53%2F53%20Passed%20(100%25)-brightgreen.svg" alt="CTest 53/53 Passed">
+   <img src="https://img.shields.io/badge/CTest-55%2F55%20Passed%20(100%25)-brightgreen.svg" alt="CTest 55/55 Passed">
   <img src="https://img.shields.io/badge/Connectome-128.9M%20somas%2Fs-orange.svg" alt="128.9M somas/s">
   <a href="#license"><img src="https://img.shields.io/badge/License-Apache%202.0%20%2F%20MIT-lightgrey.svg" alt="License"></a>
 </p>
@@ -114,7 +114,7 @@ cmake --preset ninja-release
 # 3. Build the core headless simulation executable
 cmake --build build/ninja-release --config Release
 
-# 4. Execute the complete test suite (53/53 automated tests)
+# 4. Execute the complete test suite (55/53 automated tests: 55 with Godot + display, 53 headless C++)
 ctest --test-dir build/ninja-release --output-on-failure
 
 # 5. Run headless simulation verification modes
@@ -198,15 +198,15 @@ Raw JSON experiment manifests and execution logs are preserved in [`evidence/win
 
 ## Testing & Verification
 
-The automated CTest suite executes **53 test targets** covering every simulation layer:
+The automated CTest suite executes **55 test targets** (53 C++ headless/GPU tests + 2 Godot presentation tests requiring a display and Vulkan GPU; 53 when Godot is absent). The machine-readable inventory is generated from `CMakeLists.txt` in [`evidence/testing/test_inventory.json`](evidence/testing/test_inventory.json):
 
 ```bash
 ctest --test-dir build/ninja-release --output-on-failure
 ```
 
 ```text
-100% tests passed out of 53
-Total Test time (real) = ~3.4 sec
+100% tests passed out of 55
+Total Test time (real) = ~13.1 sec
 ```
 
 | Test Target | Validation Scope |
@@ -289,6 +289,7 @@ In accordance with `GEMINI.md` Section 122 (100% Technical Honesty):
 
 1. **Hardware Vulkan 1.3+ GPU for Compute:** Physical GPU compute kernels require a compatible physical GPU (AMD, NVIDIA, or Intel). Headless cloud CI runners lacking a physical GPU report `VULKAN GPU TEST = NOT AVAILABLE` per Section 103 rather than fabricating CPU mock results.
 2. **Interactive Windowing Display:** Real-time visual presentation requires a local display or a virtual framebuffer (`Xvfb` on Linux). Headless test automation and batch simulation execute without display hardware.
+3. **Godot Presentation Tests Require Display + GPU:** The CTest targets `GodotFrontendSmokeTest` and `GodotVisualV2VerificationTest` run windowed with real Vulkan rendering (Godot `--headless` uses the dummy rasterizer and produces no pixels, so screenshot evidence cannot be captured headlessly). Cloud CI, where Godot is not installed, reports `GODOT TEST = NOT AVAILABLE`; the CPU/headless CI job executes the remaining tests only.
 
 ---
 
@@ -298,9 +299,9 @@ The following cryptographic SHA-256 hashes correspond to the standalone distribu
 
 | Package Artifact | Platform | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `d4f429e4002c58465e601f2216a5710c5bc1694fe6f91a3c2f5f9c2a962fd4a1` |
-| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `b0e7af8cc24f95e0a190b3141d61bed8765b0d4cbd797fe8f064dd2223880fe7` |
-| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `6e88274ef598e570a412e806e0eb888090dd6121a6ac73514304cec84d72785d` |
+| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `d747c9c9697b76e287057347232001db4b15ed356e6542841918f66191dbb593` |
+| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `3036d656b6e38fd2e7e95982e8a3c11f8d1a0bf4f9ff0e3cfd143e69eefbbbf0` |
+| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `8daf1b91cd9c195b167ba5b17d9bf558915437166cde17599698a45ffb0f37a1` |
 
 ---
 
@@ -314,6 +315,10 @@ Every claim and metric in this project is backed by persistent execution artifac
 - [docs/BACKEND_GATE_REPORT.md](docs/BACKEND_GATE_REPORT.md) — Verification report across all Phase A quality gates.
 - [evidence/video/render_manifest.json](evidence/video/render_manifest.json) — Automated Stage 20 cinematic video render manifest (90 frames, 30 FPS, 1280x720 H.264).
 - [evidence/visual_v2/manifest.json](evidence/visual_v2/manifest.json) — Automated headless verification manifest with 6 verified runtime visual proofs.
+- [evidence/visual_v2/visual_validation.json](evidence/visual_v2/visual_validation.json) — Per-artifact objective image validation (dimensions, SHA-256, pixel variance) generated from execution.
+- [evidence/testing/test_inventory.json](evidence/testing/test_inventory.json) — Machine-readable test inventory generated from `CMakeLists.txt` (55 configured tests).
+- [docs/FINAL_VERIFICATION.md](docs/FINAL_VERIFICATION.md) — Current release-candidate verification record across all gates.
+- [docs/VISUAL_V2_FINAL_VERIFICATION.md](docs/VISUAL_V2_FINAL_VERIFICATION.md) — Current Visual V2 runtime evidence (supersedes the pre-implementation baseline in `VISUAL_V2_AUDIT.md`).
 - [dependencies.lock.json](dependencies.lock.json) — Pinned machine-readable dependency lockfile.
 - [evidence/windows/install_test_report.json](evidence/windows/install_test_report.json) — Clean-target installation and execution test report.
 

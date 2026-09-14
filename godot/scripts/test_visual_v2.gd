@@ -1,42 +1,67 @@
 extends SceneTree
 
 # test_visual_v2.gd: Comprehensive automated verification suite for Visual V2
-# Executed headlessly under Godot 4 Forward+ Vulkan renderer.
-# Verifies all Visual V2 subsystems and produces persistent evidence artifacts.
+# Executed with real GPU rendering (windowed, NOT --headless: headless uses the
+# dummy rasterizer and produces no pixels). Verifies all Visual V2 subsystems
+# with explicit deterministic failure handling (no assert()), captures FRESH
+# screenshots on every run (never reuses stale files, never saves synthetic
+# fallback images as evidence), and writes machine-readable manifests whose
+# values are generated from actual execution.
+
+var failed: bool = false
+
+func check(cond: bool, msg: String) -> void:
+	if not cond:
+		failed = true
+		push_error("[VisualV2][FAIL] " + msg)
+		printerr("[VisualV2][FAIL] " + msg)
 
 func _init() -> void:
 	print("[Visual V2 Suite] Starting autonomous Visual V2 verification...")
 
 	# 1. Load and instantiate Main Scene
 	var scene_res = load("res://scenes/main.tscn")
-	if not scene_res:
-		push_error("Failed to load res://scenes/main.tscn")
+	if scene_res == null:
+		push_error("[VisualV2][FAIL] Failed to load res://scenes/main.tscn")
 		quit(1)
 		return
 
 	var main_node = scene_res.instantiate()
+	if main_node == null:
+		push_error("[VisualV2][FAIL] Failed to instantiate main scene")
+		quit(1)
+		return
 	root.add_child(main_node)
 	current_scene = main_node
 	main_node.ensure_initialized()
 
 	var bridge = main_node.get_node_or_null("BackendBridge")
-	assert(bridge != null, "BackendBridge must exist")
+	check(bridge != null, "BackendBridge must exist")
 
 	var terrain = main_node.get_node_or_null("Terrain")
-	assert(terrain != null, "TerrainRenderer must exist")
-	terrain.ensure_initialized()
+	check(terrain != null, "TerrainRenderer must exist")
+	if terrain:
+		terrain.ensure_initialized()
 
 	var water = main_node.get_node_or_null("Water")
-	assert(water != null, "WaterRenderer must exist")
-	water.ensure_initialized()
+	check(water != null, "WaterRenderer must exist")
+	if water:
+		water.ensure_initialized()
 
 	var veg = main_node.get_node_or_null("Vegetation")
-	assert(veg != null, "VegetationRenderer must exist")
-	veg.ensure_initialized()
+	check(veg != null, "VegetationRenderer must exist")
+	if veg:
+		veg.ensure_initialized()
 
 	var weather = main_node.get_node_or_null("Weather")
-	assert(weather != null, "WeatherRenderer must exist")
-	weather.ensure_initialized()
+	check(weather != null, "WeatherRenderer must exist")
+	if weather:
+		weather.ensure_initialized()
+
+	if failed:
+		push_error("[VisualV2] Scene setup failed, aborting.")
+		quit(1)
+		return
 
 	# 2. Test Terrain V2 slope-aware coloring and normal computation
 	print("  [1/7] Verifying Terrain V2 slope-aware biome blending & smooth normals...")
@@ -49,142 +74,252 @@ func _init() -> void:
 	var snow_col := TerrainRenderer.get_biome_color_v2(8.5, flat_norm)
 
 	# Sand should have high red/green (yellowish/sandy)
-	assert(beach_col.r > 0.6 and beach_col.g > 0.5, "Shoreline must be sandy color")
+	check(beach_col.r > 0.6 and beach_col.g > 0.5, "Shoreline must be sandy color")
 	# Grassland should have dominant green
-	assert(grass_col.g > grass_col.r and grass_col.g > grass_col.b, "Lowland must be green grassland")
+	check(grass_col.g > grass_col.r and grass_col.g > grass_col.b, "Lowland must be green grassland")
 	# Cliff must be dark grey rock
-	assert(cliff_col.r < 0.5 and cliff_col.g < 0.5 and cliff_col.b < 0.5, "Steep slopes must render as rock")
+	check(cliff_col.r < 0.5 and cliff_col.g < 0.5 and cliff_col.b < 0.5, "Steep slopes must render as rock")
 	# Alpine snow should have very high luminance (> 0.9 in all channels)
-	assert(snow_col.r > 0.85 and snow_col.g > 0.85 and snow_col.b > 0.85, "Summit must be snow white")
-	assert(terrain.vertex_count > 10000, "Terrain V2 must generate detailed mesh (>10k vertices)")
+	check(snow_col.r > 0.85 and snow_col.g > 0.85 and snow_col.b > 0.85, "Summit must be snow white")
+	check(terrain.vertex_count > 10000, "Terrain V2 must generate detailed mesh (>10k vertices)")
 	print("    -> Terrain V2 passed: %d vertices, smooth normals, slope-aware biomes." % terrain.vertex_count)
 
 	# 3. Test Water V2 presentation (surface + shoreline foam fringe)
 	print("  [2/7] Verifying Water V2 surface and shoreline foam layer...")
-	assert(water.mesh_instance != null, "Water surface mesh must exist")
-	assert(water.foam_mesh_instance != null, "Shoreline foam mesh must exist")
-	assert(water.foam_mesh_instance.position.y > water.water_level, "Foam layer must rest slightly above base water")
+	check(water.mesh_instance != null, "Water surface mesh must exist")
+	check(water.foam_mesh_instance != null, "Shoreline foam mesh must exist")
+	check(water.foam_mesh_instance.position.y > water.water_level, "Foam layer must rest slightly above base water")
 	water.apply_backend_state({"height": 0.2, "flow_x": 0.05, "flow_y": 0.02})
-	assert(abs(water.water_level - 0.2) < 1e-4, "Water level must synchronize with backend state")
+	check(abs(water.water_level - 0.2) < 1e-4, "Water level must synchronize with backend state")
 	print("    -> Water V2 passed: dual-plane surface & foam fringe active.")
 
 	# 4. Test Vegetation & Environmental Richness V2
 	print("  [3/7] Verifying Vegetation V2 multi-species instancing and rock clusters...")
-	assert(veg.placed_count > 100, "Botanical instances must be populated (>100)")
-	assert(veg.rock_multimesh_instance != null, "Rock MultiMesh must exist")
-	assert(veg.rock_placed_count > 0, "Rock boulders must be placed on terrain slopes")
+	check(veg.placed_count > 100, "Botanical instances must be populated (>100)")
+	check(veg.rock_multimesh_instance != null, "Rock MultiMesh must exist")
+	check(veg.rock_placed_count > 0, "Rock boulders must be placed on terrain slopes")
 	print("    -> Vegetation V2 passed: %d flora instances, %d rock instances." % [veg.placed_count, veg.rock_placed_count])
 
 	# 5. Test MapSystem (Minimap Radar)
 	print("  [4/7] Verifying MapSystem synchronization and world coordinate mapping...")
-	assert(main_node.map_system != null, "MapSystem must be instantiated")
-	var pt_center: Vector2 = main_node.map_system.world_to_map(30.0, 30.0)
-	var pt_c1: Vector2 = main_node.map_system.world_to_map(0.0, 0.0)
-	var pt_c2: Vector2 = main_node.map_system.world_to_map(60.0, 60.0)
-	assert(pt_center.x > 0 and pt_center.x < main_node.map_system.size.x, "Center must map within minimap bounds")
-	assert(pt_c1 != pt_c2, "Colonies must map to distinct 2D minimap locations")
+	check(main_node.map_system != null, "MapSystem must be instantiated")
+	if main_node.map_system != null:
+		var pt_center: Vector2 = main_node.map_system.world_to_map(30.0, 30.0)
+		var pt_c1: Vector2 = main_node.map_system.world_to_map(0.0, 0.0)
+		var pt_c2: Vector2 = main_node.map_system.world_to_map(60.0, 60.0)
+		check(pt_center.x > 0 and pt_center.x < main_node.map_system.size.x, "Center must map within minimap bounds")
+		check(pt_c1 != pt_c2, "Colonies must map to distinct 2D minimap locations")
 
-	# Test layer cycling
-	var initial_mode: int = main_node.map_system.layer_mode
-	main_node.map_system.cycle_layers()
-	assert(main_node.map_system.layer_mode != initial_mode, "Minimap layer cycling must work")
-	main_node.map_system.layer_mode = 0 # reset
-	print("    -> MapSystem passed: coordinate projection verified, layer cycling verified.")
+		# Test layer cycling
+		var initial_mode: int = main_node.map_system.layer_mode
+		main_node.map_system.cycle_layers()
+		check(main_node.map_system.layer_mode != initial_mode, "Minimap layer cycling must work")
+		main_node.map_system.layer_mode = 0 # reset
+		print("    -> MapSystem passed: coordinate projection verified, layer cycling verified.")
 
 	# 6. Test AtmosphereController Diurnal Cycle
 	print("  [5/7] Verifying AtmosphereController diurnal progression...")
-	assert(main_node.atmosphere_ctrl != null, "AtmosphereController must exist")
-	var atmo_script = preload("res://scripts/atmosphere_controller.gd")
-	main_node.atmosphere_ctrl.update_diurnal_cycle(0.0) # Dawn
-	assert(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.DAWN, "0s must be Dawn")
-	main_node.atmosphere_ctrl.update_diurnal_cycle(60.0) # Noon
-	assert(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.NOON, "60s must be Noon")
-	main_node.atmosphere_ctrl.update_diurnal_cycle(140.0) # Sunset
-	assert(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.SUNSET, "140s must be Sunset")
-	main_node.atmosphere_ctrl.update_diurnal_cycle(200.0) # Night
-	assert(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.NIGHT, "200s must be Night")
-	print("    -> AtmosphereController passed: Dawn, Noon, Sunset, Night progressions verified.")
+	check(main_node.atmosphere_ctrl != null, "AtmosphereController must exist")
+	if main_node.atmosphere_ctrl != null:
+		var atmo_script = preload("res://scripts/atmosphere_controller.gd")
+		main_node.atmosphere_ctrl.update_diurnal_cycle(0.0) # Dawn
+		check(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.DAWN, "0s must be Dawn")
+		main_node.atmosphere_ctrl.update_diurnal_cycle(60.0) # Noon
+		check(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.NOON, "60s must be Noon")
+		main_node.atmosphere_ctrl.update_diurnal_cycle(140.0) # Sunset
+		check(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.SUNSET, "140s must be Sunset")
+		main_node.atmosphere_ctrl.update_diurnal_cycle(200.0) # Night
+		check(main_node.atmosphere_ctrl.current_phase == atmo_script.TimeOfDay.NIGHT, "200s must be Night")
+		print("    -> AtmosphereController passed: Dawn, Noon, Sunset, Night progressions verified.")
 
 	# 7. Test Autonomous Broadcast Director
 	print("  [6/7] Verifying Autonomous Broadcast Director switching...")
 	main_node.is_auto_broadcast = true
 	main_node.broadcast_hold_timer = 0.0
 	main_node.update_broadcast_director(0.1)
-	assert(main_node.broadcast_hold_timer > 0.0, "Broadcast director must initiate timed camera hold")
+	check(main_node.broadcast_hold_timer > 0.0, "Broadcast director must initiate timed camera hold")
 	print("    -> Autonomous Broadcast Director passed: state hold timer = %.1fs." % main_node.broadcast_hold_timer)
 
-	# 8. Render and Capture Visual Evidence Artifacts
-	print("  [7/7] Rendering and capturing Visual V2 proof screenshots...")
-	var base_proj_path: String = ProjectSettings.globalize_path("res://")
-	var evidence_dir: String = ""
-	if base_proj_path.begins_with("res://") or base_proj_path.is_empty():
-		evidence_dir = "evidence/visual_v2/screenshots"
-	else:
-		evidence_dir = base_proj_path.get_base_dir().get_base_dir() + "/evidence/visual_v2/screenshots"
-	DirAccess.make_dir_recursive_absolute(evidence_dir)
+	if failed:
+		push_error("[VisualV2] Logic verification failed, skipping capture phase.")
+		quit(1)
+		return
 
-	var captures: Array = [
+	# 8. Capture FRESH Visual Evidence Artifacts across real rendered frames.
+	# A watcher node waits for the renderer to draw real frames, then captures
+	# each configured shot. Empty/uniform frames FAIL (never saved as evidence).
+	print("  [7/7] Rendering and capturing FRESH Visual V2 proof screenshots...")
+	var watcher = VisualV2Capture.new()
+	watcher.suite = self
+	watcher.main_node = main_node
+	watcher.terrain = terrain
+	watcher.water = water
+	watcher.veg = veg
+	root.add_child(watcher)
+
+
+class VisualV2Capture extends Node:
+	var suite: SceneTree = null
+	var main_node: Node = null
+	var terrain: Node = null
+	var water: Node = null
+	var veg: Node = null
+	var queue: Array = [
 		{"name": "visual_v2_horizon_overview.png", "mode": 4, "time": 60.0},
 		{"name": "visual_v2_quadview_broadcast.png", "mode": 0, "time": 60.0},
 		{"name": "visual_v2_godfly_tracking.png", "mode": 1, "time": 60.0},
 		{"name": "visual_v2_colony_nest.png", "mode": 2, "time": 60.0},
 		{"name": "visual_v2_sunset_golden_hour.png", "mode": 4, "time": 140.0},
-		{"name": "visual_v2_night_moonlight.png", "mode": 4, "time": 200.0}
+		{"name": "visual_v2_night_moonlight.png", "mode": 4, "time": 200.0},
 	]
+	var wait_frames: int = 30
+	var results: Array = []
+	var evidence_dir: String = ""
 
-	var vp := root.get_viewport()
+	func _ready() -> void:
+		var base_proj_path: String = ProjectSettings.globalize_path("res://")
+		if base_proj_path.begins_with("res://") or base_proj_path.is_empty():
+			evidence_dir = "evidence/visual_v2/screenshots"
+		else:
+			evidence_dir = base_proj_path.get_base_dir().get_base_dir() + "/evidence/visual_v2/screenshots"
+		DirAccess.make_dir_recursive_absolute(evidence_dir)
+		_apply_next()
 
-	for cap in captures:
+	func _apply_next() -> void:
+		if queue.is_empty():
+			_finish()
+			return
+		var cap: Dictionary = queue[0]
 		main_node.set_view_mode(cap["mode"])
 		main_node.atmosphere_ctrl.update_diurnal_cycle(cap["time"])
-		for f in range(5):
-			main_node._process(1.0 / 60.0)
+		wait_frames = 30
 
+	func _process(_delta: float) -> void:
+		if wait_frames > 0:
+			wait_frames -= 1
+			if wait_frames == 0:
+				RenderingServer.frame_post_draw.connect(_on_drawn, CONNECT_ONE_SHOT)
+			return
+
+	func _on_drawn() -> void:
+		var cap: Dictionary = queue.pop_front()
+		var vp := get_viewport()
+		var img: Image = null
+		if vp and vp.get_texture():
+			img = vp.get_texture().get_image()
+		_report_capture(cap, img)
+		_apply_next()
+
+	func _report_capture(cap: Dictionary, img: Image) -> void:
+		var entry := {"artifact": str(cap["name"]), "width": 0, "height": 0, "sha256": "", "content_valid": false, "validation": "FAIL"}
+		if img == null or img.is_empty():
+			suite.check(false, "Capture " + str(cap["name"]) + " produced an empty viewport image (renderer unavailable?)")
+			results.append(entry)
+			return
+		var w := img.get_width()
+		var h := img.get_height()
+		entry["width"] = w
+		entry["height"] = h
+		# Objective content metrics: sampled unique colors + channel variance.
+		var uniq := {}
+		var n := 0
+		var sum_r := 0.0
+		var sum_g := 0.0
+		var sum_b := 0.0
+		var px := img.get_data().size()
+		var total := w * h
+		var step := 97
+		var samples: Array = []
+		var d := img.get_data()
+		for i in range(0, total, step):
+			var o := i * 4
+			# get_data() is RGBA8. Guard bounds for safety.
+			if o + 2 >= px:
+				break
+			var r := d[o]
+			var g := d[o + 1]
+			var b := d[o + 2]
+			uniq[[r, g, b]] = true
+			sum_r += r
+			sum_g += g
+			sum_b += b
+			samples.append([r, g, b])
+			n += 1
+		var mean := (sum_r + sum_g + sum_b) / float(maxi(1, 3 * n))
+		var var_acc := 0.0
+		for s in samples:
+			var_acc += (s[0] - mean) * (s[0] - mean) + (s[1] - mean) * (s[1] - mean) + (s[2] - mean) * (s[2] - mean)
+		var variance := var_acc / float(maxi(1, 3 * n))
+		entry["unique_sampled_colors"] = uniq.size()
+		entry["pixel_variance"] = variance
+		var ok_dims := w >= 640 and h >= 480
+		var ok_content := uniq.size() > 50 and variance > 200.0
+		if not ok_dims:
+			suite.check(false, "Capture " + str(cap["name"]) + " has invalid dimensions %dx%d" % [w, h])
+		if not ok_content:
+			suite.check(false, "Capture " + str(cap["name"]) + " failed content validation (unique=%d variance=%.1f); refusing synthetic fallback" % [uniq.size(), variance])
+			results.append(entry)
+			return
+		# Save FRESH frame (always overwrite; never reuse stale files).
 		var save_path: String = evidence_dir + "/" + str(cap["name"])
-		if not FileAccess.file_exists(save_path):
-			var shot := Image.create(1280, 720, false, Image.FORMAT_RGBA8)
-			shot.fill(Color(0.1, 0.12, 0.16, 1.0))
-			if vp and vp.get_texture():
-				var tex := vp.get_texture().get_image()
-				if tex and not tex.is_empty():
-					shot = tex
-			shot.save_png(save_path)
-		print("    -> Verified: " + str(cap["name"]))
+		var png := img.save_png_to_buffer()
+		var ctx := HashingContext.new()
+		ctx.start(HashingContext.HASH_SHA256)
+		ctx.update(png)
+		var digest: PackedByteArray = ctx.finish()
+		entry["sha256"] = digest.hex_encode()
+		entry["content_valid"] = true
+		entry["validation"] = "PASS"
+		img.save_png(save_path)
+		results.append(entry)
+		print("    -> Captured: " + str(cap["name"]) + " (%dx%d sha256=%s...)" % [w, h, str(entry["sha256"]).substr(0, 12)])
 
-	# Create machine-readable manifest
-	var manifest := {
-		"version": "Visual V2.0",
-		"timestamp": Time.get_datetime_string_from_system(true),
-		"renderer": "Godot 4 Forward+ Vulkan",
-		"terrain_vertices": terrain.vertex_count,
-		"flora_instances": veg.placed_count,
-		"rock_instances": veg.rock_placed_count,
-		"water_surface_y": water.water_level,
-		"subsystems": {
-			"terrain_v2": "PASS",
-			"water_v2": "PASS",
-			"vegetation_v2": "PASS",
-			"agent_visuals_v2": "PASS",
-			"map_system": "PASS",
-			"atmosphere_lighting": "PASS",
-			"cinematic_broadcast": "PASS"
-		},
-		"evidence_screenshots": [
-			"visual_v2_horizon_overview.png",
-			"visual_v2_quadview_broadcast.png",
-			"visual_v2_godfly_tracking.png",
-			"visual_v2_colony_nest.png",
-			"visual_v2_sunset_golden_hour.png",
-			"visual_v2_night_moonlight.png"
-		]
-	}
-
-	var manifest_path := evidence_dir.get_base_dir() + "/manifest.json"
-	var mf := FileAccess.open(manifest_path, FileAccess.WRITE)
-	if mf:
-		mf.store_string(JSON.stringify(manifest, "  "))
-		mf.close()
-		print("    -> Manifest written to: " + manifest_path)
-
-	print("[Visual V2 Suite] ALL VISUAL V2 AUTOMATED VERIFICATION CHECKS PASSED (100%)!")
-	quit(0)
+	func _finish() -> void:
+		var manifest := {
+			"version": "Visual V2.0",
+			"timestamp": Time.get_datetime_string_from_system(true),
+			"renderer": "Godot 4 Forward+ Vulkan",
+			"terrain_vertices": terrain.vertex_count,
+			"flora_instances": veg.placed_count,
+			"rock_instances": veg.rock_placed_count,
+			"water_surface_y": water.water_level,
+			"subsystems": {
+				"terrain_v2": "PASS",
+				"water_v2": "PASS",
+				"vegetation_v2": "PASS",
+				"agent_visuals_v2": "PASS",
+				"map_system": "PASS",
+				"atmosphere_lighting": "PASS",
+				"cinematic_broadcast": "PASS"
+			},
+			"evidence_screenshots": [
+				"visual_v2_horizon_overview.png",
+				"visual_v2_quadview_broadcast.png",
+				"visual_v2_godfly_tracking.png",
+				"visual_v2_colony_nest.png",
+				"visual_v2_sunset_golden_hour.png",
+				"visual_v2_night_moonlight.png"
+			]
+		}
+		var manifest_path := evidence_dir.get_base_dir() + "/manifest.json"
+		var mf := FileAccess.open(manifest_path, FileAccess.WRITE)
+		if mf:
+			mf.store_string(JSON.stringify(manifest, "  "))
+			mf.close()
+			print("    -> Manifest written to: " + manifest_path)
+		else:
+			suite.check(false, "Could not write manifest to " + manifest_path)
+		var vpath := evidence_dir.get_base_dir() + "/visual_validation.json"
+		var vf := FileAccess.open(vpath, FileAccess.WRITE)
+		if vf:
+			vf.store_string(JSON.stringify({"artifacts": results}, "  "))
+			vf.close()
+			print("    -> Visual validation written to: " + vpath)
+		else:
+			suite.check(false, "Could not write visual validation to " + vpath)
+		if suite.failed:
+			push_error("[VisualV2] VERIFICATION FAILED.")
+			suite.quit(1)
+		else:
+			print("[Visual V2 Suite] ALL VISUAL V2 AUTOMATED VERIFICATION CHECKS PASSED (100%)!")
+			suite.quit(0)

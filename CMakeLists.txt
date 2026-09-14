@@ -312,13 +312,17 @@ if(BUILD_TESTING)
             "C:/Users/hcsme/AppData/Local/Microsoft/WinGet/Packages/GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe"
     )
     if(GODOT_EXECUTABLE)
+        # NOTE: Godot presentation tests run WINDOWED (no --headless) with a real
+        # Vulkan GPU. Headless mode uses the dummy rasterizer and produces no
+        # pixels, so screenshot evidence and render validation require a display.
+        # Cloud CI without Godot/display reports these as NOT_AVAILABLE.
         add_test(
             NAME GodotFrontendSmokeTest
-            COMMAND ${GODOT_EXECUTABLE} --headless --path "${CMAKE_SOURCE_DIR}/godot" --script res://scripts/test_headless_frontend.gd
+            COMMAND ${GODOT_EXECUTABLE} --path "${CMAKE_SOURCE_DIR}/godot" --script res://scripts/test_headless_frontend.gd
         )
         add_test(
             NAME GodotVisualV2VerificationTest
-            COMMAND ${GODOT_EXECUTABLE} --headless --path "${CMAKE_SOURCE_DIR}/godot" --script res://scripts/test_visual_v2.gd
+            COMMAND ${GODOT_EXECUTABLE} --path "${CMAKE_SOURCE_DIR}/godot" --script res://scripts/test_visual_v2.gd
         )
     endif()
 endif()

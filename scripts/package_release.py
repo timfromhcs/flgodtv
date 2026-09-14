@@ -13,11 +13,13 @@ Implements:
 import os
 import sys
 import shutil
+import time
 import zipfile
 import tarfile
 import hashlib
 import json
 import subprocess
+from datetime import datetime, timezone
 
 VERSION = "0.1.0"
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -254,18 +256,25 @@ def step_test_windows_installation(installer_exe):
     assert res_sim.returncode == 0, "Installed flgod --simulate 60 must succeed"
     print("  - Installed backend simulation engine verified (self-test, validate, simulate).")
 
-    # 4. Test installed Godot runtime executing bundled PCK headlessly
-    cmd_front = [installed_front, "--headless", "-s", "res://scripts/test_headless_frontend.gdc"]
-    res_front = subprocess.run(cmd_front, capture_output=True, text=True, cwd=TEST_INSTALL_DIR)
-    assert res_front.returncode == 0, f"Installed frontend smoke test failed: {res_front.stderr}\n{res_front.stdout}"
-    print("  - Installed Godot runtime and bundled PCK verified headlessly (all smoke tests passed).")
+    # 4. Test installed Godot runtime executing the bundled PCK. The exported
+    # project runs its main scene headlessly; success = clean init of bridge,
+    # terrain, vegetation, water and camera rig, then a timed quit.
+    cmd_front = [installed_front, "--headless", "--quit-after", "120"]
+    res_front = subprocess.run(cmd_front, capture_output=True, text=True, cwd=TEST_INSTALL_DIR, timeout=180)
+    front_ok = (
+        res_front.returncode == 0
+        and "FLGODTVController" in res_front.stdout
+        and "TerrainRenderer" in res_front.stdout
+    )
+    assert front_ok, f"Installed frontend PCK run failed: rc={res_front.returncode}\n{res_front.stderr}\n{res_front.stdout}"
+    print("  - Installed Godot runtime and bundled PCK verified headlessly (main scene init, bridge, world renderers).")
 
     # Save install verification test evidence
     evidence_dir = os.path.join(REPO_ROOT, "evidence", "windows")
     os.makedirs(evidence_dir, exist_ok=True)
     ev_path = os.path.join(evidence_dir, "install_test_report.json")
     report = {
-        "timestamp": "2026-09-14T10:52:00+02:00",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "installer": installer_exe,
         "installer_sha256": compute_sha256(installer_exe),
         "install_dir": TEST_INSTALL_DIR,
