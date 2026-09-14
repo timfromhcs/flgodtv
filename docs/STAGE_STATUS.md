@@ -380,14 +380,14 @@ This document records the exact status and evidence for every development stage 
 - Local MSVC 19.44.35228 x64 + Ninja build: 52/52 CTest targets passed (100%).
 - Real hardware execution: AMD Ryzen 7 7735HS, AMD Radeon(TM) Graphics (RDNA2).
 - Headless CLI modes tested and verified: `--self-test`, `--validate`, `--benchmark`, `--simulate 600`, `--train 5`, `--evolve 3`, `--checkpoint`, `--restore`.
-- GitHub Actions Windows runner (`windows-latest` MSVC x64, Run ID `34780763802`): 45/45 headless CTest targets passed; Headless CLI verified; artifact `flgodtv-windows-x64` generated (173,415 bytes).
+- GitHub Actions Windows runner (`windows-latest` MSVC x64, Run ID `34823232841`): 48/48 headless CTest targets passed; Headless CLI verified; artifact `flgodtv-windows-x64` generated.
 
 ---
 
 ### STAGE 23 — LINUX
 **Status:** `VERIFIED`  
 **Evidence:**
-- GitHub Actions Linux runner (`ubuntu-latest` GCC 13/14, Run ID `34780763802`): 45/45 headless CTest targets passed; Headless CLI verified; artifact `flgodtv-linux-x64` generated (202,060 bytes).
+- GitHub Actions Linux runner (`ubuntu-latest` GCC 13/14, Run ID `34823232841`): 48/48 headless CTest targets passed; Headless CLI verified; artifact `flgodtv-linux-x64` generated.
 - Standard compliance: `<cstring>` included for POSIX/GCC compatibility.
 - CWG 1360 fix: `SpeciationThresholds` struct defined prior to default function parameter usage in `SpeciationSystem`.
 - Cross-platform determinism: Enforced sorted `EntityID` order across dynamic physics iterations, agent managers, and multi-agent ecosystem brains, guaranteeing bit-exact state hash matches between Windows MSVC and Linux GCC.
@@ -411,12 +411,12 @@ This document records the exact status and evidence for every development stage 
 **Evidence:**
 - Cross-platform GitHub Actions workflow implemented: [.github/workflows/ci.yml](file:///C:/Users/hcsme/Desktop/Fly/.github/workflows/ci.yml).
 - Matrix build: Windows x64 MSVC and Linux x64 GCC.
-- Run ID `34780763802` (commit `2d20a22`): **Both platforms succeeded (conclusion: success)**.
+- Run ID `34823232841` (commit `750503e`): **Both platforms succeeded (conclusion: success)**.
 - Automated pipeline phases:
   1. Source checkout & submodules recursive initialization.
   2. Toolchain setup (MSVC + Chocolatey Ninja/Vulkan SDK on Windows; apt dependencies on Linux).
   3. CMake Release configuration & Ninja parallel compilation.
-  4. GEMINI.md Section 103-compliant CTest execution.
+  4. GEMINI.md Section 103-compliant CTest execution (48/48 headless targets passed on both platforms).
   5. CLI self-test and headless simulation validation.
   6. Section 104 artifact archive packaging and upload (`flgodtv-windows-x64`, `flgodtv-linux-x64`).
 
