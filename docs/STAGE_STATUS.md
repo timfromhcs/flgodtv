@@ -2,6 +2,14 @@
 
 This document records the exact status and evidence for every development stage defined in `GEMINI.md` Section 153.
 
+> **Counting note (2026-09-14):** per-stage test counts below (48/48, 52/52,
+> 53/53, 55/55) are HISTORICAL values recorded at the time each stage landed.
+> The CURRENT configured test count is generated from `CMakeLists.txt` in
+> `evidence/testing/test_inventory.json`: **55 total** (53 unconditional C++
+> tests + 2 Godot tests registered when a Godot binary is present). Current
+> verification state is recorded in `docs/FINAL_VERIFICATION.md` and
+> `docs/CURRENT_STATE_AUDIT.md`.
+
 ---
 
 ### STAGE 00 — AUDIT
@@ -510,4 +518,37 @@ This document records the exact status and evidence for every development stage 
 - Security & Integrity:
   - 100% GEMINI.md Section 119 compliance: zero credentials or PAT tokens committed.
   - 100% Section 122 compliance: zero fake mocks, zero skipped tests, all claims backed by executable artifacts.
+
+---
+
+### CURRENT REVERIFICATION SNAPSHOT — 2026-09-14
+**Status:** `VERIFIED (local Windows)` / `CI PENDING (new commit)`
+**Commit:** `53384aa` (code+evidence) plus the docs synchronization commit carrying
+this snapshot, `FINAL_VERIFICATION.md`, `VISUAL_V2_FINAL_VERIFICATION.md`,
+`release_manifest.json`, and `evidence/ci/coverage_matrix.json`.
+**Commands:**
+- `cmake --preset windows-ninja-release` (MSVC 19.44, configured from scratch)
+- `cmake --build build/ninja-release` (zero errors; C4189/C4100 test-code warnings only)
+- `ctest --test-dir build/ninja-release` → **55/55 PASS (~13.1 s)**, including
+  3 real-GPU Vulkan tests and 2 windowed Godot tests
+- `flgod --self-test` / `--validate` / `--simulate 120` → PASS
+  (checkpoint hash `0xbb4b22bf4769a206`)
+- `scripts/render_cinematic_video.py` → 90/90 frames, SHA-256 identical to the
+  prior manifest (deterministic reproduction)
+- `scripts/package_release.py` → installer + portable ZIP + Linux tarball rebuilt
+  from the current commit, installed-binary checks PASS, SHA256SUMS rewritten
+- Tamper test → original package PASS, 1-byte-flipped copy correctly FAILS
+**Evidence:** `evidence/testing/test_inventory.json`,
+`evidence/windows/ctest_output.txt`, `evidence/visual_v2/visual_validation.json`
+with fresh screenshots, `evidence/video/render_manifest.json`,
+`evidence/windows/install_test_report.json`, `evidence/ci/coverage_matrix.json`,
+`release_manifest.json`.
+**Fixes landed:** Godot scripts hardened (`check()`/`failed`/`quit(1)`, no `assert()`);
+captures taken from real rendered frames (windowed runs — the headless dummy
+rasterizer yields no pixels); stale-file guards removed; synthetic fallback saved
+as PASS removed (the 5 KB flat-fill UI capture was replaced with a real render);
+`package_release.py` frontend check and report timestamp fixed.
+**Limitations:** Linux verified via CI only; cloud CI has no GPU/Godot/display
+(CPU/headless CI); no real LLM inference runtime bundled. Prior HEAD (`8fbce67`)
+CI run 34835383156 was green on both Windows and Linux.
 
