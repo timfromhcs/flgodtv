@@ -304,6 +304,11 @@ if(BUILD_TESTING)
     target_link_libraries(test_integration_protocol PRIVATE flgod_core)
     add_test(NAME IntegrationProtocolTest COMMAND test_integration_protocol)
 
+    # MPE foundation tests (V1 universal platform substrate)
+    add_executable(test_mpe_foundation tests/unit/test_mpe_foundation.cpp)
+    target_link_libraries(test_mpe_foundation PRIVATE flgod_core)
+    add_test(NAME MPEFoundationTest COMMAND test_mpe_foundation)
+
     # Godot Frontend Smoke Test
     find_program(GODOT_EXECUTABLE
         NAMES godot godot_console Godot_v4.7.2-stable_win64_console.exe
