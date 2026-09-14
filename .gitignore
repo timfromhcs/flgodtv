@@ -57,3 +57,7 @@ release/linux/*.AppImage
 !release/**/*.json
 !release/**/*.md
 
+
+# Python packaging artifacts
+*.egg-info/
+

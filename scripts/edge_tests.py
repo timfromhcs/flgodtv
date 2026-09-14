@@ -96,6 +96,28 @@ def main():
     h2 = out2.strip().splitlines()[-1] if out2.strip() else ""
     check("repeat runs bit-identical", h1 == h2 and "hash=" in h1, h1[-40:] if h1 else "empty")
 
+    # Live viewer export: bridge-compatible snapshot with numeric agent data.
+    with tempfile.TemporaryDirectory() as tmp2:
+        live = os.path.join(tmp2, "live.json")
+        rc, _ = run("--scenario", "scenarios/03_ant_colony.json", "--live-export", live)
+        ok = rc == 0 and os.path.isfile(live)
+        detail = ""
+        if ok:
+            try:
+                d = json.load(open(live))
+                agents = d.get("agents", [])
+                snap = d.get("telemetry_snapshot", {})
+                ok = (isinstance(agents, list) and len(agents) == 14 and
+                      all(isinstance(a.get("position", []), list) and len(a["position"]) == 3 and
+                          all(isinstance(v, (int, float)) for v in a["position"]) for a in agents) and
+                      snap.get("population", {}).get("scenario") == "ant_colony" and
+                      "clock" in d and "events" in d)
+                detail = f"{len(agents)} agents, snapshot ok" if ok else "schema mismatch"
+            except Exception as e:
+                ok = False
+                detail = f"parse error: {e}"
+        check("live-export bridge snapshot valid", ok, detail)
+
     rc, _ = run("--simulate", "60")
     check("headless simulate exits 0", rc == 0)
     rc, _ = run("--self-test")

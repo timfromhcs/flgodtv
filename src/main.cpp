@@ -599,12 +599,15 @@ int main(int argc, char* argv[]) {
         std::string scenario_path = args[1];
         std::string archetype_dir = "scenarios/archetypes";
         std::string telemetry_path;
+        std::string live_path;
         uint64_t ticks = 0; // 0 = scenario default
         for (size_t i = 2; i < args.size(); ++i) {
             if (args[i] == "--archetypes" && i + 1 < args.size()) {
                 archetype_dir = args[++i];
             } else if (args[i] == "--telemetry-out" && i + 1 < args.size()) {
                 telemetry_path = args[++i];
+            } else if (args[i] == "--live-export" && i + 1 < args.size()) {
+                live_path = args[++i];
             } else {
                 try { ticks = std::stoull(args[i]); } catch (...) {}
             }
@@ -631,7 +634,42 @@ int main(int argc, char* argv[]) {
                     return 1;
                 }
                 tf << out.dump(2);
-                std::cout << "[MPE] Telemetry written to " << telemetry_path << "\n";
+                std::cout << "[MPE] Telemetry written to " + telemetry_path + "\n";
+            }
+            if (!live_path.empty()) {
+                // Godot presentation bridge snapshot (viewer mirrors, never owns).
+                std::string latest = "N/A";
+                if (!eng.events().empty()) latest = eng.events().back().type;
+                nlohmann::json live = {
+                    {"clock", {{"tick", eng.tick()}, {"elapsed_seconds", eng.tick() / 60.0}}},
+                    {"agents", eng.agents_json()},
+                    {"events", eng.recent_events_json()},
+                    {"telemetry_snapshot",
+                     {{"live",
+                       {{"tick", eng.tick()},
+                        {"elapsed_seconds", eng.tick() / 60.0},
+                        {"ticks_per_second", 0.0},
+                        {"backend_status", "Connected"}}},
+                      {"time", {{"generation", 0}, {"day", 1}}},
+                      {"population",
+                       {{"colony_count", 2},
+                        {"total_agents", t.spawned_total},
+                        {"alive_agents", t.alive},
+                        {"scenario", eng.scenario().name}}},
+                      {"camera",
+                       {{"active_camera", "N/A"},
+                        {"active_shot", "N/A"},
+                        {"focus_target", "N/A"}}},
+                      {"event", {{"latest_event", latest}, {"priority", 50.0}}},
+                      {"weather", {{"available", false}}},
+                      {"research", nlohmann::json::object()}}}};
+                std::ofstream lf(live_path);
+                if (!lf.is_open()) {
+                    std::cerr << "[MPE] Error: cannot write live export to " << live_path << "\n";
+                    return 1;
+                }
+                lf << live.dump(2);
+                std::cout << "[MPE] Live viewer snapshot written to " + live_path + "\n";
             }
         } catch (const std::exception& e) {
             std::cerr << "[MPE] Scenario FAILED: " << e.what() << "\n";

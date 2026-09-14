@@ -200,6 +200,42 @@ public:
     [[nodiscard]] size_t alive() const { return m_entities.size(); }
     [[nodiscard]] const std::vector<EngineEvent>& events() const noexcept { return m_events; }
 
+    // Presentation mirror (Godot bridge protocol): plain agent + event views.
+    [[nodiscard]] nlohmann::json agents_json() const {
+        nlohmann::json arr = nlohmann::json::array();
+        for (const Entity* e : m_entities.ordered()) {
+            const auto* t = e->get<TransformComponent>("Transform");
+            const auto* n = e->get<NeedsComponent>("Needs");
+            double x = 0.0, y = 1.0, z = 0.0, energy = 100.0;
+            if (t) {
+                x = t->x;
+                y = t->y + 1.0;
+                z = t->z;
+            }
+            if (n) energy = n->energy;
+            uint64_t colony = (fnv1a64(e->archetype) % 2) + 1;
+            arr.push_back({{"id", e->id.raw()},
+                           {"colony_id", colony},
+                           {"archetype", e->archetype},
+                           {"position", {x, y, z}},
+                           {"velocity", {0.0, 0.0, 0.0}},
+                           {"energy", energy}});
+        }
+        return arr;
+    }
+
+    [[nodiscard]] nlohmann::json recent_events_json(size_t limit = 20) const {
+        nlohmann::json arr = nlohmann::json::array();
+        size_t start = m_events.size() > limit ? m_events.size() - limit : 0;
+        for (size_t i = start; i < m_events.size(); ++i) {
+            arr.push_back({{"id", i},
+                           {"type_name", m_events[i].type},
+                           {"priority", 50.0},
+                           {"description", m_events[i].type}});
+        }
+        return arr;
+    }
+
     [[nodiscard]] EngineTelemetry telemetry() const {
         EngineTelemetry t;
         t.tick = m_tick;
