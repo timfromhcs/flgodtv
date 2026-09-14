@@ -1,0 +1,115 @@
+Test project C:/Users/hcsme/Desktop/Fly/build/ninja-release
+      Start  1: CoreClockTest
+ 1/55 Test  #1: CoreClockTest ....................   Passed    0.01 sec
+      Start  2: CoreRNGTest
+ 2/55 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
+      Start  3: CoreEntityTest
+ 3/55 Test  #3: CoreEntityTest ...................   Passed    0.01 sec
+      Start  4: CoreEventBusTest
+ 4/55 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
+      Start  5: DeterministicSimulationTest
+ 5/55 Test  #5: DeterministicSimulationTest ......   Passed    0.07 sec
+      Start  6: WorldNoiseTest
+ 6/55 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
+      Start  7: WorldChunkTest
+ 7/55 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
+      Start  8: WorldFieldsTest
+ 8/55 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
+      Start  9: WorldProceduralTest
+ 9/55 Test  #9: WorldProceduralTest ..............   Passed    0.01 sec
+      Start 10: DeterministicWorldTest
+10/55 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
+      Start 11: PhysicsFallTest
+11/55 Test #11: PhysicsFallTest ..................   Passed    0.01 sec
+      Start 12: PhysicsCollisionTest
+12/55 Test #12: PhysicsCollisionTest .............   Passed    0.01 sec
+      Start 13: PhysicsConstraintTest
+13/55 Test #13: PhysicsConstraintTest ............   Passed    0.01 sec
+      Start 14: PhysicsFidelityTest
+14/55 Test #14: PhysicsFidelityTest ..............   Passed    0.01 sec
+      Start 15: DeterministicPhysicsTest
+15/55 Test #15: DeterministicPhysicsTest .........   Passed    0.01 sec
+      Start 16: HeadlessModesTest
+16/55 Test #16: HeadlessModesTest ................   Passed    0.12 sec
+      Start 17: VulkanInitTest
+17/55 Test #17: VulkanInitTest ...................   Passed    0.11 sec
+      Start 18: VulkanBufferTest
+18/55 Test #18: VulkanBufferTest .................   Passed    0.78 sec
+      Start 19: VulkanComputeTest
+19/55 Test #19: VulkanComputeTest ................   Passed    0.12 sec
+      Start 20: LearningExperienceTest
+20/55 Test #20: LearningExperienceTest ...........   Passed    0.01 sec
+      Start 21: LearningMemoryTest
+21/55 Test #21: LearningMemoryTest ...............   Passed    0.01 sec
+      Start 22: LearningLoopTest
+22/55 Test #22: LearningLoopTest .................   Passed    0.01 sec
+      Start 23: LearningParallelTest
+23/55 Test #23: LearningParallelTest .............   Passed    0.01 sec
+      Start 24: EvolutionGenomeTest
+24/55 Test #24: EvolutionGenomeTest ..............   Passed    0.01 sec
+      Start 25: EvolutionSpeciationTest
+25/55 Test #25: EvolutionSpeciationTest ..........   Passed    0.01 sec
+      Start 26: EvolutionCoevolutionTest
+26/55 Test #26: EvolutionCoevolutionTest .........   Passed    0.01 sec
+      Start 27: EvolutionPopulationTest
+27/55 Test #27: EvolutionPopulationTest ..........   Passed    0.01 sec
+      Start 28: AgentLifecycleTest
+28/55 Test #28: AgentLifecycleTest ...............   Passed    0.01 sec
+      Start 29: AgentColonyTest
+29/55 Test #29: AgentColonyTest ..................   Passed    0.01 sec
+      Start 30: MultiAgentSimulationTest
+30/55 Test #30: MultiAgentSimulationTest .........   Passed    0.01 sec
+      Start 31: LLMGGUFParserTest
+31/55 Test #31: LLMGGUFParserTest ................   Passed    0.01 sec
+      Start 32: LLMModelManagerTest
+32/55 Test #32: LLMModelManagerTest ..............   Passed    0.01 sec
+      Start 33: LLMActionSecurityTest
+33/55 Test #33: LLMActionSecurityTest ............   Passed    0.01 sec
+      Start 34: LLMGodFlyTest
+34/55 Test #34: LLMGodFlyTest ....................   Passed    0.01 sec
+      Start 35: LLMNPCSystemTest
+35/55 Test #35: LLMNPCSystemTest .................   Passed    0.01 sec
+      Start 36: LLMIntegrationTest
+36/55 Test #36: LLMIntegrationTest ...............   Passed    0.01 sec
+      Start 37: LanguageSymbolTest
+37/55 Test #37: LanguageSymbolTest ...............   Passed    0.01 sec
+      Start 38: LanguageVocabularyTest
+38/55 Test #38: LanguageVocabularyTest ...........   Passed    0.01 sec
+      Start 39: LanguageSocialLearningTest
+39/55 Test #39: LanguageSocialLearningTest .......   Passed    0.01 sec
+      Start 40: LanguageTransmissionTest
+40/55 Test #40: LanguageTransmissionTest .........   Passed    0.01 sec
+      Start 41: TechnologyToolsTest
+41/55 Test #41: TechnologyToolsTest ..............   Passed    0.01 sec
+      Start 42: TechnologyVMTest
+42/55 Test #42: TechnologyVMTest .................   Passed    0.01 sec
+      Start 43: TechnologyNetworkTest
+43/55 Test #43: TechnologyNetworkTest ............   Passed    0.01 sec
+      Start 44: TechnologyIntegrationTest
+44/55 Test #44: TechnologyIntegrationTest ........   Passed    0.01 sec
+      Start 45: BrainInterfaceTest
+45/55 Test #45: BrainInterfaceTest ...............   Passed    0.01 sec
+      Start 46: BrainMaleCNSLoaderTest
+46/55 Test #46: BrainMaleCNSLoaderTest ...........   Passed    0.02 sec
+      Start 47: BrainAgentIntegrationTest
+47/55 Test #47: BrainAgentIntegrationTest ........   Passed    0.02 sec
+      Start 48: MultiAgentEcosystemTest
+48/55 Test #48: MultiAgentEcosystemTest ..........   Passed    0.05 sec
+      Start 49: CameraDirectorTest
+49/55 Test #49: CameraDirectorTest ...............   Passed    0.01 sec
+      Start 50: DeterministicCameraTest
+50/55 Test #50: DeterministicCameraTest ..........   Passed    0.01 sec
+      Start 51: TelemetryHUDTest
+51/55 Test #51: TelemetryHUDTest .................   Passed    0.01 sec
+      Start 52: VideoPipelineTest
+52/55 Test #52: VideoPipelineTest ................   Passed    0.01 sec
+      Start 53: IntegrationProtocolTest
+53/55 Test #53: IntegrationProtocolTest ..........   Passed    0.01 sec
+      Start 54: GodotFrontendSmokeTest
+54/55 Test #54: GodotFrontendSmokeTest ...........   Passed    2.46 sec
+      Start 55: GodotVisualV2VerificationTest
+55/55 Test #55: GodotVisualV2VerificationTest ....   Passed    8.45 sec
+
+100% tests passed out of 55
+
+Total Test time (real) =  12.65 sec

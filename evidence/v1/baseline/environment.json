@@ -1,0 +1,10 @@
+{
+  "os": "Microsoft Windows [Version 10.0.26200.9445]",
+  "compiler": "MSVC 19.44.35228 (VS 2022 17.14.34) x64",
+  "cmake": "cmake version 4.4.0",
+  "ninja": "ninja 1.13.2",
+  "godot": "Godot 4.7.2.stable.official.ed1daf0bf Forward+ Vulkan",
+  "blender": "Blender 5.1.2",
+  "ffmpeg": "ffmpeg version 9.0-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "python": "Python 3.14.6"
+}
