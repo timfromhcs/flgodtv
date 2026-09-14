@@ -114,6 +114,11 @@ public:
                     n->from_json(a.components["needs"]);
                 }
                 e.attach(std::move(n));
+                if (a.components.contains("genome")) {
+                    auto g = std::make_unique<GenomeComponent>();
+                    g->from_json(a.components["genome"]);
+                    e.attach(std::move(g));
+                }
                 std::unique_ptr<IBrain> brain = make_brain(a);
                 brain->initialize(a.brain_config);
                 m_brains[id.raw()] = std::move(brain);
@@ -151,10 +156,21 @@ public:
                 if (!action_allowed(e->archetype, in.action)) continue; // validated out
                 apply(e, in);
             }
-            // Biology: metabolic drain.
+            // Biology: metabolic drain (vigor-selected when a genome exists).
             auto* n = e->get<NeedsComponent>("Needs");
             if (n) {
-                n->energy -= 0.05;
+                double drain = 0.05;
+                const auto* g = e->get<GenomeComponent>("Genome");
+                if (g) {
+                    auto it = g->traits.find("vigor");
+                    if (it != g->traits.end()) {
+                        double vigor = it->second;
+                        if (vigor < 0.0) vigor = 0.0;
+                        if (vigor > 1.0) vigor = 1.0;
+                        drain = 0.05 * (1.5 - vigor);
+                    }
+                }
+                n->energy -= drain;
                 n->fatigue += 0.01;
                 if (n->fatigue > 100.0) n->fatigue = 100.0;
                 if (n->energy <= 0.0) {
@@ -267,6 +283,10 @@ public:
                     auto c = std::make_unique<NeedsComponent>();
                     c->from_json(cj);
                     e.attach(std::move(c));
+                } else if (ctype == "Genome") {
+                    auto c = std::make_unique<GenomeComponent>();
+                    c->from_json(cj);
+                    e.attach(std::move(c));
                 } else {
                     auto c = std::make_unique<BagComponent>();
                     c->from_json(cj);
@@ -342,10 +362,12 @@ private:
             r.archetype = e->archetype;
             const auto* n = e->get<NeedsComponent>("Needs");
             const auto* t = e->get<TransformComponent>("Transform");
+            const auto* g = e->get<GenomeComponent>("Genome");
             if (n) {
                 r.energy = n->energy;
                 r.fatigue = n->fatigue;
             }
+            if (g) r.traits = g->traits;
             if (t) {
                 r.x = t->x;
                 r.y = t->y;
@@ -369,6 +391,7 @@ private:
                 if (n->energy <= 0.0) {
                     n->energy = 0.0;
                     kill_entity(e->id.raw(), "EntityDied");
+                    continue; // e/n/t dangling after despawn: touch nothing else
                 }
             }
             if (t) {
@@ -376,15 +399,33 @@ private:
                 t->y = r.y;
                 t->z = r.z;
             }
+            auto* g = e->get<GenomeComponent>("Genome");
+            if (g) {
+                for (const auto& [k, v] : r.traits) {
+                    auto it = g->traits.find(k);
+                    if (it != g->traits.end()) it->second = v; // never invent keys
+                }
+            }
         }
         for (const auto& [type, raw] : ctx.events) {
             if (type.rfind("Birth:", 0) == 0) {
-                spawn_offspring(type.substr(6));
+                const Entity* parent = find_entity_const(raw);
+                const GenomeComponent* pg = nullptr;
+                if (parent) pg = parent->get<GenomeComponent>("Genome");
+                auto it = m_archetypes.find(type.substr(6));
+                if (it != m_archetypes.end()) spawn_offspring_from(it->second, pg);
             } else {
                 m_events.push_back(EngineEvent{m_tick, type, raw});
                 if (type == "FoodConsumed") m_eats++;
             }
         }
+    }
+
+    const Entity* find_entity_const(uint64_t raw) const {
+        for (const Entity* e : m_entities.ordered()) {
+            if (e->id.raw() == raw) return e;
+        }
+        return nullptr;
     }
 
     Entity* find_entity(uint64_t raw) {
@@ -406,10 +447,7 @@ private:
         m_died++;
     }
 
-    void spawn_offspring(const std::string& archetype) {
-        auto it = m_archetypes.find(archetype);
-        if (it == m_archetypes.end()) return; // unknown: ignore, never crash
-        const Archetype& a = it->second;
+    void spawn_offspring_from(const Archetype& a, const GenomeComponent* parent_genome) {
         EntityID id(EntityType::Agent, 0, m_next_index++);
         Entity& e = m_entities.spawn(id, a.name);
         auto t = std::make_unique<TransformComponent>();
@@ -418,6 +456,17 @@ private:
         if (a.components.contains("needs")) n->from_json(a.components["needs"]);
         n->energy *= 0.5; // newborns start weaker
         e.attach(std::move(n));
+        if (a.components.contains("genome")) {
+            auto g = std::make_unique<GenomeComponent>();
+            g->from_json(a.components["genome"]);
+            if (parent_genome) {
+                for (const auto& [k, v] : parent_genome->traits) {
+                    auto git = g->traits.find(k); // heritable: copy parent alleles
+                    if (git != g->traits.end()) git->second = v;
+                }
+            }
+            e.attach(std::move(g));
+        }
         std::unique_ptr<IBrain> brain = make_brain(a);
         brain->initialize(a.brain_config);
         m_brains[id.raw()] = std::move(brain);

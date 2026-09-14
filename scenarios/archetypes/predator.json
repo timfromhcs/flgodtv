@@ -1,1 +1,1 @@
-{"name":"predator","components":{"needs":{"energy":120.0,"hydration":80.0,"health":120.0,"fatigue":0.0}},"brain":{"provider":"scripted","config":{"action":"Move"}},"actions":["Move","Eat","Rest"],"sensors":["VisionSensor","SmellSensor"],"spawn_radius":20.0}
+{"name":"predator","components":{"needs":{"energy":120.0,"hydration":80.0,"health":120.0,"fatigue":0.0},"genome":{"traits":{"vigor":0.6}}},"brain":{"provider":"scripted","config":{"action":"Move"}},"actions":["Move","Eat","Rest"],"sensors":["VisionSensor","SmellSensor"],"spawn_radius":20.0}

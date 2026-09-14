@@ -98,6 +98,23 @@ int main() {
         CHECK(r2->evaluate(ctx, nlohmann::json::object()) == 0, "cooldown survives serialize");
     }
 
+    // Mutation perturbs existing traits deterministically, skips missing ones.
+    {
+        RuleContext ctx = make_ctx();
+        ctx.entities[0].traits["vigor"] = 0.5;
+        auto r = reg.create("mutation");
+        nlohmann::json cfg = {{"trait", "vigor"}, {"probability", 1.0}, {"scale", 0.1}};
+        CHECK(r->evaluate(ctx, cfg) == 1, "mutation fires at p=1");
+        double v = ctx.entities[0].traits["vigor"];
+        CHECK(v >= 0.4 && v <= 0.6 && v != 0.5, "vigor perturbed within scale");
+        RuleContext ctx2 = make_ctx();
+        ctx2.entities[0].traits["vigor"] = 0.5;
+        CHECK(reg.create("mutation")->evaluate(ctx2, cfg) == 1, "mutation fires again");
+        CHECK(ctx2.entities[0].traits["vigor"] == v, "mutation deterministic");
+        RuleContext ctx3 = make_ctx(); // no vigor trait anywhere
+        CHECK(reg.create("mutation")->evaluate(ctx3, cfg) == 0, "missing trait skipped");
+    }
+
     std::cout << "[PASS] test_mpe_rules passed successfully." << std::endl;
     return 0;
 }

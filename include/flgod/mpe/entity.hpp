@@ -86,6 +86,20 @@ struct NeedsComponent : public Component {
     }
 };
 
+struct GenomeComponent : public Component {
+    std::map<std::string, double> traits; // e.g. vigor in [0,1]
+    [[nodiscard]] std::string type_name() const override { return "Genome"; }
+    [[nodiscard]] nlohmann::json to_json() const override {
+        return {{"traits", traits}};
+    }
+    void from_json(const nlohmann::json& j) override {
+        traits.clear();
+        if (j.contains("traits")) {
+            for (auto& [k, v] : j["traits"].items()) traits[k] = v.get<double>();
+        }
+    }
+};
+
 class ComponentRegistry {
 public:
     using Factory = std::function<std::unique_ptr<Component>()>;
@@ -164,6 +178,12 @@ public:
         std::vector<Entity*> out;
         out.reserve(m_entities.size());
         for (auto& [k, v] : m_entities) out.push_back(v.get());
+        return out;
+    }
+    [[nodiscard]] std::vector<const Entity*> ordered() const {
+        std::vector<const Entity*> out;
+        out.reserve(m_entities.size());
+        for (const auto& [k, v] : m_entities) out.push_back(v.get());
         return out;
     }
     [[nodiscard]] uint64_t compute_hash() const {

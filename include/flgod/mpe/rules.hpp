@@ -22,6 +22,7 @@ struct RuleEntity {
     double energy{100.0};
     double fatigue{0.0};
     double x{0.0}, y{0.0}, z{0.0};
+    std::map<std::string, double> traits; // genome traits (e.g. vigor)
 };
 
 struct RuleContext {
@@ -201,6 +202,47 @@ public:
     }
 };
 
+// Deterministic SplitMix64 for rule-local randomness (seeded by tick+entity).
+inline uint64_t mpe_splitmix64(uint64_t& s) {
+    s += 0x9e3779b97f4a7c15ULL;
+    uint64_t z = s;
+    z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9ULL;
+    z = (z ^ (z >> 27)) * 0x94d049bb133111ebULL;
+    return z ^ (z >> 31);
+}
+
+// Mutation: perturbs genome traits with per-entity probability. Deterministic:
+// stream seeded from (tick, entity id), entities visited in sorted order.
+class MutationRule : public IRule {
+public:
+    [[nodiscard]] std::string name() const override { return "mutation"; }
+    uint64_t evaluate(RuleContext& ctx, const nlohmann::json& config) override {
+        double prob = ctx.param(config, "probability", 0.05);
+        double scale = ctx.param(config, "scale", 0.05);
+        std::string trait = "vigor";
+        if (config.contains("trait") && config["trait"].is_string()) {
+            trait = config["trait"].get<std::string>();
+        }
+        uint64_t n = 0;
+        for (auto& e : ctx.entities) {
+            auto it = e.traits.find(trait);
+            if (it == e.traits.end()) continue; // no such trait: skip, never invent
+            uint64_t s = ctx.tick * 0x9e3779b97f4a7c15ULL + e.raw * 0xbf58476d1ce4e5b9ULL + 1;
+            double u = static_cast<double>(mpe_splitmix64(s) >> 11) / 9007199254740992.0;
+            if (u < prob) {
+                double v = static_cast<double>(mpe_splitmix64(s) >> 11) / 9007199254740992.0;
+                double delta = (v * 2.0 - 1.0) * scale;
+                it->second += delta;
+                if (it->second < 0.0) it->second = 0.0;
+                if (it->second > 1.0) it->second = 1.0;
+                ctx.events.emplace_back("Mutation", e.raw);
+                ++n;
+            }
+        }
+        return n;
+    }
+};
+
 class RuleRegistry {
 public:
     using Factory = std::function<std::unique_ptr<IRule>()>;
@@ -211,6 +253,7 @@ public:
         register_rule("territory", []() { return std::make_unique<TerritoryRule>(); });
         register_rule("survival", []() { return std::make_unique<SurvivalRule>(); });
         register_rule("reproduction", []() { return std::make_unique<ReproductionRule>(); });
+        register_rule("mutation", []() { return std::make_unique<MutationRule>(); });
     }
     void register_rule(const std::string& name, Factory f) {
         if (m_factories.count(name)) {
