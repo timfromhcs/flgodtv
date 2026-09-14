@@ -27,13 +27,33 @@ func ensure_initialized() -> void:
 	if not fly_multimesh:
 		fly_multimesh = get_node_or_null("FlyMultiMesh")
 		god_fly_mesh = get_node_or_null("GodFlyMesh")
+	if fly_multimesh and fly_multimesh.multimesh == null:
+		setup_fly_multimesh()
 
 func _ready() -> void:
 	print("[FLGODTVController] Initializing 4-Camera System and MultiMesh Fly Renderer...")
 	ensure_initialized()
 	if bridge:
 		bridge.state_updated.connect(_on_state_updated)
-	setup_fly_multimesh()
+
+func load_mesh_from_scene(path: String, fallback_mesh: Mesh) -> Mesh:
+	if ResourceLoader.exists(path):
+		var res = load(path)
+		if res is PackedScene:
+			var inst = res.instantiate()
+			if inst is MeshInstance3D and inst.mesh != null:
+				var m = inst.mesh
+				inst.free()
+				return m
+			for child in inst.get_children():
+				if child is MeshInstance3D and child.mesh != null:
+					var m = child.mesh
+					inst.free()
+					return m
+			inst.free()
+		elif res is Mesh:
+			return res
+	return fallback_mesh
 
 func setup_fly_multimesh() -> void:
 	if not fly_multimesh:
@@ -43,12 +63,15 @@ func setup_fly_multimesh() -> void:
 	mm.use_colors = true
 	mm.instance_count = 100
 	
-	# Create simple proxy prism/capsule mesh for flies
+	# Load Blender-generated biological fly mesh, or fallback to primitive sphere
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.2
 	sphere.height = 0.5
-	mm.mesh = sphere
+	var mesh_to_use = load_mesh_from_scene("res://assets/models/fly_agent.glb", sphere)
+	mm.mesh = mesh_to_use
 	fly_multimesh.multimesh = mm
+	if god_fly_mesh:
+		god_fly_mesh.mesh = mesh_to_use
 
 func _process(delta: float) -> void:
 	update_cameras(delta)

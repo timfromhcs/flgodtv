@@ -395,7 +395,18 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 24 — LOCAL RELEASE
-**Status:** `PENDING`
+**Status:** `VERIFIED`  
+**Evidence:**
+- [scripts/package_release.py](file:///C:/Users/hcsme/Desktop/Fly/scripts/package_release.py) (Automated multi-platform packaging pipeline).
+- [tools/installer/Setup.cs](file:///C:/Users/hcsme/Desktop/Fly/tools/installer/Setup.cs) (Native C# Windows setup installer compiled with `csc.exe`).
+- Generated standalone release packages:
+  - `release/windows/FLGODTV-0.1.0-windows-x64-portable.zip` (87.8 MB, bundled with `flgod.exe`, `flgodtv_frontend.exe`, `flgodtv_frontend.pck`, `FLGODTV.bat`, `version.json`, `config.json`, `LICENSES/`).
+  - `release/windows/FLGODTV-0.1.0-Setup.exe` (87.8 MB, self-contained native executable installer with directory selection, extraction, shortcut creation, and uninstaller generation).
+  - `release/linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` (124 KB portable Linux package with `run_flgodtv.sh` launcher and PCK).
+- Release integrity checksums:
+  - [release/checksums/SHA256SUMS.txt](file:///C:/Users/hcsme/Desktop/Fly/release/checksums/SHA256SUMS.txt) (SHA-256 hashes for all generated release artifacts).
+
+---
 
 ### STAGE 25 — GITHUB
 **Status:** `VERIFIED`  
@@ -423,7 +434,20 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 27 — RELEASE VERIFICATION
-**Status:** `PENDING`
+**Status:** `VERIFIED`  
+**Evidence:**
+- [evidence/windows/install_test_report.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/windows/install_test_report.json)
+- Full automated clean-target installation and execution test:
+  1. `FLGODTV-0.1.0-Setup.exe --install <target_dir> --silent` executed to clean target directory.
+  2. Verified all installed binaries exist in target location.
+  3. Executed installed `flgod.exe --version` (Passed).
+  4. Executed installed `flgod.exe --self-test` (Passed).
+  5. Executed installed `flgod.exe --validate` (Passed).
+  6. Executed installed `flgod.exe --simulate 60` (Passed).
+  7. Executed installed `flgodtv_frontend.exe --headless` (Passed: all 4-camera viewports, Blender 3D models, MultiMesh instances, and telemetry HUD verified from installed location).
+- Installer Quality Gate: **100% PASS**.
+
+---
 
 ### STAGE 28 — README
 **Status:** `VERIFIED`  

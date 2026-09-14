@@ -102,23 +102,32 @@ The system enforces strict architectural boundaries: the simulation core never d
 
 ---
 
-## Installation
+## Installation & Usage
+
+### 1. End-User Standalone Installation (No Dev Tools Required)
+
+End users do not need Visual Studio, CMake, Ninja, Python, Blender, or the Godot editor.
+
+#### Windows
+- **Installer:** Download and run `release/windows/FLGODTV-0.1.0-Setup.exe` (supports interactive install, desktop shortcut creation, uninstaller, or unattended setup via `--silent --install <path>`).
+- **Portable ZIP:** Extract `release/windows/FLGODTV-0.1.0-windows-x64-portable.zip` and double-click `FLGODTV.bat` to launch the presentation, run headless simulation, or execute system self-tests.
+
+#### Linux
+- **Portable Archive:** Extract `release/linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` and execute `./run_flgodtv.sh`.
+
+---
+
+### 2. Developer Source Installation & Build
 
 ```bash
 # Clone the repository with submodules
 git clone --recursive https://github.com/timfromhcs/flgodtv.git
 cd flgodtv
 
-# Verify external connectome dataset
+# Verify external connectome dataset baseline
 git -C malecns rev-parse HEAD
 # Expected baseline commit: daf8e2a9849cc77695b14bb6b9d4c02456cd3b3c
 ```
-
----
-
-## Build
-
-### Using CMake & Ninja (Recommended)
 
 #### Windows (MSVC x64 Native Tools Command Prompt)
 ```cmd
@@ -130,6 +139,18 @@ cmake --build build --config Release
 ```bash
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DFLGOD_ENABLE_VULKAN=ON
 cmake --build build --config Release
+```
+
+#### Blender Procedural 3D Asset Pipeline
+```bash
+# Generate deterministic 3D morphological fly models, flora, and environment assets
+"C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" -b --python scripts/blender_asset_generator.py -- --out-dir godot/assets/models --seed 42
+```
+
+#### Standalone Release Packaging
+```bash
+# Export Godot presentation pack, compile native installer, and run full install verification test
+python scripts/package_release.py
 ```
 
 ---

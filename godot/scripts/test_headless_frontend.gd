@@ -39,7 +39,12 @@ func _init() -> void:
 	# Verify MultiMesh fly renderer
 	var multimesh_inst = main_node.get_node_or_null("FlyMultiMesh")
 	assert(multimesh_inst != null, "FlyMultiMesh must exist")
-	print("  - FlyMultiMesh verified.")
+	assert(multimesh_inst.multimesh != null and multimesh_inst.multimesh.mesh != null, "FlyMultiMesh mesh must be populated")
+	# Verify Blender-generated 3D procedural assets (GEMINI.md Sections 77-78, Phase 6-8)
+	assert(ResourceLoader.exists("res://assets/models/fly_agent.glb") or FileAccess.file_exists("res://assets/models/fly_agent.glb"), "Blender fly_agent.glb must exist")
+	assert(ResourceLoader.exists("res://assets/models/flora_shrub.glb") or FileAccess.file_exists("res://assets/models/flora_shrub.glb"), "Blender flora_shrub.glb must exist")
+	assert(ResourceLoader.exists("res://assets/models/environment_rock.glb") or FileAccess.file_exists("res://assets/models/environment_rock.glb"), "Blender environment_rock.glb must exist")
+	print("  - FlyMultiMesh and Blender 3D assets verified (fly_agent.glb, flora_shrub.glb, environment_rock.glb).")
 
 	# Verify Backend Bridge
 	var bridge = main_node.get_node_or_null("BackendBridge")
@@ -181,7 +186,11 @@ func _init() -> void:
 
 	# Capture UI/UX verification screenshot
 	var base_proj_path: String = ProjectSettings.globalize_path("res://")
-	var dir_root: String = base_proj_path.get_base_dir().get_base_dir() + "/renders/screenshots"
+	var dir_root: String = ""
+	if base_proj_path.begins_with("res://") or base_proj_path.is_empty():
+		dir_root = "renders/screenshots"
+	else:
+		dir_root = base_proj_path.get_base_dir().get_base_dir() + "/renders/screenshots"
 	DirAccess.make_dir_recursive_absolute(dir_root)
 
 	var shot_img := Image.create(1280, 720, false, Image.FORMAT_RGBA8)

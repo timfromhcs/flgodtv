@@ -5,6 +5,7 @@ out/
 bin/
 .cache/
 third_party/JoltPhysics/
+/blender/
 
 # Visual Studio / MSVC
 .vs/
@@ -46,7 +47,12 @@ videos/*.mp4
 videos/*.avi
 videos/*.mkv
 renders/*.png
-renders/*.jpg
-!evidence/**/*.txt
-!evidence/**/*.json
-!evidence/**/*.md
+# Release binaries (keep manifests and checksums)
+release/windows/*.exe
+release/windows/*.zip
+release/linux/*.tar.gz
+release/linux/*.AppImage
+!release/checksums/SHA256SUMS.txt
+!release/**/*.json
+!release/**/*.md
+

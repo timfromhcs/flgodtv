@@ -48,6 +48,25 @@ func deterministic_positions(count: int, radius: float, seed_value: int) -> Arra
 		out.append({"pos": Vector3(x, y + 0.6, z), "scale": scale_factor, "index": i})
 	return out
 
+func load_mesh_from_scene(path: String, fallback_mesh: Mesh) -> Mesh:
+	if ResourceLoader.exists(path):
+		var res = load(path)
+		if res is PackedScene:
+			var inst = res.instantiate()
+			if inst is MeshInstance3D and inst.mesh != null:
+				var m = inst.mesh
+				inst.free()
+				return m
+			for child in inst.get_children():
+				if child is MeshInstance3D and child.mesh != null:
+					var m = child.mesh
+					inst.free()
+					return m
+			inst.free()
+		elif res is Mesh:
+			return res
+	return fallback_mesh
+
 func apply_positions(items: Array) -> void:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
@@ -63,7 +82,9 @@ func apply_positions(items: Array) -> void:
 	mat.vertex_color_use_as_albedo = true
 	mat.roughness = 0.7
 	cylinder.material = mat
-	mm.mesh = cylinder
+
+	var flora_mesh = load_mesh_from_scene("res://assets/models/flora_shrub.glb", cylinder)
+	mm.mesh = flora_mesh
 
 	placed_count = 0
 	for slot in range(mm.instance_count):

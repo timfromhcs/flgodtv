@@ -1,0 +1,22 @@
+{
+  "generator": "scripts/blender_asset_generator.py",
+  "blender_version": "5.1.2",
+  "seed": 42,
+  "assets": {
+    "fly_agent": {
+      "file": "godot/assets/models\\fly_agent.glb",
+      "size_bytes": 119964,
+      "sha256": "95b9f92a0427c827a2ff53a4ddff966f111a4fb4e257cad731186abf8319232a"
+    },
+    "flora_shrub": {
+      "file": "godot/assets/models\\flora_shrub.glb",
+      "size_bytes": 43808,
+      "sha256": "d218c84391e3b7d17ebab295aa15d6f81c5ffbb75e1dc533a9229892ba71d7cd"
+    },
+    "environment_rock": {
+      "file": "godot/assets/models\\environment_rock.glb",
+      "size_bytes": 34008,
+      "sha256": "5898b5c9850a23dacf98983894d88d859b9181c117bd8b55195dc0b12edbd2f8"
+    }
+  }
+}

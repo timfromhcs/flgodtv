@@ -1,0 +1,21 @@
+commit 349fc27092df84267860aacbb70987fe9adc1e47
+Author: Casey Bianco-Davis <caseycasey739@gmail.com>
+Date:   Mon Sep 14 09:58:33 2026 +0200
+
+    Grease Pencil: Basic Draw Mode edit operators
+    
+    This adds support for some of the basic edit mode operators
+    in Draw Mode:
+    - Circle, Box, and Pick selection tools.
+    - Copy and Paste operators.
+    - Delete operator.
+    - Transform operators.
+    - Draw mode `Stroke` menu.
+    
+    Pull Request: https://projects.blender.org/blender/blender/pulls/162890
+    
+    Note: The `x` and `b` keybind for delete and box select has not be added
+    because `x` is already used for swapping the brush colors and `b` is
+    used for box delete.
+    
+    Co-authored-by: Falk David <falk@blender.org>

@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-09-14T10:47:25+02:00",
+  "blender_executable": "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+  "blender_version": "5.1.2",
+  "source_tree_path": "C:\\Users\\hcsme\\Desktop\\Fly\\blender",
+  "source_tree_revision": "349fc27092df84267860aacbb70987fe9adc1e47",
+  "source_tree_version": "5.3.0 alpha",
+  "pipeline_script": "scripts/blender_asset_generator.py",
+  "deterministic_verification": {
+    "seed": 42,
+    "runs_compared": 2,
+    "run1_dir": "godot/assets/models",
+    "run2_dir": "scratch/blender_test_seed42",
+    "all_assets_match_sha256": true,
+    "assets": {
+      "fly_agent": {
+        "file": "fly_agent.glb",
+        "size_bytes": 119964,
+        "sha256": "95b9f92a0427c827a2ff53a4ddff966f111a4fb4e257cad731186abf8319232a",
+        "match": true
+      },
+      "flora_shrub": {
+        "file": "flora_shrub.glb",
+        "size_bytes": 43808,
+        "sha256": "d218c84391e3b7d17ebab295aa15d6f81c5ffbb75e1dc533a9229892ba71d7cd",
+        "match": true
+      },
+      "environment_rock": {
+        "file": "environment_rock.glb",
+        "size_bytes": 34008,
+        "sha256": "5898b5c9850a23dacf98983894d88d859b9181c117bd8b55195dc0b12edbd2f8",
+        "match": true
+      }
+    }
+  }
+}

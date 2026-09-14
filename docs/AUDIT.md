@@ -27,9 +27,10 @@
 | **Python** | 3.14.6 (`C:\Program Files\Python314\python.exe`) | VERIFIED | `python --version` |
 | **Pip** | 26.0 (`C:\Program Files\Python314\Scripts\pip.exe`) | VERIFIED | `pip --version` |
 | **FFmpeg** | 9.0-full_build (`C:\Users\hcsme\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg...`) | VERIFIED | `ffmpeg -version` |
-| **Blender** | 5.1 (`C:\Program Files\Blender Foundation\Blender 5.1\blender.exe`) | VERIFIED | `blender.exe --version` |
-| **Godot Engine** | Not in PATH / winget package not installed | MISSING | `winget list`, `Get-Command` |
-| **R / Rscript** | Not installed in system PATH | MISSING | `Get-Command R, Rscript` |
+| **Blender (Binary)** | 5.1.2 (`C:\Program Files\Blender Foundation\Blender 5.1\blender.exe`) | VERIFIED | `blender.exe --version` |
+| **Blender (Source)** | 5.3.0 alpha (`blender/` at commit `349fc27092df84267860aacbb70987fe9adc1e47`) | VERIFIED | `git -C blender log -1` |
+| **Godot Engine** | 4.7.2 Forward+ Vulkan (`C:\Users\hcsme\AppData\Local\Microsoft\WinGet\Packages\GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe\Godot_v4.7.2-stable_win64.exe`) | VERIFIED | `godot --version`, headless test |
+| **R / Rscript** | Not installed in system PATH (data parsed directly via C++/Python) | N/A | `Get-Command R, Rscript` |
 
 ---
 
@@ -61,14 +62,8 @@ In compliance with Contract Section 8 ("Protect the Existing Fly-Brain"), the di
 
 ---
 
-## 4. Summary of Stage Gates & Next Actions
-
+## 4. Summary of Toolchain Verification & Integration
 - **Stage 0 (Audit):** VERIFIED. Complete system, hardware, toolchain, and repository audit recorded.
-- **Stage 1 (Toolchain):** VERIFIED. MSVC C++ compiler, CMake 4.4.0, Ninja 1.13.2, Vulkan SDK 1.4.357, Python 3.14.6, FFmpeg 9.0, Blender 5.1 are verified with evidence files in `evidence/toolchain/`.
-- **Stage 2 (Core):** NEXT. Implement deterministic core simulation structures in C++:
-  - `SimulationClock`
-  - `DeterministicRNG` (SplitMix64 / PCG / Xoshiro256++)
-  - `EntityID`
-  - `EventBus`
-  - `WorldState`
-  - Unit tests and determinism verification.
+- **Stage 1 (Toolchain):** VERIFIED. MSVC C++ compiler (19.44), CMake 4.4.0, Ninja 1.13.2, Vulkan SDK 1.4.357, Python 3.14.6, FFmpeg 9.0, Blender 5.1.2 binary, Blender 5.3.0 alpha source tree (`blender/`), and Godot 4.7.2 are verified with evidence files in `evidence/toolchain/`.
+- **Blender 3D Pipeline:** VERIFIED. Headless procedural asset generation (`scripts/blender_asset_generator.py`) generates deterministic 3D morphological fly models, flora shrubs, and rocks with 100% bit-exact SHA-256 replication across independent runs.
+- **Standalone Packaging:** VERIFIED. Standalone Windows installer (`FLGODTV-0.1.0-Setup.exe`), Windows portable ZIP, and Linux portable tarball generated and verified via clean-install execution test (`evidence/windows/install_test_report.json`).
