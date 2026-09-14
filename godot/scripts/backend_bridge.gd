@@ -99,7 +99,7 @@ func _simulate_standalone_agents(delta: float) -> void:
 		var pos: Vector3 = a.get("position", Vector3.ZERO)
 		var vel: Vector3 = a.get("velocity", Vector3.ZERO)
 		var cid: int = a.get("colony_id", 1)
-		var nest := Vector3.ZERO if cid == 1 else Vector3(60, 0, 60)
+		var nest := Vector3(15, 3, 15) if cid == 1 else Vector3(45, 2, 45)
 		
 		# Wander force
 		var to_nest := nest - pos
@@ -124,6 +124,13 @@ func _simulate_standalone_agents(delta: float) -> void:
 			cos(simulation_time * 0.5) * 4.0
 		)
 
+static func to_vec3(val, fallback: Vector3 = Vector3.ZERO) -> Vector3:
+	if val is Vector3:
+		return val
+	if val is Array and val.size() >= 3:
+		return Vector3(float(val[0]), float(val[1]), float(val[2]))
+	return fallback
+
 func apply_state_dictionary(data: Dictionary) -> void:
 	if data.has("clock"):
 		current_tick = data["clock"].get("tick", 0)
@@ -134,12 +141,21 @@ func apply_state_dictionary(data: Dictionary) -> void:
 
 	if data.has("agents"):
 		agents_data = data["agents"]
+		for a in agents_data:
+			if a is Dictionary:
+				a["position"] = to_vec3(a.get("position"), Vector3.ZERO)
+				a["velocity"] = to_vec3(a.get("velocity"), Vector3.ZERO)
 
 	if data.has("colonies"):
 		colonies_data = data["colonies"]
+		for c in colonies_data:
+			if c is Dictionary:
+				c["nest"] = to_vec3(c.get("nest"), Vector3.ZERO)
 
 	if data.has("god_fly"):
 		god_fly_data = data["god_fly"]
+		if god_fly_data is Dictionary:
+			god_fly_data["position"] = to_vec3(god_fly_data.get("position"), Vector3(30, 8, 30))
 
 	if data.has("telemetry"):
 		telemetry_data = data["telemetry"]
@@ -149,6 +165,9 @@ func apply_state_dictionary(data: Dictionary) -> void:
 
 	if data.has("events"):
 		events_data = data["events"]
+		for ev in events_data:
+			if ev is Dictionary and ev.has("pos"):
+				ev["pos"] = to_vec3(ev.get("pos"), Vector3.ZERO)
 
 	if data.has("telemetry_snapshot"):
 		telemetry_snapshot = data["telemetry_snapshot"]
@@ -165,17 +184,17 @@ func apply_synthetic_baseline() -> void:
 		"visibility": 1000.0
 	}
 	colonies_data = [
-		{"id": 1, "nest": Vector3(0, 0, 0), "radius": 30.0, "resources": 150.0, "pop": 10},
-		{"id": 2, "nest": Vector3(60, 0, 60), "radius": 30.0, "resources": 120.0, "pop": 10}
+		{"id": 1, "nest": Vector3(15, 3, 15), "radius": 30.0, "resources": 150.0, "pop": 10},
+		{"id": 2, "nest": Vector3(45, 2, 45), "radius": 30.0, "resources": 120.0, "pop": 10}
 	]
 	agents_data = []
 	for i in range(1, 21):
 		var cid : int = 1 if i <= 10 else 2
-		var base_pos : Vector3 = Vector3(0, 0, 0) if cid == 1 else Vector3(60, 0, 60)
+		var base_pos : Vector3 = Vector3(15, 3, 15) if cid == 1 else Vector3(45, 2, 45)
 		agents_data.append({
 			"id": i,
 			"colony_id": cid,
-			"position": base_pos + Vector3(randf_range(-12, 12), randf_range(1.0, 3.5), randf_range(-12, 12)),
+			"position": base_pos + Vector3(randf_range(-6, 6), randf_range(1.0, 3.5), randf_range(-6, 6)),
 			"velocity": Vector3(randf_range(-1.5, 1.5), 0, randf_range(-1.5, 1.5)),
 			"energy": 85.0,
 			"hunger": 20.0,
@@ -200,8 +219,8 @@ func apply_synthetic_baseline() -> void:
 				"current_pose": {"pos": [30.0, 11.5, 36.0], "look_at": [30.0, 8.0, 30.0], "fov": 55.0, "distance": 7.0}
 			},
 			{
-				"channel": 1, "channel_name": "Cam2_LearningAgent", "shot": 5, "shot_name": "Tracking",
-				"current_pose": {"pos": [5.0, 3.5, 8.0], "look_at": [3.0, 1.5, 5.0], "fov": 50.0, "distance": 4.5}
+				"channel": 1, "channel_name": "Cam2_Colony_POV", "shot": 5, "shot_name": "Tracking",
+				"current_pose": {"pos": [23.0, 8.5, 23.0], "look_at": [15.0, 3.5, 15.0], "fov": 55.0, "distance": 11.5}
 			},
 			{
 				"channel": 2, "channel_name": "Cam3_Event", "shot": 1, "shot_name": "Close",

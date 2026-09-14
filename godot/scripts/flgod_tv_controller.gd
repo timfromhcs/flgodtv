@@ -134,10 +134,12 @@ func setup_quad_view_presentation() -> void:
 
 	var labels := [
 		"CAM 1: GOD FLY [TRACKING]",
-		"CAM 2: COLONY POV [NEST]",
+		"CAM 2: AGENT POV [CHASE]",
 		"CAM 3: EVENT FOCUS [ACTION]",
 		"CAM 4: WORLD OVERVIEW [WIDE]"
 	]
+
+	var env_node = get_node_or_null("WorldEnvironment")
 
 	quad_sub_cams.clear()
 	for i in range(4):
@@ -155,6 +157,8 @@ func setup_quad_view_presentation() -> void:
 		var sub_cam = Camera3D.new()
 		sub_cam.name = "SubCam_%d" % i
 		sub_cam.current = true
+		if env_node and env_node.environment:
+			sub_cam.environment = env_node.environment
 		vp.add_child(sub_cam)
 		quad_sub_cams.append(sub_cam)
 
@@ -188,7 +192,7 @@ func get_view_mode_name(mode: int) -> String:
 	match mode:
 		0: return "Quad-View (4-Camera)"
 		1: return "Cam 1 (God Fly Solo)"
-		2: return "Cam 2 (Colony Solo)"
+		2: return "Cam 2 (Agent POV Chase Solo)"
 		3: return "Cam 3 (Event Solo)"
 		4: return "Cam 4 (Global Wide Solo)"
 		_: return "Unknown"
@@ -297,6 +301,19 @@ func update_quad_sub_cameras() -> void:
 func _on_state_updated(_state: Dictionary) -> void:
 	pass
 
+func sample_terrain_height(x: float, z: float) -> float:
+	var t_node = get_node_or_null("Terrain")
+	if t_node and t_node.has_method("sample_height"):
+		return t_node.sample_height(x, z)
+	return sin(x * 0.05) * cos(z * 0.05) * 3.5 + sin(x * 0.12 + 1.2) * 1.5 + cos(z * 0.09 - 0.7) * 1.2
+
+func to_vector3(val, fallback: Vector3 = Vector3.ZERO) -> Vector3:
+	if val is Vector3:
+		return val
+	if val is Array and val.size() >= 3:
+		return Vector3(float(val[0]), float(val[1]), float(val[2]))
+	return fallback
+
 func update_cameras(delta: float) -> void:
 	if not bridge:
 		return
@@ -318,16 +335,32 @@ func update_cameras(delta: float) -> void:
 			var target_pos := Vector3(pos_arr[0], pos_arr[1], pos_arr[2])
 			var target_look := Vector3(look_arr[0], look_arr[1], look_arr[2])
 
+			# Terrain collision avoidance (GEMINI.md Section 81 & 89)
+			target_pos.y = maxf(target_pos.y, sample_terrain_height(target_pos.x, target_pos.z) + 1.8)
+			target_look.y = maxf(target_look.y, sample_terrain_height(target_look.x, target_look.z) + 0.5)
+
 			match ch_id:
 				0: # Cam1_GodFly
 					if camera_godfly:
 						var new_pos = camera_godfly.position.lerp(target_pos, delta * 5.0)
 						camera_godfly.look_at_from_position(new_pos, target_look, Vector3.UP)
 						camera_godfly.fov = fov_val
-				1: # Cam2_Colony / Learner
+				1: # Cam2_Colony / Agent POV
 					if camera_colony:
-						var new_pos = camera_colony.position.lerp(target_pos, delta * 3.5)
-						camera_colony.look_at_from_position(new_pos, target_look, Vector3.UP)
+						if bridge.agents_data.size() > 0:
+							var lead: Dictionary = bridge.agents_data[0]
+							var a_pos: Vector3 = to_vector3(lead.get("position"), target_look)
+							var a_vel: Vector3 = to_vector3(lead.get("velocity"), Vector3(0, 0, 1))
+							var fwd := a_vel.normalized() if a_vel.length() > 0.05 else Vector3(0, 0, 1)
+							var pov_cam_pos := a_pos - fwd * 3.2 + Vector3(0, 1.4, 0)
+							var pov_cam_look := a_pos + fwd * 6.0
+							pov_cam_pos.y = maxf(pov_cam_pos.y, sample_terrain_height(pov_cam_pos.x, pov_cam_pos.z) + 1.2)
+							pov_cam_look.y = maxf(pov_cam_look.y, sample_terrain_height(pov_cam_look.x, pov_cam_look.z) + 0.5)
+							var new_pos = camera_colony.position.lerp(pov_cam_pos, delta * 4.0)
+							camera_colony.look_at_from_position(new_pos, pov_cam_look, Vector3.UP)
+						else:
+							var new_pos = camera_colony.position.lerp(target_pos, delta * 3.5)
+							camera_colony.look_at_from_position(new_pos, target_look, Vector3.UP)
 						camera_colony.fov = fov_val
 				2: # Cam3_Event
 					if camera_event:
@@ -348,18 +381,38 @@ func update_cameras(delta: float) -> void:
 	if camera_godfly and bridge.god_fly_data.has("position"):
 		var gf_pos: Vector3 = bridge.god_fly_data["position"]
 		var target_pos := gf_pos + Vector3(0, 3.5, 6.0)
+		target_pos.y = maxf(target_pos.y, sample_terrain_height(target_pos.x, target_pos.z) + 1.8)
 		var new_pos = camera_godfly.position.lerp(target_pos, delta * 4.0)
 		camera_godfly.look_at_from_position(new_pos, gf_pos, Vector3.UP)
 
 	if camera_colony:
-		var nest_pos: Vector3 = bridge.colonies_data[0].get("nest", Vector3.ZERO) if bridge.colonies_data.size() > 0 else Vector3.ZERO
-		camera_colony.look_at_from_position(nest_pos + Vector3(12, 10, 16), nest_pos + Vector3(0, 1, 0), Vector3.UP)
+		if bridge.agents_data.size() > 0:
+			var lead: Dictionary = bridge.agents_data[0]
+			var a_pos: Vector3 = to_vector3(lead.get("position"), Vector3(15, 3, 15))
+			var a_vel: Vector3 = to_vector3(lead.get("velocity"), Vector3(0, 0, 1))
+			var fwd := a_vel.normalized() if a_vel.length() > 0.05 else Vector3(0, 0, 1)
+			var pov_cam_pos := a_pos - fwd * 3.2 + Vector3(0, 1.4, 0)
+			var pov_cam_look := a_pos + fwd * 6.0
+			pov_cam_pos.y = maxf(pov_cam_pos.y, sample_terrain_height(pov_cam_pos.x, pov_cam_pos.z) + 1.2)
+			pov_cam_look.y = maxf(pov_cam_look.y, sample_terrain_height(pov_cam_look.x, pov_cam_look.z) + 0.5)
+			var new_pos = camera_colony.position.lerp(pov_cam_pos, delta * 4.0)
+			camera_colony.look_at_from_position(new_pos, pov_cam_look, Vector3.UP)
+			camera_colony.fov = 65.0
+		else:
+			var nest_pos: Vector3 = bridge.colonies_data[0].get("nest", Vector3(15, 3, 15)) if bridge.colonies_data.size() > 0 else Vector3(15, 3, 15)
+			var cam_pos := nest_pos + Vector3(8.0, 5.5, 8.0)
+			var look_pos := nest_pos + Vector3(0, 0.8, 0)
+			cam_pos.y = maxf(cam_pos.y, sample_terrain_height(cam_pos.x, cam_pos.z) + 1.8)
+			camera_colony.look_at_from_position(cam_pos, look_pos, Vector3.UP)
 
 	if camera_event:
 		var focus: Vector3 = Vector3(20, 2, 20)
 		if bridge.agents_data.size() > 0:
 			focus = bridge.agents_data[0].get("position", focus)
-		var new_pos = camera_event.position.lerp(focus + Vector3(3.0, 2.5, 4.5), delta * 2.5)
+		var cam_pos := focus + Vector3(3.0, 2.5, 4.5)
+		cam_pos.y = maxf(cam_pos.y, sample_terrain_height(cam_pos.x, cam_pos.z) + 1.8)
+		focus.y = maxf(focus.y, sample_terrain_height(focus.x, focus.z) + 0.5)
+		var new_pos = camera_event.position.lerp(cam_pos, delta * 2.5)
 		camera_event.look_at_from_position(new_pos, focus, Vector3.UP)
 
 func update_fly_instances() -> void:
@@ -372,8 +425,8 @@ func update_fly_instances() -> void:
 
 	for i in range(count):
 		var a: Dictionary = agents[i]
-		var pos: Vector3 = a.get("position", Vector3.ZERO)
-		var vel: Vector3 = a.get("velocity", Vector3.ZERO)
+		var pos: Vector3 = to_vector3(a.get("position"), Vector3.ZERO)
+		var vel: Vector3 = to_vector3(a.get("velocity"), Vector3.ZERO)
 		var action: String = a.get("action", "Fly")
 		var cid: int = a.get("colony_id", 1)
 

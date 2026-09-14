@@ -273,7 +273,7 @@ flgodtv/
 │   ├── scripts/                # Autonomous camera director, swarm MultiMesh
 │   └── assets/models/          # Generated procedural glTF 3D models
 ├── scripts/                    # Asset generator, packager, and verify scripts
-├── tests/                      # 52 unit, deterministic, GPU, and smoke tests
+├── tests/                      # 53 unit, deterministic, GPU, and smoke tests
 ├── tools/installer/            # Native self-contained C# Windows setup source
 ├── release/                    # Generated standalone distribution packages
 │   └── checksums/SHA256SUMS.txt# Cryptographic SHA-256 release manifest
@@ -298,9 +298,9 @@ The following cryptographic SHA-256 hashes correspond to the standalone distribu
 
 | Package Artifact | Platform | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `f102fcba9e6cacff30d3b633e4695a0631e1146480383357babf80ad54ef9909` |
-| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `0b3e6fdac7a450d0213e67e636b2e321beaaa884c3b6c92e669e41c34bdc3911` |
-| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `115c779ac23bc8859438261b10f276b9f9f08d7b28260e1dcd95dc53be444852` |
+| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `87edb7a2b0e0db0de100fc1ab807bed7bdf92eddf6a3628b3563aade4e99b7e1` |
+| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `55cde8a4c85a14fdf22988e0bed9371d694d48e21921dc861155638f29feccaa` |
+| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `59e9850fa7a627dcd73d73fddc292c32c063afe0ce7d664da289ee4497294295` |
 
 ---
 

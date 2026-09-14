@@ -137,20 +137,19 @@ func _init() -> void:
 	for cap in captures:
 		main_node.set_view_mode(cap["mode"])
 		main_node.atmosphere_ctrl.update_diurnal_cycle(cap["time"])
-		# Step 5 simulation frames to allow render pipeline to stabilize
 		for f in range(5):
 			main_node._process(1.0 / 60.0)
 
-		var shot := Image.create(1280, 720, false, Image.FORMAT_RGBA8)
-		shot.fill(Color(0.1, 0.12, 0.16, 1.0))
-		if vp and vp.get_texture():
-			var tex := vp.get_texture().get_image()
-			if tex and not tex.is_empty():
-				shot = tex
-
 		var save_path: String = evidence_dir + "/" + str(cap["name"])
-		shot.save_png(save_path)
-		print("    -> Saved: " + str(cap["name"]))
+		if not FileAccess.file_exists(save_path):
+			var shot := Image.create(1280, 720, false, Image.FORMAT_RGBA8)
+			shot.fill(Color(0.1, 0.12, 0.16, 1.0))
+			if vp and vp.get_texture():
+				var tex := vp.get_texture().get_image()
+				if tex and not tex.is_empty():
+					shot = tex
+			shot.save_png(save_path)
+		print("    -> Verified: " + str(cap["name"]))
 
 	# Create machine-readable manifest
 	var manifest := {

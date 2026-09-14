@@ -248,14 +248,14 @@ void export_live_state(flgod::Simulation& sim, const std::string& path) {
     nlohmann::json colonies = nlohmann::json::array();
     colonies.push_back({
         {"id", 1},
-        {"nest", {0.0, 0.0, 0.0}},
+        {"nest", {15.0, 3.0, 15.0}},
         {"radius", 30.0},
         {"resources", 150.0},
         {"pop", 10}
     });
     colonies.push_back({
         {"id", 2},
-        {"nest", {60.0, 0.0, 60.0}},
+        {"nest", {45.0, 2.0, 45.0}},
         {"radius", 30.0},
         {"resources", 120.0},
         {"pop", 10}
@@ -368,15 +368,15 @@ void export_live_state(flgod::Simulation& sim, const std::string& path) {
         }}
     });
     channels.push_back({
-        {"channel", 1}, {"channel_name", "Cam2_Colony"}, {"shot", 5}, {"shot_name", "Tracking"},
+        {"channel", 1}, {"channel_name", "Cam2_Colony_POV"}, {"shot", 5}, {"shot_name", "Tracking"},
         {"current_pose", {
-            {"pos", {12.0, 10.0, 16.0}}, {"look_at", {0.0, 1.0, 0.0}}, {"fov", 55.0}, {"distance", 15.0}
+            {"pos", {23.0, 8.5, 23.0}}, {"look_at", {15.0, 3.5, 15.0}}, {"fov", 55.0}, {"distance", 11.5}
         }}
     });
     channels.push_back({
         {"channel", 2}, {"channel_name", "Cam3_Event"}, {"shot", 1}, {"shot_name", "Close"},
         {"current_pose", {
-            {"pos", {18.0, 5.0, 26.0}}, {"look_at", {20.0, 2.0, 20.0}}, {"fov", 50.0}, {"distance", 4.0}
+            {"pos", {18.0, 5.0, 26.0}}, {"look_at", {20.0, 2.0, 20.0}}, {"fov", 45.0}, {"distance", 4.0}
         }}
     });
     channels.push_back({

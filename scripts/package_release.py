@@ -205,8 +205,22 @@ def step_create_windows_installer(zip_path):
 
 def step_test_windows_installation(installer_exe):
     print("[5/7] Executing Phase 16 Windows Installation & Installed-App Verification Test...")
+    def safe_rmtree(p):
+        if not os.path.exists(p):
+            return
+        if sys.platform == "win32":
+            subprocess.run(["taskkill", "/F", "/IM", "flgodtv_frontend.exe"], capture_output=True)
+            subprocess.run(["taskkill", "/F", "/IM", "flgod.exe"], capture_output=True)
+        for _ in range(5):
+            try:
+                shutil.rmtree(p)
+                return
+            except PermissionError:
+                time.sleep(0.5)
+        shutil.rmtree(p, ignore_errors=True)
+
     if os.path.exists(TEST_INSTALL_DIR):
-        shutil.rmtree(TEST_INSTALL_DIR)
+        safe_rmtree(TEST_INSTALL_DIR)
 
     # 1. Run installer
     print(f"  - Installing to: {TEST_INSTALL_DIR} via {installer_exe}")

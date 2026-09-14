@@ -15,6 +15,13 @@ var bridge: Node = null
 var active_camera_pos: Vector3 = Vector3(30, 55, 115)
 var active_camera_look: Vector3 = Vector3(30, 5, 25)
 
+static func to_vec3(val, fallback: Vector3 = Vector3.ZERO) -> Vector3:
+	if val is Vector3:
+		return val
+	if val is Array and val.size() >= 3:
+		return Vector3(float(val[0]), float(val[1]), float(val[2]))
+	return fallback
+
 func _init() -> void:
 	custom_minimum_size = Vector2(180, 180)
 	size = Vector2(180, 180)
@@ -88,7 +95,7 @@ func _draw() -> void:
 	# 5. Agents
 	if layer_mode == 0 or layer_mode == 1:
 		for a in bridge.agents_data:
-			var pos: Vector3 = a.get("position", Vector3.ZERO)
+			var pos: Vector3 = to_vec3(a.get("position"), Vector3.ZERO)
 			var cid: int = a.get("colony_id", 1)
 			var pt := world_to_map(pos.x, pos.z)
 			var col := Color(0.3, 0.95, 1.0, 0.85) if cid == 1 else Color(1.0, 0.75, 0.2, 0.85)
@@ -96,7 +103,7 @@ func _draw() -> void:
 
 	# 6. God Fly Beacon
 	if bridge.god_fly_data.has("position"):
-		var gf_pos: Vector3 = bridge.god_fly_data["position"]
+		var gf_pos: Vector3 = to_vec3(bridge.god_fly_data.get("position"), Vector3(30, 8, 30))
 		var gf_pt := world_to_map(gf_pos.x, gf_pos.z)
 		# Golden Diamond Beacon
 		var sz: float = 4.5
@@ -113,7 +120,7 @@ func _draw() -> void:
 	if layer_mode == 0 or layer_mode == 3:
 		for ev in bridge.events_data:
 			if ev.has("pos"):
-				var ep := Vector3(ev["pos"][0], ev["pos"][1], ev["pos"][2])
+				var ep: Vector3 = to_vec3(ev.get("pos"), Vector3.ZERO)
 				var ev_pt := world_to_map(ep.x, ep.z)
 				draw_circle(ev_pt, 5.0, Color(1.0, 0.2, 0.2, 0.5))
 				draw_circle(ev_pt, 2.0, Color(1.0, 0.8, 0.8, 0.9))

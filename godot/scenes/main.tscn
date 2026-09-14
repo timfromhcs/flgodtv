@@ -62,7 +62,7 @@ current = true
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 30, 12, 36)
 
 [node name="CameraColony" type="Camera3D" parent="CameraRig"]
-transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 10, 8, 12)
+transform = Transform3D(0.707107, -0.28583, 0.646762, 0, 0.914659, 0.404226, -0.707107, -0.28583, 0.646762, 23, 8.5, 23)
 
 [node name="CameraEvent" type="Camera3D" parent="CameraRig"]
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 4, 6)
