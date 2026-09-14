@@ -1,0 +1,1 @@
+{"name":"fly","components":{"needs":{"energy":100.0,"hydration":80.0,"health":100.0,"fatigue":0.0}},"brain":{"provider":"malecns","config":{"max_somas":200}},"actions":["Move","Eat","Rest","Communicate"],"sensors":["TemperatureSensor","ResourceSensor"],"spawn_radius":12.0}

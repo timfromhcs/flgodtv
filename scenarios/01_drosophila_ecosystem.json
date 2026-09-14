@@ -1,0 +1,1 @@
+{"name":"drosophila_ecosystem","scenario_version":1,"simulation_version":"0.1.0","master_seed":1337,"ticks":120,"populations":[{"archetype":"fly","count":6}],"rules":["foraging","reproduction"],"presentation":{"camera":"quad","layers":["agents","colonies"]}}

@@ -1,0 +1,1 @@
+{"name":"ant","components":{"needs":{"energy":100.0,"hydration":90.0,"health":100.0,"fatigue":0.0}},"brain":{"provider":"scripted","config":{"action":"Move"}},"actions":["Move","Eat","Rest","Communicate"],"sensors":["TemperatureSensor","SocialSensor"],"spawn_radius":8.0}

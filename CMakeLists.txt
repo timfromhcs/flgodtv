@@ -309,6 +309,15 @@ if(BUILD_TESTING)
     target_link_libraries(test_mpe_foundation PRIVATE flgod_core)
     add_test(NAME MPEFoundationTest COMMAND test_mpe_foundation)
 
+    # MPE scenario + engine tests (V1 data-driven scenarios)
+    add_executable(test_mpe_scenario tests/unit/test_mpe_scenario.cpp)
+    target_link_libraries(test_mpe_scenario PRIVATE flgod_core)
+    add_test(NAME MPEScenarioTest COMMAND test_mpe_scenario)
+
+    add_executable(test_mpe_engine tests/integration/test_mpe_engine.cpp)
+    target_link_libraries(test_mpe_engine PRIVATE flgod_core)
+    add_test(NAME MPEEngineTest COMMAND test_mpe_engine)
+
     # Godot Frontend Smoke Test
     find_program(GODOT_EXECUTABLE
         NAMES godot godot_console Godot_v4.7.2-stable_win64_console.exe

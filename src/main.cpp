@@ -1,6 +1,7 @@
 #include "flgod/core/simulation.hpp"
 #include "flgod/core/replay.hpp"
 #include "flgod/camera/event_detector.hpp"
+#include "flgod/mpe/engine.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -32,6 +33,7 @@ void print_usage(const char* prog) {
               << "  --checkpoint <path>     Run simulation and save checkpoint snapshot to file\n"
               << "  --restore <path>        Restore simulation from checkpoint file and continue\n"
               << "  --replay <path>         Verify bit-exact replay from recorded replay log\n"
+              << "  --scenario <path> [ticks] Run a data-driven MPE scenario (default archetypes: scenarios/archetypes)\n"
               << "  --seed <uint64>         Set primary world seed (default: 133701)\n"
               << "  --version               Display version, schema, and build metadata\n"
               << "  --help                  Show this help text\n";
@@ -586,6 +588,40 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "[FLGODTV] Replay VERIFIED bit-exact for " << log.total_ticks 
                   << " ticks across " << log.checkpoint_ticks.size() << " checkpoints.\n";
+        return 0;
+    }
+
+    if (primary_mode == "--scenario") {
+        if (args.size() < 2) {
+            std::cerr << "Error: --scenario requires a scenario JSON path\n";
+            return 1;
+        }
+        std::string scenario_path = args[1];
+        std::string archetype_dir = "scenarios/archetypes";
+        uint64_t ticks = 0; // 0 = scenario default
+        for (size_t i = 2; i < args.size(); ++i) {
+            if (args[i] == "--archetypes" && i + 1 < args.size()) {
+                archetype_dir = args[++i];
+            } else {
+                try { ticks = std::stoull(args[i]); } catch (...) {}
+            }
+        }
+        try {
+            flgod::mpe::MPEEngine eng;
+            eng.load(scenario_path, archetype_dir);
+            eng.initialize();
+            if (ticks == 0) ticks = eng.scenario().ticks;
+            eng.run_ticks(ticks);
+            flgod::mpe::EngineTelemetry t = eng.telemetry();
+            std::cout << "[MPE] Scenario '" << eng.scenario().name << "' completed "
+                      << eng.tick() << " ticks. alive=" << t.alive
+                      << " spawned=" << t.spawned_total << " died=" << t.died_total
+                      << " moves=" << t.moves << " eats=" << t.eats
+                      << " hash=" << eng.compute_hash() << "\n";
+        } catch (const std::exception& e) {
+            std::cerr << "[MPE] Scenario FAILED: " << e.what() << "\n";
+            return 1;
+        }
         return 0;
     }
 

@@ -1,0 +1,1 @@
+{"name":"robot","components":{"needs":{"energy":100.0,"hydration":100.0,"health":100.0,"fatigue":0.0}},"brain":{"provider":"scripted","config":{"action":"Rest"}},"actions":["Move","Rest","Communicate"],"sensors":["TemperatureSensor","InternalStateSensor"],"spawn_radius":15.0}
