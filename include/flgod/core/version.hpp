@@ -48,11 +48,11 @@ struct SimulationVersion {
 };
 
 inline const SimulationVersion CURRENT_SIMULATION_VERSION{
-    .major = 0,
-    .minor = 1,
+    .major = 1,
+    .minor = 0,
     .patch = 0,
     .schema_version = 1,
-    .build_meta = "dev"
+    .build_meta = "v1"
 };
 
 } // namespace flgod

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flgodtv"
-version = "0.1.0"
+version = "1.0.0"
 description = "FLGODTV universal Multi-Agent Simulation Platform: scenario runner, telemetry, and experiment client"
 readme = "README.md"
 requires-python = ">=3.10"

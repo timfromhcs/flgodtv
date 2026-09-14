@@ -1,3 +1,3 @@
-d747c9c9697b76e287057347232001db4b15ed356e6542841918f66191dbb593  windows/FLGODTV-0.1.0-Setup.exe
-3036d656b6e38fd2e7e95982e8a3c11f8d1a0bf4f9ff0e3cfd143e69eefbbbf0  windows/FLGODTV-0.1.0-windows-x64-portable.zip
-8daf1b91cd9c195b167ba5b17d9bf558915437166cde17599698a45ffb0f37a1  linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz
+c2aad9f97cf261e0111256be3d8c9aa4734ce344aedd2ba77b0663fb3c387c1d  windows/FLGODTV-1.0.0-Setup.exe
+a343084120318f630d72c5e81c1c3edf693075edebf586facb0cf38e2a5d6f6c  windows/FLGODTV-1.0.0-windows-x64-portable.zip
+df025e79adbd7a1d83ee6a63f5be5f7a3b67f73891f04293ac591e8541ef568e  linux/FLGODTV-1.0.0-linux-x64-portable.tar.gz

@@ -21,7 +21,7 @@ import json
 import subprocess
 from datetime import datetime, timezone
 
-VERSION = "0.1.0"
+VERSION = "1.0.0"
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BUILD_DIR = os.path.join(REPO_ROOT, "build", "ninja-release")
 RELEASE_DIR = os.path.join(REPO_ROOT, "release")

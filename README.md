@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Vulkan-1.4-red.svg" alt="Vulkan 1.4">
   <img src="https://img.shields.io/badge/Godot-4.7.2%20Forward%2B-478cbf.svg" alt="Godot 4.7.2">
   <img src="https://img.shields.io/badge/Blender-5.1%20Procedural-f5792a.svg" alt="Blender 5.1">
-   <img src="https://img.shields.io/badge/CTest-55%2F55%20Passed%20(100%25)-brightgreen.svg" alt="CTest 55/55 Passed">
+   <img src="https://img.shields.io/badge/CTest-61%2F61%20Passed%20(100%25)-brightgreen.svg" alt="CTest 61/61 Passed">
   <img src="https://img.shields.io/badge/Connectome-128.9M%20somas%2Fs-orange.svg" alt="128.9M somas/s">
   <a href="#license"><img src="https://img.shields.io/badge/License-Apache%202.0%20%2F%20MIT-lightgrey.svg" alt="License"></a>
 </p>
@@ -38,6 +38,8 @@ The platform executes entirely independent of rendering. A C++20 simulation core
 - [Quick Start: Standalone Release](#quick-start-standalone-release)
 - [Quick Start: Developer Build](#quick-start-developer-build)
 - [Architecture](#architecture)
+- [MPE Scenarios & Platform](#mpe-scenarios--platform)
+- [Python Interface](#python-interface)
 - [Verified Benchmarks](#verified-benchmarks)
 - [Testing & Verification](#testing--verification)
 - [Blender 3D Procedural Pipeline](#blender-3d-procedural-pipeline)
@@ -60,6 +62,8 @@ The platform executes entirely independent of rendering. A C++20 simulation core
 - **Blender 3D Procedural Content Pipeline:** Headless asset generator producing optimized glTF models (`fly_agent.glb`, `flora_shrub.glb`, `environment_rock.glb`) with **100% bit-exact SHA-256 replication**.
 - **Godot 4 Forward+ Visual V2 Presentation:** Slope-aware central-difference terrain normals, dual-plane water with shoreline foam fringe and wave swell, multi-species botanical flora & hillside rock clusters, high-frequency wing oscillation & flight banking, 2D radar minimap with layer toggles, and dynamic 4-phase diurnal day/night atmospheric cycle.
 - **Sandboxed Technology VM:** Isolated 8-register virtual machine with bounded cycle execution and packet-routed virtual network interfaces—zero host privilege exposure.
+- **Universal MPE Platform (V1):** Species-agnostic entity/component core with replaceable brains, sensors, actions, rules, and genomes; 8 data-driven scenarios (`01_drosophila_ecosystem` … `08_custom_research`) plus reusable profiles run on one deterministic core with bit-exact checkpoint restore.
+- **Black-Box Verification:** Independent edge harness (13 checks: malformed inputs, scale, determinism) and an installable Python interface driving real scenario execution.
 
 ---
 
@@ -68,16 +72,16 @@ The platform executes entirely independent of rendering. A C++20 simulation core
 End users do **not** need a C++ compiler, CMake, Ninja, Python, Blender, or Godot. Standalone release packages bundle all runtime binaries, assets, and presentation layers:
 
 ### Option A: Windows Installer (Recommended)
-1. Download `FLGODTV-0.1.0-Setup.exe` from the latest release.
+1. Download `FLGODTV-1.0.0-Setup.exe` from the latest release.
 2. Run the installer (supports custom target directory, desktop shortcut, and uninstaller).
 3. Launch **FLGODTV** from your Start menu or desktop shortcut.
 
 ### Option B: Windows Portable ZIP
-1. Download and extract `FLGODTV-0.1.0-windows-x64-portable.zip`.
+1. Download and extract `FLGODTV-1.0.0-windows-x64-portable.zip`.
 2. Double-click `FLGODTV.bat` to launch the frontend and simulation bridge.
 
 ### Option C: Linux Portable
-1. Download and extract `FLGODTV-0.1.0-linux-x64-portable.tar.gz`.
+1. Download and extract `FLGODTV-1.0.0-linux-x64-portable.tar.gz`.
 2. Execute `./run_flgodtv.sh`.
 
 ```bash
@@ -114,7 +118,7 @@ cmake --preset ninja-release
 # 3. Build the core headless simulation executable
 cmake --build build/ninja-release --config Release
 
-# 4. Execute the complete test suite (55/53 automated tests: 55 with Godot + display, 53 headless C++)
+# 4. Execute the complete test suite (61 targets: 57 C++, 2 Godot windowed, edge + Python API)
 ctest --test-dir build/ninja-release --output-on-failure
 
 # 5. Run headless simulation verification modes
@@ -124,6 +128,45 @@ ctest --test-dir build/ninja-release --output-on-failure
 
 # 6. Launch the Godot 4 Forward+ presentation frontend
 godot --path godot/
+```
+
+---
+
+## MPE Scenarios & Platform
+
+The V1 universal platform (`include/flgod/mpe/`, contract in `docs/mpe/`) runs data-driven scenarios with no C++ changes. Eight scenarios ship in `scenarios/` (fly/ant/robot/predator archetypes, scripted + MaleCNS brains, foraging/predation/reproduction/mutation/cooperation/territory/survival rules) plus `minimal`/`social`/`benchmark` profiles:
+
+```bash
+# Run any scenario headlessly (deterministic; same hash every run)
+./build/ninja-release/flgod --scenario scenarios/06_evolution_lab.json
+./build/ninja-release/flgod --scenario scenarios/05_robot_society.json 150
+
+# Schema-versioned telemetry + Godot viewer snapshot export
+./build/ninja-release/flgod --scenario scenarios/03_ant_colony.json \
+  --telemetry-out /tmp/tel.json --live-export /tmp/live_state.json
+
+# Reproducible experiments (repeats, determinism gate, evidence record)
+python3 scripts/run_experiment.py scenarios/profiles/benchmark.json --id scale_v1 --repeats 2
+```
+
+Scenario documents are validated at load (unknown archetype/rule/brain provider, malformed JSON, and empty populations fail loudly). Checkpoints are bit-exact (`0→N` ≡ `0→N/2→restore→N/2→N`, including rule state and heritable genomes).
+
+---
+
+## Python Interface
+
+Installable package (`pyproject.toml`, subprocess client over the compiled binary — no reimplemented simulation):
+
+```bash
+pip install .
+python -c "import flgodtv; print(flgodtv.__version__)"
+python tests/python/test_api.py
+```
+
+```python
+from flgodtv import run_scenario, scenario_hash
+res = run_scenario("scenarios/profiles/minimal.json")  # telemetry + state_hash
+h, deterministic = scenario_hash("scenarios/03_ant_colony.json")
 ```
 
 ---
@@ -198,15 +241,15 @@ Raw JSON experiment manifests and execution logs are preserved in [`evidence/win
 
 ## Testing & Verification
 
-The automated CTest suite executes **55 test targets** (53 C++ headless/GPU tests + 2 Godot presentation tests requiring a display and Vulkan GPU; 53 when Godot is absent). The machine-readable inventory is generated from `CMakeLists.txt` in [`evidence/testing/test_inventory.json`](evidence/testing/test_inventory.json):
+The automated CTest suite executes **61 test targets**: 57 C++ tests (53 pre-V1 plus MPE foundation, scenario, engine, rules), 2 Godot presentation tests requiring a display and Vulkan GPU, and 2 subprocess-driven tests (black-box edge harness, Python API). Machine-readable inventories: [`evidence/testing/test_inventory.json`](evidence/testing/test_inventory.json) (CMake-generated) and [`evidence/v1/repository_inventory.json`](evidence/v1/repository_inventory.json).
 
 ```bash
 ctest --test-dir build/ninja-release --output-on-failure
 ```
 
 ```text
-100% tests passed out of 55
-Total Test time (real) = ~13.1 sec
+100% tests passed out of 61
+Total Test time (real) = ~15 sec
 ```
 
 | Test Target | Validation Scope |
@@ -220,6 +263,9 @@ Total Test time (real) = ~13.1 sec
 | `TelemetryHUDTest` | Live simulation telemetry extraction with strict "N/A" fallback safety |
 | `GodotFrontendSmokeTest` | Headless validation of 4-camera rig, MultiMesh instancing, and UI capture |
 | `GodotVisualV2VerificationTest` | Autonomous headless verification of Visual V2 terrain, water, vegetation, minimap, and day/night cycle |
+| `MPEFoundationTest` / `MPEScenarioTest` / `MPEEngineTest` / `MPERulesTest` | Universal platform: entities/components, scenario validation, 11 data-driven scenarios, checkpoint bit-exactness, rule behavior |
+| `EdgeHarnessTest` | Independent black-box checks: exit codes, malformed/edge inputs, scale, repeat determinism, viewer export |
+| `PythonApiTest` | Installable package import, scenario execution, telemetry schema, determinism |
 
 ---
 
@@ -272,8 +318,10 @@ flgodtv/
 │   ├── scenes/                 # 4-camera rig, world renderers, telemetry HUD
 │   ├── scripts/                # Autonomous camera director, swarm MultiMesh
 │   └── assets/models/          # Generated procedural glTF 3D models
-├── scripts/                    # Asset generator, packager, and verify scripts
-├── tests/                      # 55 unit, deterministic, GPU, integration, and smoke tests
+├── scripts/                    # Asset generator, packager, experiment runner, edge harness
+├── scenarios/                  # Data-driven MPE scenarios, archetypes, profiles, JSON schema
+├── flgodtv/                    # Installable Python interface package
+├── tests/                      # 57 C++ + edge harness + Python API tests (61 CTest targets)
 ├── tools/installer/            # Native self-contained C# Windows setup source
 ├── release/                    # Generated standalone distribution packages
 │   └── checksums/SHA256SUMS.txt# Cryptographic SHA-256 release manifest
@@ -299,9 +347,9 @@ The following cryptographic SHA-256 hashes correspond to the standalone distribu
 
 | Package Artifact | Platform | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `d747c9c9697b76e287057347232001db4b15ed356e6542841918f66191dbb593` |
-| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `3036d656b6e38fd2e7e95982e8a3c11f8d1a0bf4f9ff0e3cfd143e69eefbbbf0` |
-| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `8daf1b91cd9c195b167ba5b17d9bf558915437166cde17599698a45ffb0f37a1` |
+| `windows/FLGODTV-1.0.0-Setup.exe` | Windows x64 (Installer) | `c2aad9f97cf261e0111256be3d8c9aa4734ce344aedd2ba77b0663fb3c387c1d` |
+| `windows/FLGODTV-1.0.0-windows-x64-portable.zip` | Windows x64 (Portable) | `a343084120318f630d72c5e81c1c3edf693075edebf586facb0cf38e2a5d6f6c` |
+| `linux/FLGODTV-1.0.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `df025e79adbd7a1d83ee6a63f5be5f7a3b67f73891f04293ac591e8541ef568e` |
 
 ---
 

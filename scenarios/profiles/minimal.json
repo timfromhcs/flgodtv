@@ -1,1 +1,1 @@
-{"name":"profile_minimal","scenario_version":1,"simulation_version":"0.1.0","master_seed":1,"ticks":60,"populations":[{"archetype":"ant","count":2}],"rules":["survival"],"presentation":{"camera":"quad","layers":["agents"]}}
+{"name":"profile_minimal","scenario_version":1,"simulation_version":"1.0.0","master_seed":1,"ticks":60,"populations":[{"archetype":"ant","count":2}],"rules":["survival"],"presentation":{"camera":"quad","layers":["agents"]}}

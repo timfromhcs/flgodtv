@@ -1,1 +1,1 @@
-{"name":"profile_social","scenario_version":1,"simulation_version":"0.1.0","master_seed":11,"ticks":120,"populations":[{"archetype":"ant","count":8},{"archetype":"fly","count":4}],"rules":["cooperation","foraging","survival"],"presentation":{"camera":"quad","layers":["agents","events"]}}
+{"name":"profile_social","scenario_version":1,"simulation_version":"1.0.0","master_seed":11,"ticks":120,"populations":[{"archetype":"ant","count":8},{"archetype":"fly","count":4}],"rules":["cooperation","foraging","survival"],"presentation":{"camera":"quad","layers":["agents","events"]}}

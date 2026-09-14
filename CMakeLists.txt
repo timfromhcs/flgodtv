@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(flgodtv
-    VERSION 0.1.0
-    DESCRIPTION "FLGODTV Autonomous Simulation Platform"
+    VERSION 1.0.0
+    DESCRIPTION "FLGODTV Universal Multi-Agent Simulation Platform (MPE)"
     LANGUAGES CXX C
 )
 
