@@ -47,6 +47,7 @@ videos/*.mp4
 videos/*.avi
 videos/*.mkv
 renders/*.png
+renders/frames/
 # Release binaries (keep manifests and checksums)
 release/windows/*.exe
 release/windows/*.zip

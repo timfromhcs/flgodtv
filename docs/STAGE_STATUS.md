@@ -373,10 +373,25 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 20 — VIDEO
-**Status:** `NEXT`
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/video/video_types.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/video/video_types.hpp) (`VideoResolution`, `VideoConfig`, `EventScore` calculation per GEMINI.md Section 89, `ShotPlan` multi-angle segmenting, `RenderManifest` JSON serialization roundtrip).
+- [tests/unit/test_video_pipeline.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_video_pipeline.cpp) (Unit tests verifying resolution validation, event ranking by composite novelty/causality score, shot plan validation, and render manifest serialization: Passed).
+- [godot/scripts/render_video_sequence.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/render_video_sequence.gd) (Autonomous Godot frame sequence renderer driving multi-angle camera transitions and diurnal cycle progression across 90 frames).
+- [scripts/render_cinematic_video.py](file:///C:/Users/hcsme/Desktop/Fly/scripts/render_cinematic_video.py) (Autonomous pipeline executing Godot rendering, frame integrity verification [90/90 frames, 1280x720], FFmpeg H.264 / yuv420p video encoding, and FFprobe container verification).
+- [evidence/video/render_manifest.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/video/render_manifest.json) (Machine-readable video manifest: 90 frames, 30 FPS, 3.0s duration, SHA-256 `2dc163240521034a6b9bc6414f7cad2c67e7a4c441e8511b94017dbf20413868`).
+- [videos/flgodtv_cinematic_highlight.mp4](file:///C:/Users/hcsme/Desktop/Fly/videos/flgodtv_cinematic_highlight.mp4) (Generated verified standalone video container).
+- CTest suite: **55/55 tests passed (100%)** via `VideoPipelineTest`.
+
+---
 
 ### STAGE 21 — INTEGRATION
-**Status:** `PENDING`
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/integration/protocol.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/integration/protocol.hpp) (Versioned protocol with `ProtocolVersion` [1.0], `AgentSnapshot`, `ColonySnapshot`, `GodFlySnapshot`, `EventMessage`, `CameraTarget`, `TelemetryMessage`, and `WorldSnapshot` composite payload per GEMINI.md Section 92).
+- [tests/unit/test_integration_protocol.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_integration_protocol.cpp) (Unit tests verifying version compatibility, entity ID serialization, and composite world snapshot roundtrip: Passed).
+- [godot/scripts/backend_bridge.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/backend_bridge.gd) (Presentation bridge implementing multi-path state discovery, dynamic ingestion, and graceful offline fallback per GEMINI.md Section 93).
+- CTest suite: **55/55 tests passed (100%)** via `IntegrationProtocolTest`.
 
 ### STAGE 22 — WINDOWS
 **Status:** `VERIFIED`  
@@ -486,8 +501,8 @@ This document records the exact status and evidence for every development stage 
   - Proof Manifest: [evidence/visual_v2/manifest.json](file:///C:/Users/hcsme/Desktop/Fly/evidence/visual_v2/manifest.json).
   - 6 Screenshot Proofs: [evidence/visual_v2/screenshots/](file:///C:/Users/hcsme/Desktop/Fly/evidence/visual_v2/screenshots/).
 - Automated Test Suite:
-  - Integrated `GodotVisualV2VerificationTest` into CMake / CTest.
-  - **53/53 tests passed (100%)** via CTest.
+  - Integrated `VideoPipelineTest` and `IntegrationProtocolTest` into CMake / CTest.
+  - **55/55 tests passed (100%)** via CTest.
 - Standalone Release Packaging:
   - Bundled Visual V2 PCK into Windows Installer, Windows Portable ZIP, and Linux Portable archive.
   - Clean installer execution and cryptographic tamper rejection verified (100% PASS).

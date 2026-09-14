@@ -294,6 +294,16 @@ if(BUILD_TESTING)
     target_link_libraries(test_telemetry_hud PRIVATE flgod_core)
     add_test(NAME TelemetryHUDTest COMMAND test_telemetry_hud)
 
+    # Video Pipeline Subsystem tests (Stage 20)
+    add_executable(test_video_pipeline tests/unit/test_video_pipeline.cpp)
+    target_link_libraries(test_video_pipeline PRIVATE flgod_core)
+    add_test(NAME VideoPipelineTest COMMAND test_video_pipeline)
+
+    # Integration Protocol Subsystem tests (Stage 21)
+    add_executable(test_integration_protocol tests/unit/test_integration_protocol.cpp)
+    target_link_libraries(test_integration_protocol PRIVATE flgod_core)
+    add_test(NAME IntegrationProtocolTest COMMAND test_integration_protocol)
+
     # Godot Frontend Smoke Test
     find_program(GODOT_EXECUTABLE
         NAMES godot godot_console Godot_v4.7.2-stable_win64_console.exe

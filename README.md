@@ -273,7 +273,7 @@ flgodtv/
 │   ├── scripts/                # Autonomous camera director, swarm MultiMesh
 │   └── assets/models/          # Generated procedural glTF 3D models
 ├── scripts/                    # Asset generator, packager, and verify scripts
-├── tests/                      # 53 unit, deterministic, GPU, and smoke tests
+├── tests/                      # 55 unit, deterministic, GPU, integration, and smoke tests
 ├── tools/installer/            # Native self-contained C# Windows setup source
 ├── release/                    # Generated standalone distribution packages
 │   └── checksums/SHA256SUMS.txt# Cryptographic SHA-256 release manifest
@@ -298,9 +298,9 @@ The following cryptographic SHA-256 hashes correspond to the standalone distribu
 
 | Package Artifact | Platform | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `87edb7a2b0e0db0de100fc1ab807bed7bdf92eddf6a3628b3563aade4e99b7e1` |
-| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `55cde8a4c85a14fdf22988e0bed9371d694d48e21921dc861155638f29feccaa` |
-| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `59e9850fa7a627dcd73d73fddc292c32c063afe0ce7d664da289ee4497294295` |
+| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `d4f429e4002c58465e601f2216a5710c5bc1694fe6f91a3c2f5f9c2a962fd4a1` |
+| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `b0e7af8cc24f95e0a190b3141d61bed8765b0d4cbd797fe8f064dd2223880fe7` |
+| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `6e88274ef598e570a412e806e0eb888090dd6121a6ac73514304cec84d72785d` |
 
 ---
 
@@ -312,6 +312,7 @@ Every claim and metric in this project is backed by persistent execution artifac
 - [docs/VISUAL_V2_AUDIT.md](docs/VISUAL_V2_AUDIT.md) — Visual V2 architectural audit and implementation tracking.
 - [docs/STAGE_STATUS.md](docs/STAGE_STATUS.md) — Exact verification logs for development stages 00 through 29.
 - [docs/BACKEND_GATE_REPORT.md](docs/BACKEND_GATE_REPORT.md) — Verification report across all Phase A quality gates.
+- [evidence/video/render_manifest.json](evidence/video/render_manifest.json) — Automated Stage 20 cinematic video render manifest (90 frames, 30 FPS, 1280x720 H.264).
 - [evidence/visual_v2/manifest.json](evidence/visual_v2/manifest.json) — Automated headless verification manifest with 6 verified runtime visual proofs.
 - [dependencies.lock.json](dependencies.lock.json) — Pinned machine-readable dependency lockfile.
 - [evidence/windows/install_test_report.json](evidence/windows/install_test_report.json) — Clean-target installation and execution test report.

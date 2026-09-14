@@ -1,0 +1,23 @@
+{
+  "simulation_seed": 1337,
+  "simulation_version": "0.1.0",
+  "start_tick": 0,
+  "end_tick": 60,
+  "resolution": {
+    "width": 1280,
+    "height": 720
+  },
+  "fps": 30,
+  "expected_frames": 90,
+  "produced_frames": 90,
+  "output_path": "videos/flgodtv_cinematic_highlight.mp4",
+  "output_sha256": "2dc163240521034a6b9bc6414f7cad2c67e7a4c441e8511b94017dbf20413868",
+  "output_file_size": 7410,
+  "duration_seconds": 3.0,
+  "validation_result": "PASS",
+  "shots": [
+    "Shot 1: Cam 4 Global Wide Horizon Establishing Shot (Frames 0-30)",
+    "Shot 2: Cam 2 Agent POV Aerial Flight Chase (Frames 30-60)",
+    "Shot 3: Cam 1 God Fly Golden Guidance Orbit (Frames 60-90)"
+  ]
+}
