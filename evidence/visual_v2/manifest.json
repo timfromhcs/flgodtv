@@ -1,0 +1,26 @@
+{
+  "evidence_screenshots": [
+    "visual_v2_horizon_overview.png",
+    "visual_v2_quadview_broadcast.png",
+    "visual_v2_godfly_tracking.png",
+    "visual_v2_colony_nest.png",
+    "visual_v2_sunset_golden_hour.png",
+    "visual_v2_night_moonlight.png"
+  ],
+  "flora_instances": 118,
+  "renderer": "Godot 4 Forward+ Vulkan",
+  "rock_instances": 22,
+  "subsystems": {
+    "agent_visuals_v2": "PASS",
+    "atmosphere_lighting": "PASS",
+    "cinematic_broadcast": "PASS",
+    "map_system": "PASS",
+    "terrain_v2": "PASS",
+    "vegetation_v2": "PASS",
+    "water_v2": "PASS"
+  },
+  "terrain_vertices": 13254,
+  "timestamp": "2026-09-14T09:52:03",
+  "version": "Visual V2.0",
+  "water_surface_y": 0.2
+}

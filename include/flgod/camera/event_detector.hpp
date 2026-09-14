@@ -22,7 +22,16 @@ enum class SimulationEventType : uint32_t {
     SpeciationDivergence = 7,
     WeatherShift = 8,
     BrainSurge = 9,
-    Generic = 10
+    Combat = 10,
+    Predation = 11,
+    Discovery = 12,
+    ResourceDiscovery = 13,
+    Construction = 14,
+    Migration = 15,
+    Fire = 16,
+    Flooding = 17,
+    UnusualBehavior = 18,
+    Generic = 19
 };
 
 [[nodiscard]] inline const char* to_string(SimulationEventType type) noexcept {
@@ -37,6 +46,15 @@ enum class SimulationEventType : uint32_t {
         case SimulationEventType::SpeciationDivergence: return "SpeciationDivergence";
         case SimulationEventType::WeatherShift: return "WeatherShift";
         case SimulationEventType::BrainSurge: return "BrainSurge";
+        case SimulationEventType::Combat: return "Combat";
+        case SimulationEventType::Predation: return "Predation";
+        case SimulationEventType::Discovery: return "Discovery";
+        case SimulationEventType::ResourceDiscovery: return "ResourceDiscovery";
+        case SimulationEventType::Construction: return "Construction";
+        case SimulationEventType::Migration: return "Migration";
+        case SimulationEventType::Fire: return "Fire";
+        case SimulationEventType::Flooding: return "Flooding";
+        case SimulationEventType::UnusualBehavior: return "UnusualBehavior";
         case SimulationEventType::Generic: default: return "Generic";
     }
 }

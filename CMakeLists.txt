@@ -306,6 +306,10 @@ if(BUILD_TESTING)
             NAME GodotFrontendSmokeTest
             COMMAND ${GODOT_EXECUTABLE} --headless --path "${CMAKE_SOURCE_DIR}/godot" --script res://scripts/test_headless_frontend.gd
         )
+        add_test(
+            NAME GodotVisualV2VerificationTest
+            COMMAND ${GODOT_EXECUTABLE} --headless --path "${CMAKE_SOURCE_DIR}/godot" --script res://scripts/test_visual_v2.gd
+        )
     endif()
 endif()
 

@@ -221,6 +221,48 @@ void test_camera_director_serialization_and_replay() {
     std::cout << "  -> Camera director serialization and replay match passed." << std::endl;
 }
 
+void test_visual_v2_event_types() {
+    std::cout << "[Test] Running test_visual_v2_event_types..." << std::endl;
+    EventDetector detector(100);
+
+    const std::vector<SimulationEventType> v2_types = {
+        SimulationEventType::Combat,
+        SimulationEventType::Predation,
+        SimulationEventType::Discovery,
+        SimulationEventType::ResourceDiscovery,
+        SimulationEventType::Construction,
+        SimulationEventType::Migration,
+        SimulationEventType::Fire,
+        SimulationEventType::Flooding,
+        SimulationEventType::UnusualBehavior
+    };
+
+    for (size_t i = 0; i < v2_types.size(); ++i) {
+        SimulationEvent ev;
+        ev.tick = 100 + i;
+        ev.type = v2_types[i];
+        ev.priority = 10.0 + i * 5.0;
+        ev.description = to_string(v2_types[i]);
+        uint64_t id = detector.record_event(ev);
+        ALWAYS_ASSERT(id > 0);
+        ALWAYS_ASSERT(std::string(to_string(v2_types[i])) == ev.description);
+    }
+
+    ALWAYS_ASSERT(detector.active_count() == v2_types.size());
+    const SimulationEvent* highest = detector.highest_priority_event();
+    ALWAYS_ASSERT(highest != nullptr);
+    ALWAYS_ASSERT(highest->type == SimulationEventType::UnusualBehavior);
+
+    // Verify JSON roundtrip for V2 events
+    nlohmann::json j = detector.to_json();
+    EventDetector restored;
+    restored.from_json(j);
+    ALWAYS_ASSERT(restored.active_count() == v2_types.size());
+    ALWAYS_ASSERT(restored.highest_priority_event()->type == SimulationEventType::UnusualBehavior);
+
+    std::cout << "  -> Visual V2 event types passed." << std::endl;
+}
+
 int main() {
     std::cout << "=== FLGODTV STAGE 18 CAMERA DIRECTOR TEST SUITE ===" << std::endl;
     test_event_detector_priority_and_tie_breaking();
@@ -228,6 +270,7 @@ int main() {
     test_camera_cooldown_and_hysteresis();
     test_camera_transition_numerical_stability();
     test_camera_director_serialization_and_replay();
+    test_visual_v2_event_types();
     std::cout << "=== ALL STAGE 18 CAMERA DIRECTOR TESTS PASSED ===" << std::endl;
     return 0;
 }

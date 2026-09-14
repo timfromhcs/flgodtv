@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Vulkan-1.4-red.svg" alt="Vulkan 1.4">
   <img src="https://img.shields.io/badge/Godot-4.7.2%20Forward%2B-478cbf.svg" alt="Godot 4.7.2">
   <img src="https://img.shields.io/badge/Blender-5.1%20Procedural-f5792a.svg" alt="Blender 5.1">
-  <img src="https://img.shields.io/badge/CTest-52%2F52%20Passed%20(100%25)-brightgreen.svg" alt="CTest 52/52 Passed">
+  <img src="https://img.shields.io/badge/CTest-53%2F53%20Passed%20(100%25)-brightgreen.svg" alt="CTest 53/53 Passed">
   <img src="https://img.shields.io/badge/Connectome-128.9M%20somas%2Fs-orange.svg" alt="128.9M somas/s">
   <a href="#license"><img src="https://img.shields.io/badge/License-Apache%202.0%20%2F%20MIT-lightgrey.svg" alt="License"></a>
 </p>
@@ -58,7 +58,7 @@ The platform executes entirely independent of rendering. A C++20 simulation core
 - **Multi-Agent Genetics & Speciation:** 8-trait genome, 6 mutation operators, 2-parent crossover, phenotypic divergence tracking, and multi-colony social dynamics.
 - **Autonomous 4-Camera Presentation Rig:** Real-time cinematic camera director switching between Global Overview, Follow Fly, Colony POV, and Best-Of Event cameras with dynamic weight scoring.
 - **Blender 3D Procedural Content Pipeline:** Headless asset generator producing optimized glTF models (`fly_agent.glb`, `flora_shrub.glb`, `environment_rock.glb`) with **100% bit-exact SHA-256 replication**.
-- **Godot 4 Forward+ Vulkan Frontend:** Dynamic terrain LOD streaming, GPU MultiMesh swarm rendering, procedural water ripples, and live telemetry HUD with zero canonical simulation state ownership.
+- **Godot 4 Forward+ Visual V2 Presentation:** Slope-aware central-difference terrain normals, dual-plane water with shoreline foam fringe and wave swell, multi-species botanical flora & hillside rock clusters, high-frequency wing oscillation & flight banking, 2D radar minimap with layer toggles, and dynamic 4-phase diurnal day/night atmospheric cycle.
 - **Sandboxed Technology VM:** Isolated 8-register virtual machine with bounded cycle execution and packet-routed virtual network interfaces—zero host privilege exposure.
 
 ---
@@ -114,7 +114,7 @@ cmake --preset ninja-release
 # 3. Build the core headless simulation executable
 cmake --build build/ninja-release --config Release
 
-# 4. Execute the complete test suite (52/52 automated tests)
+# 4. Execute the complete test suite (53/53 automated tests)
 ctest --test-dir build/ninja-release --output-on-failure
 
 # 5. Run headless simulation verification modes
@@ -157,10 +157,13 @@ flowchart TD
         Blender["Blender 5.1 Procedural Generator\nDeterministic Ico-Sphere glTF Export"]
     end
 
-    subgraph FRONTEND["GODOT 4 FORWARD+ PRESENTATION"]
-        Rig["Autonomous 4-Camera Rig\n(Global / Follow / Colony / Event)"]
-        Terrain["Terrain LOD Streamer"]
-        Swarm["MultiMesh Agent & Flora Renderer"]
+    subgraph FRONTEND["GODOT 4 FORWARD+ PRESENTATION (VISUAL V2)"]
+        Rig["Autonomous 4-Camera Broadcast Rig\n(Global / Follow / Colony / Event)"]
+        Terrain["Terrain V2 (Central-Diff Normals & Biomes)"]
+        Water["Water V2 (Dual-Plane Shoreline & Swell)"]
+        Swarm["MultiMesh Agent & Flora V2 Renderer"]
+        Map["2D Radar Minimap & Layer Tracker"]
+        Atmo["Atmosphere & Diurnal Cycle Controller"]
         HUD["Simulation Telemetry HUD"]
     end
 
@@ -195,15 +198,15 @@ Raw JSON experiment manifests and execution logs are preserved in [`evidence/win
 
 ## Testing & Verification
 
-The automated CTest suite executes **52 test targets** covering every simulation layer:
+The automated CTest suite executes **53 test targets** covering every simulation layer:
 
 ```bash
 ctest --test-dir build/ninja-release --output-on-failure
 ```
 
 ```text
-100% tests passed out of 52
-Total Test time (real) = ~2.6 sec
+100% tests passed out of 53
+Total Test time (real) = ~3.4 sec
 ```
 
 | Test Target | Validation Scope |
@@ -216,6 +219,7 @@ Total Test time (real) = ~2.6 sec
 | `VulkanComputeTest` | Bit-exact numerical match (0.0 absolute difference) with CPU reference |
 | `TelemetryHUDTest` | Live simulation telemetry extraction with strict "N/A" fallback safety |
 | `GodotFrontendSmokeTest` | Headless validation of 4-camera rig, MultiMesh instancing, and UI capture |
+| `GodotVisualV2VerificationTest` | Autonomous headless verification of Visual V2 terrain, water, vegetation, minimap, and day/night cycle |
 
 ---
 
@@ -294,9 +298,9 @@ The following cryptographic SHA-256 hashes correspond to the standalone distribu
 
 | Package Artifact | Platform | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `c1d16a04815db4a3904db191273dcd81902da25728401f57979ab124ca5c78ff` |
-| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `cf0ece0dc4cbeec0e75ed37409595dc9562baaf2afd11fdf2a8b95bcbd14d0df` |
-| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `c1100186425e0e356aaee825e3b445431bffcc1e7906623b29bd7dd087f4d5b6` |
+| `windows/FLGODTV-0.1.0-Setup.exe` | Windows x64 (Installer) | `f102fcba9e6cacff30d3b633e4695a0631e1146480383357babf80ad54ef9909` |
+| `windows/FLGODTV-0.1.0-windows-x64-portable.zip` | Windows x64 (Portable) | `0b3e6fdac7a450d0213e67e636b2e321beaaa884c3b6c92e669e41c34bdc3911` |
+| `linux/FLGODTV-0.1.0-linux-x64-portable.tar.gz` | Linux x64 (Portable) | `115c779ac23bc8859438261b10f276b9f9f08d7b28260e1dcd95dc53be444852` |
 
 ---
 
@@ -305,8 +309,10 @@ The following cryptographic SHA-256 hashes correspond to the standalone distribu
 Every claim and metric in this project is backed by persistent execution artifacts:
 
 - [docs/AUDIT.md](docs/AUDIT.md) — Baseline repository inventory and toolchain audit.
-- [docs/STAGE_STATUS.md](docs/STAGE_STATUS.md) — Exact verification logs for development stages 00 through 28.
+- [docs/VISUAL_V2_AUDIT.md](docs/VISUAL_V2_AUDIT.md) — Visual V2 architectural audit and implementation tracking.
+- [docs/STAGE_STATUS.md](docs/STAGE_STATUS.md) — Exact verification logs for development stages 00 through 29.
 - [docs/BACKEND_GATE_REPORT.md](docs/BACKEND_GATE_REPORT.md) — Verification report across all Phase A quality gates.
+- [evidence/visual_v2/manifest.json](evidence/visual_v2/manifest.json) — Automated headless verification manifest with 6 verified runtime visual proofs.
 - [dependencies.lock.json](dependencies.lock.json) — Pinned machine-readable dependency lockfile.
 - [evidence/windows/install_test_report.json](evidence/windows/install_test_report.json) — Clean-target installation and execution test report.
 

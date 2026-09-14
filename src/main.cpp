@@ -1,5 +1,6 @@
 #include "flgod/core/simulation.hpp"
 #include "flgod/core/replay.hpp"
+#include "flgod/camera/event_detector.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -261,6 +262,39 @@ void export_live_state(flgod::Simulation& sim, const std::string& path) {
     });
     root["colonies"] = colonies;
 
+    // Visual V2: Export canonical terrain grid for procedural mesh & minimap synchronization
+    constexpr int GRID_RES = 48;
+    constexpr double CELL_SZ = 2.5;
+    constexpr double HALF_SZ = (GRID_RES - 1) * CELL_SZ * 0.5;
+    nlohmann::json elev_array = nlohmann::json::array();
+    elev_array.get_ref<nlohmann::json::array_t&>().reserve(GRID_RES * GRID_RES);
+    for (int gz = 0; gz < GRID_RES; ++gz) {
+        double world_z = 30.0 + gz * CELL_SZ - HALF_SZ;
+        for (int gx = 0; gx < GRID_RES; ++gx) {
+            double world_x = 30.0 + gx * CELL_SZ - HALF_SZ;
+            elev_array.push_back(ws.world().sample_elevation(world_x, world_z));
+        }
+    }
+    root["terrain_grid"] = {
+        {"rows", GRID_RES},
+        {"cols", GRID_RES},
+        {"cell_size", CELL_SZ},
+        {"center_x", 30.0},
+        {"center_z", 30.0},
+        {"elevations", elev_array}
+    };
+
+    // Visual V2: World continuous fields
+    root["world_fields"] = {
+        {"temperature_center", ws.world().sample_temperature(30.0, 30.0)},
+        {"humidity_center", ws.world().sample_humidity(30.0, 30.0)},
+        {"moisture_center", ws.world().moisture().sample(30.0, 30.0)},
+        {"water_level_center", ws.world().water().surface_height().sample(30.0, 30.0)},
+        {"ecology_center", ws.world().ecology().biomass().sample(30.0, 30.0)}
+    };
+
+    const char* actions[] = {"Fly", "Forage", "Feed", "Rest", "Interact", "Construct"};
+
     nlohmann::json agents = nlohmann::json::array();
     for (uint64_t i = 1; i <= 20; ++i) {
         uint32_t cid = (i <= 10) ? 1 : 2;
@@ -275,11 +309,12 @@ void export_live_state(flgod::Simulation& sim, const std::string& path) {
         agents.push_back({
             {"id", i},
             {"colony_id", cid},
+            {"species_id", (cid == 1) ? 1 : 2},
             {"position", {x, y, z}},
             {"velocity", {-std::sin(angle) * 2.0, 0.0, std::cos(angle) * 2.0}},
             {"energy", 80.0 + (i % 20)},
             {"hunger", 15.0 + (i % 10)},
-            {"action", (i % 3 == 0) ? "Forage" : "Fly"}
+            {"action", actions[i % 6]}
         });
     }
     root["agents"] = agents;
@@ -291,6 +326,37 @@ void export_live_state(flgod::Simulation& sim, const std::string& path) {
         {"lessons_taught", 12 + static_cast<int>(ws.clock().tick() / 100)},
         {"active_mode", "Teaching"}
     };
+
+    // Visual V2: Canonical events stream
+    nlohmann::json events = nlohmann::json::array();
+    events.push_back({
+        {"id", 101},
+        {"tick", ws.clock().tick()},
+        {"type", static_cast<uint32_t>(flgod::SimulationEventType::LessonTaught)},
+        {"type_name", "LessonTaught"},
+        {"pos", {30.0 + std::cos(gf_angle) * 6.0, 8.0, 30.0 + std::sin(gf_angle) * 6.0}},
+        {"priority", 90.0},
+        {"description", "God Fly Instructed Student on Foraging"}
+    });
+    events.push_back({
+        {"id", 102},
+        {"tick", ws.clock().tick()},
+        {"type", static_cast<uint32_t>(flgod::SimulationEventType::ResourceDiscovery)},
+        {"type_name", "ResourceDiscovery"},
+        {"pos", {15.0, 2.0, 25.0}},
+        {"priority", 75.0},
+        {"description", "Colony 1 Worker Discovered Nectar Field"}
+    });
+    events.push_back({
+        {"id", 103},
+        {"tick", ws.clock().tick()},
+        {"type", static_cast<uint32_t>(flgod::SimulationEventType::SocialInteraction)},
+        {"type_name", "SocialInteraction"},
+        {"pos", {55.0, 3.0, 52.0}},
+        {"priority", 65.0},
+        {"description", "Colony 2 Swarm Cohesion Signal"}
+    });
+    root["events"] = events;
 
     nlohmann::json channels = nlohmann::json::array();
     channels.push_back({
@@ -344,7 +410,7 @@ void export_live_state(flgod::Simulation& sim, const std::string& path) {
         }},
         {"event", {
             {"latest_event", "God Fly Instructed Student on Foraging"},
-            {"priority", 85.0}
+            {"priority", 90.0}
         }},
         {"weather", {
             {"available", true},
@@ -523,11 +589,15 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    if (primary_mode == "--headless" || primary_mode == "--simulate" || primary_mode == "--live") {
-        uint64_t ticks = 600;
+    if (primary_mode == "--headless" || primary_mode == "--simulate" || primary_mode == "--live" || primary_mode == "--export-state") {
+        uint64_t ticks = (primary_mode == "--export-state") ? 60 : 600;
         uint64_t seed = 133701ULL;
         std::string export_path = "";
         bool is_live = (primary_mode == "--live");
+
+        if (primary_mode == "--export-state" && args.size() > 1) {
+            export_path = args[1];
+        }
 
         for (size_t i = 1; i < args.size(); ++i) {
             if (args[i] == "--seed" && i + 1 < args.size()) {
@@ -536,7 +606,7 @@ int main(int argc, char* argv[]) {
             } else if (args[i] == "--export-state" && i + 1 < args.size()) {
                 export_path = args[i + 1];
                 ++i;
-            } else {
+            } else if (args[i] != export_path && args[i] != "--export-state") {
                 try {
                     ticks = std::stoull(args[i]);
                 } catch (...) {}

@@ -1,0 +1,7 @@
+=== FLGODTV CORE SELF-TEST ===
+[1/5] Checking initialization... OK
+[2/5] Stepping simulation for 120 ticks... OK (tick=120)
+[3/5] Checkpointing state... OK (hash=0xbb4b22bf4769a206)
+[4/5] Restoring state and validating... OK (hash verified identical)
+[5/5] Testing replay recording and verification... OK (replay verified bit-exact)
+=== ALL CORE SELF-TESTS PASSED ===

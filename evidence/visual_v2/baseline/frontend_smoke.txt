@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[Godot Headless Test] Starting FLGODTV Frontend smoke test...
+  - 4-Camera presentation rig verified.
+  - FlyMultiMesh and Blender 3D assets verified (fly_agent.glb, flora_shrub.glb, environment_rock.glb).
+  - BackendBridge verified: 20 agents, 2 colonies.
+[TerrainRenderer] Terrain mesh: LOD0 step=1 verts=13254 backend_grid=false.
+[TerrainRenderer] Terrain mesh: LOD0 step=1 verts=13254 backend_grid=false.
+[TerrainRenderer] Terrain mesh: LOD2 step=4 verts=864 backend_grid=false.
+[TerrainRenderer] Terrain mesh: LOD0 step=1 verts=13254 backend_grid=false.
+[TerrainRenderer] Terrain mesh: LOD0 step=1 verts=13254 backend_grid=true.
+  - TerrainRenderer verified (verts=13254, LOD, streaming, backend grid).
+[VegetationRenderer] Instances: placed=118/200 backend=false.
+[VegetationRenderer] Instances: placed=118/200 backend=false.
+[VegetationRenderer] Instances: placed=2/200 backend=true.
+[VegetationRenderer] Instances: placed=118/200 backend=false.
+  - VegetationRenderer verified (placed=118, GPU instancing, backend wiring).
+[WaterRenderer] Water surface at Y=-0.5 backend=false.
+  - WaterRenderer verified (level=0.75, backend wiring).
+  - WeatherRenderer verified (backend consequences, N/A-safe).
+[LightingProfiles] Active profile: LOW.
+[LightingProfiles] Active profile: MEDIUM.
+[LightingProfiles] Active profile: HIGH.
+[LightingProfiles] Active profile: CINEMATIC.
+[LightingProfiles] Active profile: MEDIUM.
+  - LightingProfiles verified (LOW/MEDIUM/HIGH/CINEMATIC).
+  - Stage 18 Camera Director frontend integration verified (4 channels, poses, FOV).
+  - Stage 19 Telemetry HUD frontend integration verified (all panels, N/A fallback, toggles).
+  - UI/UX verification screenshot saved to C:/Users/hcsme/Desktop/Fly/renders/screenshots/ui_ux_headless_verification.png.
+[Godot Headless Test] ALL FRONTEND SMOKE TESTS PASSED!
+[BackendBridge] Initializing FLGODTV presentation bridge...
+[FLGODTVController] Initializing 4-Camera System and MultiMesh Fly Renderer...
+[FLGODTVController] View Mode switched to: Cam 4 (Global Wide Solo)

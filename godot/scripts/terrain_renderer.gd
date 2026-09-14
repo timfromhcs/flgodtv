@@ -48,7 +48,8 @@ func generate_terrain_mesh() -> void:
 
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
-	mat.roughness = 0.85
+	mat.roughness = 0.82
+	mat.metallic_specular = 0.25
 	surface_tool.set_material(mat)
 
 	var step := lod_step()
@@ -74,39 +75,40 @@ func generate_terrain_mesh() -> void:
 			var v01 := Vector3(x0, y01, z1)
 			var v11 := Vector3(x1, y11, z1)
 
-			var c00 := get_biome_color(y00)
-			var c10 := get_biome_color(y10)
-			var c01 := get_biome_color(y01)
-			var c11 := get_biome_color(y11)
+			# Central-difference smooth normal calculation (Terrain V2)
+			var n00 := compute_vertex_normal(x, z, x0, z0, step)
+			var n10 := compute_vertex_normal(x1i, z, x1, z0, step)
+			var n01 := compute_vertex_normal(x, z1i, x0, z1, step)
+			var n11 := compute_vertex_normal(x1i, z1i, x1, z1, step)
 
-			var n1: Vector3 = (v10 - v00).cross(v01 - v00).normalized()
-			var n2: Vector3 = (v11 - v10).cross(v01 - v10).normalized()
-			if n1.length() < 0.5:
-				n1 = Vector3.UP
-			if n2.length() < 0.5:
-				n2 = Vector3.UP
+			var c00 := get_biome_color_v2(y00, n00)
+			var c10 := get_biome_color_v2(y10, n10)
+			var c01 := get_biome_color_v2(y01, n01)
+			var c11 := get_biome_color_v2(y11, n11)
 
-			surface_tool.set_normal(n1)
+			# Tri 1: v00 -> v10 -> v01
+			surface_tool.set_normal(n00)
 			surface_tool.set_color(c00)
 			surface_tool.add_vertex(v00)
 
-			surface_tool.set_normal(n1)
+			surface_tool.set_normal(n10)
 			surface_tool.set_color(c10)
 			surface_tool.add_vertex(v10)
 
-			surface_tool.set_normal(n1)
+			surface_tool.set_normal(n01)
 			surface_tool.set_color(c01)
 			surface_tool.add_vertex(v01)
 
-			surface_tool.set_normal(n2)
+			# Tri 2: v10 -> v11 -> v01
+			surface_tool.set_normal(n10)
 			surface_tool.set_color(c10)
 			surface_tool.add_vertex(v10)
 
-			surface_tool.set_normal(n2)
+			surface_tool.set_normal(n11)
 			surface_tool.set_color(c11)
 			surface_tool.add_vertex(v11)
 
-			surface_tool.set_normal(n2)
+			surface_tool.set_normal(n01)
 			surface_tool.set_color(c01)
 			surface_tool.add_vertex(v01)
 			vertex_count += 6
@@ -165,13 +167,49 @@ static func sample_height(x: float, z: float) -> float:
 	var h2: float = sin(x * 0.12 + 1.2) * cos(z * 0.12 + 0.8) * 1.5
 	return h1 + h2
 
+func compute_vertex_normal(gx: int, gz: int, x: float, z: float, step: int) -> Vector3:
+	var delta_coord: float = float(step) * cell_size
+	var h_left: float = sample_height_grid(gx - step, gz, x - delta_coord, z)
+	var h_right: float = sample_height_grid(gx + step, gz, x + delta_coord, z)
+	var h_down: float = sample_height_grid(gx, gz - step, x, z - delta_coord)
+	var h_up: float = sample_height_grid(gx, gz + step, x, z + delta_coord)
+	var n := Vector3(h_left - h_right, 2.0 * delta_coord, h_down - h_up).normalized()
+	if n.length() < 0.5 or is_nan(n.x) or is_nan(n.y) or is_nan(n.z):
+		return Vector3.UP
+	return n
+
 static func get_biome_color(elevation: float) -> Color:
-	# Biome coloration matching Whittaker diagram bands used by backend.
-	if elevation < -1.0:
-		return Color(0.76, 0.70, 0.50) # Sandy Shoreline
-	elif elevation < 2.0:
-		return Color(0.35, 0.65, 0.25) # Grassland / Meadow
-	elif elevation < 4.0:
-		return Color(0.20, 0.48, 0.20) # Forest / Woodland
+	return get_biome_color_v2(elevation, Vector3.UP)
+
+static func get_biome_color_v2(elevation: float, normal: Vector3) -> Color:
+	# Slope-aware biome blending (Visual V2):
+	# normal.y close to 1.0 is flat; normal.y < 0.70 is steep cliff/rock.
+	var slope: float = clampf(normal.y, 0.0, 1.0)
+	var rock_color := Color(0.44, 0.42, 0.40) # Cliff rock / shale
+	var cliff_steep_color := Color(0.32, 0.30, 0.30) # Dark bedrock
+
+	var base_biome: Color
+	if elevation < -0.4:
+		# Shoreline / Wet Sand / Mud
+		base_biome = Color(0.74, 0.68, 0.48)
+	elif elevation < 2.2:
+		# Lush Grassland / Meadow
+		base_biome = Color(0.30, 0.62, 0.22)
+	elif elevation < 4.8:
+		# Woodland / Temperate Forest
+		base_biome = Color(0.18, 0.44, 0.16)
+	elif elevation < 7.0:
+		# Subalpine Scree & Moss
+		base_biome = Color(0.42, 0.50, 0.36)
 	else:
-		return Color(0.55, 0.55, 0.55) # Rocky Peak
+		# Alpine Snow Summit
+		base_biome = Color(0.92, 0.95, 0.98)
+
+	# If slope is steep, blend toward rock cliff
+	if slope < 0.60:
+		return cliff_steep_color.lerp(rock_color, slope / 0.60)
+	elif slope < 0.78:
+		var factor: float = (slope - 0.60) / 0.18
+		return rock_color.lerp(base_biome, factor)
+	else:
+		return base_biome

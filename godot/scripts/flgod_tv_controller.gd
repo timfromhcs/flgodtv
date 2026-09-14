@@ -20,6 +20,14 @@ var current_view_mode: int = 4
 var quad_container: Control = null
 var quad_sub_cams: Array[Camera3D] = []
 
+# Visual V2 Subsystems: MapSystem & AtmosphereController
+const MapSystemScript = preload("res://scripts/map_system.gd")
+const AtmosphereControllerScript = preload("res://scripts/atmosphere_controller.gd")
+var map_system: Control = null
+var atmosphere_ctrl: Node = null
+var is_auto_broadcast: bool = false
+var broadcast_hold_timer: float = 0.0
+
 func ensure_initialized() -> void:
 	if not bridge:
 		bridge = get_node_or_null("BackendBridge")
@@ -33,14 +41,38 @@ func ensure_initialized() -> void:
 		god_fly_mesh = get_node_or_null("GodFlyMesh")
 	if fly_multimesh and fly_multimesh.multimesh == null:
 		setup_fly_multimesh()
+	if quad_container == null:
+		setup_quad_view_presentation()
+	if map_system == null:
+		setup_map_system()
+	if atmosphere_ctrl == null:
+		setup_atmosphere_controller()
 
 func _ready() -> void:
 	print("[FLGODTVController] Initializing 4-Camera System and MultiMesh Fly Renderer...")
 	ensure_initialized()
 	if bridge:
 		bridge.state_updated.connect(_on_state_updated)
-	setup_quad_view_presentation()
 	set_view_mode(current_view_mode)
+
+func setup_map_system() -> void:
+	var ui_node = get_node_or_null("UI")
+	if not ui_node or map_system != null:
+		return
+	map_system = MapSystemScript.new()
+	map_system.name = "MinimapRadar"
+	map_system.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	map_system.position = Vector2(-200.0, 20.0)
+	ui_node.add_child(map_system)
+	if bridge:
+		map_system.set_bridge(bridge)
+
+func setup_atmosphere_controller() -> void:
+	if atmosphere_ctrl != null:
+		return
+	atmosphere_ctrl = AtmosphereControllerScript.new()
+	atmosphere_ctrl.name = "AtmosphereController"
+	add_child(atmosphere_ctrl)
 
 func load_mesh_from_scene(path: String, fallback_mesh: Mesh) -> Mesh:
 	if ResourceLoader.exists(path):
@@ -174,6 +206,15 @@ func _unhandled_input(event: InputEvent) -> void:
 				set_view_mode(3)
 			KEY_4:
 				set_view_mode(4)
+			KEY_B:
+				is_auto_broadcast = not is_auto_broadcast
+				print("[FLGODTVController] Autonomous Broadcast Director: ", "ON" if is_auto_broadcast else "OFF")
+			KEY_M:
+				if map_system:
+					map_system.toggle_expanded()
+			KEY_L:
+				if map_system:
+					map_system.cycle_layers()
 			KEY_R:
 				var hud = get_node_or_null("UI")
 				if hud and hud.has_method("toggle_research_panel"):
@@ -183,25 +224,73 @@ func _unhandled_input(event: InputEvent) -> void:
 				if hud:
 					var p = hud.get_node_or_null("Panel")
 					if p: p.visible = not p.visible
+					if map_system:
+						map_system.visible = p.visible if p else true
 
 func _process(delta: float) -> void:
+	if is_auto_broadcast:
+		update_broadcast_director(delta)
 	update_cameras(delta)
 	update_fly_instances()
 	update_quad_sub_cameras()
+	update_map_camera_state()
+
+func update_broadcast_director(delta: float) -> void:
+	broadcast_hold_timer -= delta
+	if broadcast_hold_timer > 0.0:
+		return
+
+	# Deterministic autonomous director rules (GEMINI.md Sections 83 & 89):
+	# Check for breaking events
+	if bridge and bridge.events_data.size() > 0:
+		var top_ev: Dictionary = bridge.events_data[0]
+		var prio: float = float(top_ev.get("priority", 0.0))
+		if prio >= 80.0 and current_view_mode != 3:
+			set_view_mode(3) # Action event cut
+			broadcast_hold_timer = 6.0
+			return
+
+	# Sequence through documentary perspectives
+	match current_view_mode:
+		0:
+			set_view_mode(1) # God Fly Tracking
+			broadcast_hold_timer = 8.0
+		1:
+			set_view_mode(2) # Colony POV
+			broadcast_hold_timer = 7.0
+		2:
+			set_view_mode(4) # Archipelago Overview
+			broadcast_hold_timer = 10.0
+		_:
+			set_view_mode(0) # 4-Camera QuadView Broadcast
+			broadcast_hold_timer = 8.0
+
+func update_map_camera_state() -> void:
+	if not map_system:
+		return
+	var active_cam: Camera3D = camera_global
+	match current_view_mode:
+		1: active_cam = camera_godfly
+		2: active_cam = camera_colony
+		3: active_cam = camera_event
+		_: active_cam = camera_global
+	if active_cam and active_cam.is_inside_tree():
+		map_system.active_camera_pos = active_cam.global_position
+		map_system.active_camera_look = active_cam.global_position - active_cam.global_transform.basis.z * 15.0
 
 func update_quad_sub_cameras() -> void:
 	if not quad_container or not quad_container.visible or quad_sub_cams.size() < 4:
 		return
-	if camera_godfly and quad_sub_cams[0]:
+	if camera_godfly and camera_godfly.is_inside_tree() and quad_sub_cams[0]:
 		quad_sub_cams[0].global_transform = camera_godfly.global_transform
 		quad_sub_cams[0].fov = camera_godfly.fov
-	if camera_colony and quad_sub_cams[1]:
+	if camera_colony and camera_colony.is_inside_tree() and quad_sub_cams[1]:
 		quad_sub_cams[1].global_transform = camera_colony.global_transform
 		quad_sub_cams[1].fov = camera_colony.fov
-	if camera_event and quad_sub_cams[2]:
+	if camera_event and camera_event.is_inside_tree() and quad_sub_cams[2]:
 		quad_sub_cams[2].global_transform = camera_event.global_transform
 		quad_sub_cams[2].fov = camera_event.fov
-	if camera_global and quad_sub_cams[3]:
+	if camera_global and camera_global.is_inside_tree() and quad_sub_cams[3]:
 		quad_sub_cams[3].global_transform = camera_global.global_transform
 		quad_sub_cams[3].fov = camera_global.fov
 
@@ -279,25 +368,65 @@ func update_fly_instances() -> void:
 	var mm := fly_multimesh.multimesh
 	var agents: Array = bridge.agents_data
 	var count : int = min(agents.size(), mm.instance_count)
+	var time_now: float = bridge.simulation_time if bridge else 0.0
+
 	for i in range(count):
 		var a: Dictionary = agents[i]
 		var pos: Vector3 = a.get("position", Vector3.ZERO)
 		var vel: Vector3 = a.get("velocity", Vector3.ZERO)
-		
+		var action: String = a.get("action", "Fly")
+		var cid: int = a.get("colony_id", 1)
+
+		# Procedural high-frequency wing oscillation and micro-bobbing (Agent V2)
+		var wing_bob: float = sin(time_now * 28.0 + float(i) * 1.7) * 0.04
+		var current_pos := pos + Vector3(0.0, wing_bob, 0.0)
+
 		var t := Transform3D()
-		# Orient mesh towards flight direction
 		if vel.length_squared() > 0.05:
 			var forward := vel.normalized()
 			var up := Vector3.UP
 			var right := forward.cross(up).normalized()
 			up = right.cross(forward).normalized()
-			t.basis = Basis(right, up, -forward)
-		t.origin = pos
-		mm.set_instance_transform(i, t)
-		
-		var col := Color(0.2, 0.8, 1.0) if a.get("colony_id", 1) == 1 else Color(1.0, 0.6, 0.2)
-		mm.set_instance_color(i, col)
 
-	# Update God Fly visual mesh
+			# Subtle flight bank angle based on lateral turn
+			var bank_angle: float = clampf(vel.x * 0.15, -0.4, 0.4)
+			var base_basis := Basis(right, up, -forward)
+			t.basis = base_basis.rotated(forward, bank_angle)
+		else:
+			# Stationary / Resting pose
+			t.basis = Basis.IDENTITY
+
+		# Scale modulation based on action
+		var scale_val: float = 1.0
+		if action == "Rest":
+			scale_val = 0.85
+		elif action == "Feed" or action == "Construct":
+			scale_val = 1.1
+
+		t.basis = t.basis.scaled(Vector3(scale_val, scale_val, scale_val))
+		t.origin = current_pos
+		mm.set_instance_transform(i, t)
+
+		# Action and colony aware color coding (Visual V2)
+		var base_col: Color = Color(0.2, 0.85, 1.0) if cid == 1 else Color(1.0, 0.65, 0.18)
+		var display_col: Color = base_col
+		match action:
+			"Forage":
+				display_col = base_col.lerp(Color(0.4, 1.0, 0.4), 0.3)
+			"Feed":
+				display_col = Color(1.0, 0.9, 0.25) # Nectar feeding gold
+			"Interact":
+				display_col = Color(0.9, 0.4, 0.9) # Social cohesion magenta
+			"Construct":
+				display_col = Color(0.95, 0.5, 0.3) # Technology/construction amber
+			"Rest":
+				display_col = base_col.darkened(0.3)
+
+		mm.set_instance_color(i, display_col)
+
+	# Update God Fly visual mesh with smooth teacher orbit
 	if god_fly_mesh and bridge.god_fly_data.has("position"):
 		god_fly_mesh.position = bridge.god_fly_data["position"]
+		# Subtle golden scale pulse indicating active teaching
+		var pulse: float = 1.0 + sin(time_now * 2.0) * 0.06
+		god_fly_mesh.scale = Vector3(pulse, pulse, pulse)
