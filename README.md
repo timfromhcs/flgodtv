@@ -211,7 +211,7 @@ Detailed experiment manifests and raw JSON data are archived in [`evidence/windo
 
 ## Testing
 
-CTest runs 49 automated test targets spanning unit, deterministic integration, physics, GPU compute, learning, evolution, and frontend validation:
+CTest runs 52 automated test targets spanning unit, deterministic integration, physics, GPU compute, learning, evolution, camera directing, telemetry UI, and frontend validation:
 
 ```bash
 # Execute the full test suite
@@ -219,18 +219,20 @@ ctest --test-dir build --output-on-failure
 ```
 
 ```text
-100% tests passed out of 49
+100% tests passed out of 52
 
-Total Test time (real) = ~13.0 sec
+Total Test time (real) = ~2.4 sec
 ```
 
 Key test suites:
 - `DeterministicSimulationTest`: Bit-exact simulation hash across independent executions.
 - `DeterministicPhysicsTest`: 500-step rigid body trajectory match and 100% midpoint crash recovery hash match.
 - `DeterministicWorldTest`: Multi-octave procedural terrain and continuous field determinism.
+- `DeterministicCameraTest`: Bit-exact deterministic camera pose replication across runs over 150 ticks.
 - `EvolutionPopulationTest`: 25-generation drift, speciation isolation, and migration tracking.
 - `VulkanComputeTest`: Bit-exact numerical equality (0.0 max absolute diff) between CPU reference and GPU compute kernel output.
-- `GodotFrontendSmokeTest`: Headless validation of the 4-camera rig, MultiMesh instancing, LOD decimation, and weather consequence mapping.
+- `TelemetryHUDTest`: Real simulation telemetry extraction with strict "N/A" fallback safety.
+- `GodotFrontendSmokeTest`: Headless validation of 4-camera rig, MultiMesh instancing, LOD decimation, weather consequences, and automated UI/UX screenshot capture.
 
 ---
 
@@ -247,8 +249,8 @@ $$\text{Seed} + \text{SimulationVersion} + \text{Inputs} \implies \text{Bit-Exac
 ## Known Limitations
 
 1. **Hardware GPU Requirement for Vulkan Compute:** Real Vulkan compute kernels require a compatible physical Vulkan 1.3+ GPU (AMD, NVIDIA, or Intel). Headless cloud CI runners lacking a physical GPU report `VULKAN GPU TEST = NOT AVAILABLE` per `GEMINI.md` Section 103 rather than fabricating CPU mock results.
-2. **Interactive Rendering:** Godot presentation requires a local display or virtual framebuffer (`xvfb` on Linux) for interactive windowed viewing.
-3. **Camera Director & UI Roadmap:** Stage 18 (autonomous camera director) and Stage 19 (full UI telemetry HUD) are currently in active implementation.
+2. **Interactive Rendering:** Godot presentation requires a local display or virtual framebuffer (`xvfb` on Linux) for interactive windowed viewing. Headless test automation executes without display hardware.
+3. **Automated Video Encoding Pipeline:** Stage 20 (automated headless FFmpeg video rendering pipeline) is the next engineering milestone. Stages 18 (Camera Director) and 19 (Telemetry HUD) are fully implemented and verified.
 
 ---
 

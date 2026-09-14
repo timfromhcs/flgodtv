@@ -14,7 +14,7 @@ test 1
 1: Test timeout computed to be: 10000000
 1: [TEST] Running test_core_clock...
 1: [PASS] test_core_clock passed successfully.
- 1/30 Test  #1: CoreClockTest ....................   Passed    0.01 sec
+ 1/52 Test  #1: CoreClockTest ....................   Passed    0.01 sec
 test 2
       Start  2: CoreRNGTest
 
@@ -23,7 +23,7 @@ test 2
 2: Test timeout computed to be: 10000000
 2: [TEST] Running test_core_rng...
 2: [PASS] test_core_rng passed successfully.
- 2/30 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
+ 2/52 Test  #2: CoreRNGTest ......................   Passed    0.01 sec
 test 3
       Start  3: CoreEntityTest
 
@@ -32,7 +32,7 @@ test 3
 3: Test timeout computed to be: 10000000
 3: [TEST] Running test_core_entity...
 3: [PASS] test_core_entity passed successfully.
- 3/30 Test  #3: CoreEntityTest ...................   Passed    0.01 sec
+ 3/52 Test  #3: CoreEntityTest ...................   Passed    0.01 sec
 test 4
       Start  4: CoreEventBusTest
 
@@ -41,7 +41,7 @@ test 4
 4: Test timeout computed to be: 10000000
 4: [TEST] Running test_core_event_bus...
 4: [PASS] test_core_event_bus passed successfully.
- 4/30 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
+ 4/52 Test  #4: CoreEventBusTest .................   Passed    0.01 sec
 test 5
       Start  5: DeterministicSimulationTest
 
@@ -52,7 +52,7 @@ test 5
 5: [CHECK 1/2] Uninterrupted parallel runs produced identical hash: 2326199170333143766
 5: [CHECK 2/2] Restored checkpoint run matched reference final hash: 2326199170333143766
 5: [PASS] test_deterministic_simulation passed successfully.
- 5/30 Test  #5: DeterministicSimulationTest ......   Passed    0.07 sec
+ 5/52 Test  #5: DeterministicSimulationTest ......   Passed    0.07 sec
 test 6
       Start  6: WorldNoiseTest
 
@@ -61,7 +61,7 @@ test 6
 6: Test timeout computed to be: 10000000
 6: [TEST] Running test_world_noise...
 6: [PASS] test_world_noise passed successfully.
- 6/30 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
+ 6/52 Test  #6: WorldNoiseTest ...................   Passed    0.01 sec
 test 7
       Start  7: WorldChunkTest
 
@@ -75,7 +75,7 @@ test 7
 7: [JSON]: {"coord":{"x":3,"y":0,"z":-7},"delta":{"biomass":[],"biomes":[{"idx":85,"val":4}],"heights":[{"idx":85,"val":-3.5}]},"id":26388281163769,"seed":13665729913251135165}
 7: [STEP 4 PASS]
 7: [PASS] test_world_chunk passed successfully.
- 7/30 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
+ 7/52 Test  #7: WorldChunkTest ...................   Passed    0.01 sec
 test 8
       Start  8: WorldFieldsTest
 
@@ -84,7 +84,7 @@ test 8
 8: Test timeout computed to be: 10000000
 8: [TEST] Running test_world_fields...
 8: [PASS] test_world_fields passed successfully.
- 8/30 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
+ 8/52 Test  #8: WorldFieldsTest ..................   Passed    0.01 sec
 test 9
       Start  9: WorldProceduralTest
 
@@ -94,7 +94,7 @@ test 9
 9: [TEST] Running test_world_procedural...
 9: [INFO] Observed 4 distinct biomes across region.
 9: [PASS] test_world_procedural passed successfully.
- 9/30 Test  #9: WorldProceduralTest ..............   Passed    0.01 sec
+ 9/52 Test  #9: WorldProceduralTest ..............   Passed    0.01 sec
 test 10
       Start 10: DeterministicWorldTest
 
@@ -105,7 +105,7 @@ test 10
 10: [CHECK 1/2] Parallel identical world runs matched final hash: 1179954163374705284
 10: [CHECK 2/2] Restored checkpoint run matched reference final hash: 1179954163374705284
 10: [PASS] test_deterministic_world passed successfully.
-10/30 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
+10/52 Test #10: DeterministicWorldTest ...........   Passed    0.02 sec
 test 11
       Start 11: PhysicsFallTest
 
@@ -117,7 +117,7 @@ test 11
 11:   Restitution bounce observed successfully.
 11:   Ball settled on ground at y = 0.5, vy = 0
 11: [TEST] test_physics_fall PASSED
-11/30 Test #11: PhysicsFallTest ..................   Passed    0.01 sec
+11/52 Test #11: PhysicsFallTest ..................   Passed    0.01 sec
 test 12
       Start 12: PhysicsCollisionTest
 
@@ -128,7 +128,7 @@ test 12
 12:   Head-on collision reversal verified.
 12:   Raycast hit body 10 at dist 7.62084, point (-2.37916, 5, 0)
 12: [TEST] test_physics_collision PASSED
-12/30 Test #12: PhysicsCollisionTest .............   Passed    0.01 sec
+12/52 Test #12: PhysicsCollisionTest .............   Passed    0.01 sec
 test 13
       Start 13: PhysicsConstraintTest
 
@@ -140,7 +140,7 @@ test 13
 13:   Structural failure successfully triggered when force exceeded threshold.
 13:   Bodies separated after failure: dist = 7.48367
 13: [TEST] test_physics_constraint PASSED
-13/30 Test #13: PhysicsConstraintTest ............   Passed    0.01 sec
+13/52 Test #13: PhysicsConstraintTest ............   Passed    0.01 sec
 test 14
       Start 14: PhysicsFidelityTest
 
@@ -151,7 +151,7 @@ test 14
 14:   L2 statistical behavior verified (ground equilibrium: y = 0.5)
 14:   Promotion and demotion lifecycle verified cleanly without data loss.
 14: [TEST] test_physics_fidelity PASSED
-14/30 Test #14: PhysicsFidelityTest ..............   Passed    0.01 sec
+14/52 Test #14: PhysicsFidelityTest ..............   Passed    0.01 sec
 test 15
       Start 15: DeterministicPhysicsTest
 
@@ -162,7 +162,7 @@ test 15
 15:   Passed 500 steps bit-exact determinism check. Final hash: 0x7fe83107ca6891d4
 15:   Passed 100% crash recovery and checkpoint replay test. Hash: 0x7fe83107ca6891d4
 15: [TEST] test_deterministic_physics PASSED
-15/30 Test #15: DeterministicPhysicsTest .........   Passed    0.01 sec
+15/52 Test #15: DeterministicPhysicsTest .........   Passed    0.01 sec
 test 16
       Start 16: HeadlessModesTest
 
@@ -173,7 +173,7 @@ test 16
 16:   Checkpoint file write/restore verified. Hash: 0x580c022399993ec1
 16:   Replay file recording and verification verified bit-exact for 200 ticks.
 16: [TEST] test_headless_modes PASSED
-16/30 Test #16: HeadlessModesTest ................   Passed    0.13 sec
+16/52 Test #16: HeadlessModesTest ................   Passed    0.19 sec
 test 17
       Start 17: VulkanInitTest
 
@@ -187,7 +187,7 @@ test 17
 17:   Compute Queue Family: 0
 17:   Total Memory: 14226 MB
 17: [TEST] test_vulkan_init PASSED
-17/30 Test #17: VulkanInitTest ...................   Passed    0.12 sec
+17/52 Test #17: VulkanInitTest ...................   Passed    0.11 sec
 test 18
       Start 18: VulkanBufferTest
 
@@ -197,10 +197,10 @@ test 18
 18: [TEST] Running test_vulkan_buffer...
 18:   1 MB upload/download pattern match verified.
 18:   Memory Transfer Benchmark (4 MB payload):
-18:     Host -> Device: 28093.8 MB/s (0.14238 ms)
-18:     Device -> Host: 178.253 MB/s (22.44 ms)
+18:     Host -> Device: 23740.3 MB/s (0.16849 ms)
+18:     Device -> Host: 174.293 MB/s (22.9498 ms)
 18: [TEST] test_vulkan_buffer PASSED
-18/30 Test #18: VulkanBufferTest .................   Passed    0.81 sec
+18/52 Test #18: VulkanBufferTest .................   Passed    0.81 sec
 test 19
       Start 19: VulkanComputeTest
 
@@ -211,7 +211,7 @@ test 19
 19:   Vector add (65,536 floats) verified against CPU reference. Max diff: 0
 19:   2D field step (64x64 grid) verified against CPU reference. Max diff: 0
 19: [TEST] test_vulkan_compute PASSED
-19/30 Test #19: VulkanComputeTest ................   Passed    0.12 sec
+19/52 Test #19: VulkanComputeTest ................   Passed    0.12 sec
 test 20
       Start 20: LearningExperienceTest
 
@@ -222,7 +222,7 @@ test 20
 20:   ExperienceRecord JSON roundtrip verified.
 20:   ReplayBuffer FIFO eviction and deterministic batch sampling verified.
 20: [TEST] test_learning_experience PASSED
-20/30 Test #20: LearningExperienceTest ...........   Passed    0.01 sec
+20/52 Test #20: LearningExperienceTest ...........   Passed    0.01 sec
 test 21
       Start 21: LearningMemoryTest
 
@@ -236,7 +236,7 @@ test 21
 21:   Memory consolidation from episodic to procedural & semantic verified.
 21:   Multi-tier memory serialization roundtrip verified.
 21: [TEST] test_learning_memory PASSED
-21/30 Test #21: LearningMemoryTest ...............   Passed    0.01 sec
+21/52 Test #21: LearningMemoryTest ...............   Passed    0.01 sec
 test 22
       Start 22: LearningLoopTest
 
@@ -248,7 +248,7 @@ test 22
 22:   Learned optimal policy reached goal in 5 steps (optimal <= 5)!
 22:   QLearner state serialization verified bit-exact.
 22: [TEST] test_learning_loop PASSED
-22/30 Test #22: LearningLoopTest .................   Passed    0.01 sec
+22/52 Test #22: LearningLoopTest .................   Passed    0.01 sec
 test 23
       Start 23: LearningParallelTest
 
@@ -260,7 +260,7 @@ test 23
 23:   Agent workers memory consolidated successfully.
 23:   Parallel trained policy reached goal in 6 steps (success)!
 23: [TEST] test_learning_parallel PASSED
-23/30 Test #23: LearningParallelTest .............   Passed    0.01 sec
+23/52 Test #23: LearningParallelTest .............   Passed    0.01 sec
 test 24
       Start 24: EvolutionGenomeTest
 
@@ -272,7 +272,7 @@ test 24
 24:   All 6 mutation operators executed successfully (genetic dist: 0.525248).
 24:   Recombination produced viable blended offspring (child mass: 0.531924 between 0.5 and 1.5).
 24: [TEST] test_evolution_genome PASSED
-24/30 Test #24: EvolutionGenomeTest ..............   Passed    0.01 sec
+24/52 Test #24: EvolutionGenomeTest ..............   Passed    0.01 sec
 test 25
       Start 25: EvolutionSpeciationTest
 
@@ -283,7 +283,7 @@ test 25
 25:   Mating compatibility: similar=0.999109, divergent=0.0133112 (reproductive isolation confirmed).
 25:   Speciation event successfully detected: new species ID 1 branched from ancestral species 0.
 25: [TEST] test_evolution_speciation PASSED
-25/30 Test #25: EvolutionSpeciationTest ..........   Passed    0.01 sec
+25/52 Test #25: EvolutionSpeciationTest ..........   Passed    0.01 sec
 test 26
       Start 26: EvolutionCoevolutionTest
 
@@ -298,7 +298,7 @@ test 26
 26:     Large brain (adapted body): 421
 26:   Body/brain co-evolution dynamics validated: metabolic penalty prevents unviable brain growth without supporting morphology.
 26: [TEST] test_evolution_coevolution PASSED
-26/30 Test #26: EvolutionCoevolutionTest .........   Passed    0.01 sec
+26/52 Test #26: EvolutionCoevolutionTest .........   Passed    0.01 sec
 test 27
       Start 27: EvolutionPopulationTest
 
@@ -310,7 +310,7 @@ test 27
 27:   Passed 100% crash recovery test at generation 15 -> 25. Hash: 0xbaf2e641efe02fec
 27:   Recorded 34 migration gene flow events across regional boundaries.
 27: [TEST] test_evolution_population PASSED
-27/30 Test #27: EvolutionPopulationTest ..........   Passed    0.01 sec
+27/52 Test #27: EvolutionPopulationTest ..........   Passed    0.01 sec
 test 28
       Start 28: AgentLifecycleTest
 
@@ -322,7 +322,7 @@ test 28
 28:   Foraging response verified: energy replenished to 95.4913
 28:   Agent serialization roundtrip verified.
 28: [TEST] test_agent_lifecycle PASSED
-28/30 Test #28: AgentLifecycleTest ...............   Passed    0.01 sec
+28/52 Test #28: AgentLifecycleTest ...............   Passed    0.01 sec
 test 29
       Start 29: AgentColonyTest
 
@@ -333,7 +333,7 @@ test 29
 29:   Colony collective resource sharing verified: stored=30
 29:   Colony serialization roundtrip verified.
 29: [TEST] test_agent_colony PASSED
-29/30 Test #29: AgentColonyTest ..................   Passed    0.01 sec
+29/52 Test #29: AgentColonyTest ..................   Passed    0.01 sec
 test 30
       Start 30: MultiAgentSimulationTest
 
@@ -344,8 +344,276 @@ test 30
 30:   Passed 200 ticks multi-agent bit-exact determinism check. Hash: 0x364a6ad6f1854002
 30:   Passed 100% crash recovery test at tick 100 -> 200. Final hash: 0x364a6ad6f1854002
 30: [TEST] test_multi_agent_simulation PASSED
-30/30 Test #30: MultiAgentSimulationTest .........   Passed    0.01 sec
+30/52 Test #30: MultiAgentSimulationTest .........   Passed    0.01 sec
+test 31
+      Start 31: LLMGGUFParserTest
 
-100% tests passed out of 30
+31: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_llm_gguf_parser.exe
+31: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+31: Test timeout computed to be: 10000000
+31: [Test] Running GGUF Parser Unit Tests...
+31:   Parsed model: FLGOD-Test-Llama-1B (llama)
+31:   Context length: 4096, Hash: e7d53476b97e7e5b
+31: [Test] GGUF Parser Unit Tests PASSED!
+31/52 Test #31: LLMGGUFParserTest ................   Passed    0.01 sec
+test 32
+      Start 32: LLMModelManagerTest
 
-Total Test time (real) =   1.54 sec
+32: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_llm_model_manager.exe
+32: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+32: Test timeout computed to be: 10000000
+32: [Test] Running Model Manager Unit Tests...
+32:   GodFly Metrics: TTFT=0.00025ms, tok/s=6.26667e+07, RAM=2156MB
+32: [Test] Model Manager Unit Tests PASSED!
+32/52 Test #32: LLMModelManagerTest ..............   Passed    0.01 sec
+test 33
+      Start 33: LLMActionSecurityTest
+
+33: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_llm_action_security.exe
+33: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+33: Test timeout computed to be: 10000000
+33: [Test] Running Action Security Unit Tests...
+33:   Passed Malformed JSON rejection test: JSON parse error: [json.exception.parse_error.101] parse error at line 1, column 3: syntax error while parsing object key - invalid literal; last read: '{ a'; expected string literal
+33:   Passed Sandbox Escape rejection test: Forbidden dangerous keyword or sandbox escape detected in JSON payload
+33:   Passed Capability Validation rejection test: Agent lacks teacher capability for action: concept
+33:   Passed Non-existent Target rejection test: Target agent 99999999 does not exist in world
+33:   Passed Dead Target rejection test: Target agent is dead
+33: [Test] Action Security Unit Tests PASSED!
+33/52 Test #33: LLMActionSecurityTest ............   Passed    0.01 sec
+test 34
+      Start 34: LLMGodFlyTest
+
+34: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_llm_god_fly.exe
+34: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+34: Test timeout computed to be: 10000000
+34: [Test] Running God Fly Unit Tests...
+34:   Student received lesson. Initial concept confidence=0.25 (strictly no free skills/rewards)
+34: [Test] God Fly Unit Tests PASSED!
+34/52 Test #34: LLMGodFlyTest ....................   Passed    0.01 sec
+test 35
+      Start 35: LLMNPCSystemTest
+
+35: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_llm_npc_system.exe
+35: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+35: Test timeout computed to be: 10000000
+35: [Test] Running NPC System Unit Tests...
+35:   Event-driven cooldown verified: 1st=PASS, 2nd (0.5s)=SUPPRESSED, 3rd (4.0s)=PASS.
+35: [Test] NPC System Unit Tests PASSED!
+35/52 Test #35: LLMNPCSystemTest .................   Passed    0.01 sec
+test 36
+      Start 36: LLMIntegrationTest
+
+36: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_llm_integration.exe
+36: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+36: Test timeout computed to be: 10000000
+36: [Test] Running LLM Subsystem End-to-End Integration Test...
+36:   Integration Flow Verified: Lesson delivered -> physical simulation foraging -> Q-learning step -> concept reinforcement (0.25 -> 0.85) -> event-driven dialogue -> crash recovery match.
+36: [Test] LLM Subsystem End-to-End Integration Test PASSED!
+36/52 Test #36: LLMIntegrationTest ...............   Passed    0.01 sec
+test 37
+      Start 37: LanguageSymbolTest
+
+37: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_language_symbol.exe
+37: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+37: Test timeout computed to be: 10000000
+37: [Test] Running Language Signal & Symbol Unit Tests...
+37: [Test] Language Signal & Symbol Unit Tests PASSED!
+37/52 Test #37: LanguageSymbolTest ...............   Passed    0.01 sec
+test 38
+      Start 38: LanguageVocabularyTest
+
+38: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_language_vocabulary.exe
+38: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+38: Test timeout computed to be: 10000000
+38: [Test] Running Vocabulary & Sequence Patterns Unit Tests...
+38: [Test] Vocabulary & Sequence Patterns Unit Tests PASSED!
+38/52 Test #38: LanguageVocabularyTest ...........   Passed    0.01 sec
+test 39
+      Start 39: LanguageSocialLearningTest
+
+39: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_language_social_learning.exe
+39: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+39: Test timeout computed to be: 10000000
+39: [Test] Running Social Learning & Provenance Unit Tests...
+39: [Test] Social Learning & Provenance Unit Tests PASSED!
+39/52 Test #39: LanguageSocialLearningTest .......   Passed    0.01 sec
+test 40
+      Start 40: LanguageTransmissionTest
+
+40: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_language_transmission.exe
+40: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+40: Test timeout computed to be: 10000000
+40: [Test] Running Language & Cultural Transmission Integration Test...
+40:   Cultural Transmission Verified: God Fly (0) -> Social Peer (1) -> Cultural Student (2) -> Cultural Tradition (3).
+40:   Vocabulary Consensus P(OBJ_NECTAR | ACT_FORAGE) = 1, Symbol Grounding Confidence = 0.992306
+40: [Test] Language & Cultural Transmission Integration Test PASSED!
+40/52 Test #40: LanguageTransmissionTest .........   Passed    0.01 sec
+test 41
+      Start 41: TechnologyToolsTest
+
+41: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_technology_tools.exe
+41: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+41: Test timeout computed to be: 10000000
+41: [Test] Running Technology Tool System Unit Tests...
+41: [Test] Technology Tool System Unit Tests PASSED!
+41/52 Test #41: TechnologyToolsTest ..............   Passed    0.01 sec
+test 42
+      Start 42: TechnologyVMTest
+
+42: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_technology_vm.exe
+42: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+42: Test timeout computed to be: 10000000
+42: [Test] Running Virtual Machine Sandboxed Execution Unit Tests...
+42:   Arithmetic program verified: R4 = 15
+42:   Memory boundary fault verified: rejected out-of-bounds address
+42:   Infinite loop safely bounded: halted at exactly 1000 cycles
+42: [Test] Virtual Machine Sandboxed Execution Unit Tests PASSED!
+42/52 Test #42: TechnologyVMTest .................   Passed    0.01 sec
+test 43
+      Start 43: TechnologyNetworkTest
+
+43: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_technology_network.exe
+43: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+43: Test timeout computed to be: 10000000
+43: [Test] Running Virtual Devices & Network Unit Tests...
+43: [Test] Virtual Devices & Network Unit Tests PASSED!
+43/52 Test #43: TechnologyNetworkTest ............   Passed    0.01 sec
+test 44
+      Start 44: TechnologyIntegrationTest
+
+44: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_technology_integration.exe
+44: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+44: Test timeout computed to be: 10000000
+44: [Test] Running Programmable Technology Layer Integration Test...
+44:   Programmable Technology Layer Verified: Tool crafting -> device setup -> sandboxed VM control -> network dispatch -> actuator latch -> state hash: 0xec776e6b245e4939
+44: [Test] Programmable Technology Layer Integration Test PASSED!
+44/52 Test #44: TechnologyIntegrationTest ........   Passed    0.01 sec
+test 45
+      Start 45: BrainInterfaceTest
+
+45: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_brain_interface.exe
+45: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+45: Test timeout computed to be: 10000000
+45: [Test] Running Fly Brain Interface Unit Tests...
+45: [Test] Fly Brain Interface Unit Tests PASSED!
+45/52 Test #45: BrainInterfaceTest ...............   Passed    0.01 sec
+test 46
+      Start 46: BrainMaleCNSLoaderTest
+
+46: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_brain_malecns_loader.exe
+46: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+46: Test timeout computed to be: 10000000
+46: [Test] Running MaleCNS Connectome Dataset Loader Unit Tests...
+46:   Loaded 5000 biological somas from Janelia connectome.
+46:   Hemisphere balance: Left=3083, Right=1917
+46:   Connectome execution step verified: Wingbeat=201.457 Hz, PER=0.75
+46: [Test] MaleCNS Connectome Dataset Loader Unit Tests PASSED!
+46/52 Test #46: BrainMaleCNSLoaderTest ...........   Passed    0.02 sec
+test 47
+      Start 47: BrainAgentIntegrationTest
+
+47: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_brain_agent_integration.exe
+47: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+47: Test timeout computed to be: 10000000
+47: [Test] Running Brain-Agent Biological Control Integration Test...
+47:   Brain-Agent Biological Loop Verified: 2,000 connectome somas simulated over 100 ticks, cumulative PER=100, brain hash: 0x5dd77db3df54f424
+47: [Test] Brain-Agent Biological Control Integration Test PASSED!
+47/52 Test #47: BrainAgentIntegrationTest ........   Passed    0.02 sec
+test 48
+      Start 48: MultiAgentEcosystemTest
+
+48: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_multi_agent_ecosystem.exe
+48: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+48: Test timeout computed to be: 10000000
+48: [TEST] Running MultiAgentEcosystem integration tests...
+48:   - Initialization, connectome stepping, and technology VM passed.
+48:   - Determinism passed: exact hash match (9819910894256404070) over 100 ticks.
+48:   - Crash recovery / checkpoint replay passed: restored hash matches reference (14178614903983755940).
+48: [TEST] ALL MultiAgentEcosystem integration tests PASSED!
+48/52 Test #48: MultiAgentEcosystemTest ..........   Passed    0.05 sec
+test 49
+      Start 49: CameraDirectorTest
+
+49: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_camera_director.exe
+49: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+49: Test timeout computed to be: 10000000
+49: === FLGODTV STAGE 18 CAMERA DIRECTOR TEST SUITE ===
+49: [Test] Running test_event_detector_priority_and_tie_breaking...
+49:   -> Priority and deterministic tie-breaking passed.
+49: [Test] Running test_event_lifecycle_and_disappearance...
+49:   -> Event lifecycle and expiration fallback passed.
+49: [Test] Running test_camera_cooldown_and_hysteresis...
+49:   -> Camera cooldown and interruption hysteresis passed.
+49: [Test] Running test_camera_transition_numerical_stability...
+49:   -> Camera transition numerical stability passed.
+49: [Test] Running test_camera_director_serialization_and_replay...
+49:   -> Camera director serialization and replay match passed.
+49: === ALL STAGE 18 CAMERA DIRECTOR TESTS PASSED ===
+49/52 Test #49: CameraDirectorTest ...............   Passed    0.01 sec
+test 50
+      Start 50: DeterministicCameraTest
+
+50: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_deterministic_camera.exe
+50: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+50: Test timeout computed to be: 10000000
+50: === FLGODTV STAGE 18 DETERMINISTIC CAMERA TEST ===
+50: [Test] Running test_deterministic_camera_decisions across runs...
+50:   -> Bit-exact deterministic camera decisions and poses verified over 150 ticks.
+50: === ALL DETERMINISTIC CAMERA TESTS PASSED ===
+50/52 Test #50: DeterministicCameraTest ..........   Passed    0.01 sec
+test 51
+      Start 51: TelemetryHUDTest
+
+51: Test command: C:\Users\hcsme\Desktop\Fly\build\ninja-release\test_telemetry_hud.exe
+51: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+51: Test timeout computed to be: 10000000
+51: === FLGODTV STAGE 19 TELEMETRY HUD TEST SUITE ===
+51: [Test] Running test_telemetry_snapshot_capture_and_roundtrip...
+51:   -> Telemetry capture and serialization roundtrip passed.
+51: [Test] Running test_telemetry_na_fallback_when_empty...
+51:   -> N/A fallback when empty verified (zero fake data).
+51: === ALL STAGE 19 TELEMETRY HUD TESTS PASSED ===
+51/52 Test #51: TelemetryHUDTest .................   Passed    0.01 sec
+test 52
+      Start 52: GodotFrontendSmokeTest
+
+52: Test command: C:\Users\hcsme\AppData\Local\Microsoft\WinGet\Packages\GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe\Godot_v4.7.2-stable_win64_console.exe "--headless" "--path" "C:/Users/hcsme/Desktop/Fly/godot" "--script" "res://scripts/test_headless_frontend.gd"
+52: Working Directory: C:/Users/hcsme/Desktop/Fly/build/ninja-release
+52: Test timeout computed to be: 10000000
+52: Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+52: 
+52: [Godot Headless Test] Starting FLGODTV Frontend smoke test...
+52:   - 4-Camera presentation rig verified.
+52:   - FlyMultiMesh verified.
+52:   - BackendBridge verified: 20 agents, 2 colonies.
+52: [TerrainRenderer] Terrain mesh: LOD0 step=1 verts=5766 backend_grid=false.
+52: [TerrainRenderer] Terrain mesh: LOD0 step=1 verts=5766 backend_grid=false.
+52: [TerrainRenderer] Terrain mesh: LOD2 step=4 verts=384 backend_grid=false.
+52: [TerrainRenderer] Terrain mesh: LOD0 step=1 verts=5766 backend_grid=false.
+52: [TerrainRenderer] Terrain mesh: LOD0 step=1 verts=5766 backend_grid=true.
+52:   - TerrainRenderer verified (verts=5766, LOD, streaming, backend grid).
+52: [VegetationRenderer] Instances: placed=117/200 backend=false.
+52: [VegetationRenderer] Instances: placed=117/200 backend=false.
+52: [VegetationRenderer] Instances: placed=2/200 backend=true.
+52: [VegetationRenderer] Instances: placed=117/200 backend=false.
+52:   - VegetationRenderer verified (placed=117, GPU instancing, backend wiring).
+52: [WaterRenderer] Water surface at Y=-0.5 backend=false.
+52:   - WaterRenderer verified (level=0.75, backend wiring).
+52:   - WeatherRenderer verified (backend consequences, N/A-safe).
+52: [LightingProfiles] Active profile: LOW.
+52: [LightingProfiles] Active profile: MEDIUM.
+52: [LightingProfiles] Active profile: HIGH.
+52: [LightingProfiles] Active profile: CINEMATIC.
+52: [LightingProfiles] Active profile: MEDIUM.
+52:   - LightingProfiles verified (LOW/MEDIUM/HIGH/CINEMATIC).
+52:   - Stage 18 Camera Director frontend integration verified (4 channels, poses, FOV).
+52:   - Stage 19 Telemetry HUD frontend integration verified (all panels, N/A fallback, toggles).
+52:   - UI/UX verification screenshot saved to C:/Users/hcsme/Desktop/Fly/renders/screenshots/ui_ux_headless_verification.png.
+52: [Godot Headless Test] ALL FRONTEND SMOKE TESTS PASSED!
+52: [BackendBridge] Initialized FLGODTV Godot presentation bridge.
+52: [FLGODTVController] Initializing 4-Camera System and MultiMesh Fly Renderer...
+52/52 Test #52: GodotFrontendSmokeTest ...........   Passed    0.28 sec
+
+100% tests passed out of 52
+
+Total Test time (real) =   2.15 sec

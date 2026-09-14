@@ -26,6 +26,9 @@ public:
     [[nodiscard]] VirtualNetwork& network() noexcept { return m_network; }
     [[nodiscard]] const VirtualNetwork& network() const noexcept { return m_network; }
 
+    [[nodiscard]] size_t device_count() const noexcept { return m_devices.size(); }
+    [[nodiscard]] size_t vm_count() const noexcept { return m_vms.size(); }
+
     VirtualMachine* create_vm(uint32_t vm_id) {
         auto res = m_vms.emplace(vm_id, VirtualMachine());
         return &(res.first->second);

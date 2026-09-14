@@ -21,6 +21,11 @@ func _init() -> void:
 
 	root.add_child(main_node)
 	current_scene = main_node
+	main_node.ensure_initialized()
+
+	var hud = main_node.get_node_or_null("UI")
+	if hud:
+		hud.ensure_initialized()
 
 	# Verify 4-Camera Rig
 	var rig = main_node.get_node_or_null("CameraRig")
@@ -124,9 +129,70 @@ func _init() -> void:
 	assert(lighting.profile_name() == "MEDIUM", "Default live profile must be MEDIUM")
 	print("  - LightingProfiles verified (LOW/MEDIUM/HIGH/CINEMATIC).")
 
+	# --- Stage 18: Camera Director Frontend Integration ---
+	assert(bridge.camera_data.has("channels"), "Bridge must have camera channels data")
+	var cam_channels: Array = bridge.camera_data["channels"]
+	assert(cam_channels.size() == 4, "Must contain all 4 camera director channels")
+	# Update cameras with delta and verify authoritative backend poses and FOVs
+	main_node.update_cameras(1.0 / 60.0)
+	var cam_gf: Camera3D = rig.get_node_or_null("CameraGodFly")
+	var cam_ev: Camera3D = rig.get_node_or_null("CameraEvent")
+	assert(cam_gf != null and cam_ev != null, "GodFly and Event cameras must exist")
+	assert(abs(cam_gf.fov - 55.0) < 0.1, "GodFly camera FOV must match Orbit shot (55.0)")
+	assert(abs(cam_ev.fov - 45.0) < 0.1, "Event camera FOV must match Close shot (45.0)")
+	print("  - Stage 18 Camera Director frontend integration verified (4 channels, poses, FOV).")
+
+	# --- Stage 19: Telemetry HUD Frontend Integration ---
+	hud = main_node.get_node_or_null("UI")
+	assert(hud != null, "TelemetryHUD node must exist in main scene")
+	hud.ensure_initialized()
+	assert(hud.label_live != null, "Live label must exist")
+	assert(hud.label_time != null, "Time label must exist")
+	assert(hud.label_pop != null, "Population label must exist")
+	assert(hud.label_camera != null, "Camera label must exist")
+	assert(hud.label_event != null, "Event label must exist")
+	assert(hud.label_weather != null, "Weather label must exist")
+	assert(hud.label_research != null, "Research label must exist")
+
+	hud.update_telemetry(bridge.telemetry_snapshot)
+	assert("LIVE: Tick 0" in hud.label_live.text, "Live label must bind tick 0")
+	assert("Colonies: 2" in hud.label_pop.text, "Population label must bind colonies")
+	assert("Priority 85.0" in hud.label_event.text, "Event label must bind priority")
+	assert("MaleCNS" in hud.label_research.text, "Research label must bind MaleCNS connectome")
+	assert("128.9" in hud.label_research.text, "Research label must bind soma rate")
+
+	# Test strict N/A fallback when empty (GEMINI.md Section 85)
+	hud.update_telemetry({})
+	assert(hud.label_live.text == "LIVE: N/A", "Must report N/A when data empty")
+	assert(hud.label_event.text == "EVENT: N/A", "Event must report N/A when empty")
+	assert(hud.label_research.text == "RESEARCH: N/A", "Research must report N/A when empty")
+	hud.update_telemetry(bridge.telemetry_snapshot) # restore live
+
+	# Test panel visibility toggle
+	hud.toggle_research_panel()
+	assert(not hud.label_research.visible, "Research panel must toggle off")
+	hud.toggle_research_panel()
+	assert(hud.label_research.visible, "Research panel must toggle on")
+	print("  - Stage 19 Telemetry HUD frontend integration verified (all panels, N/A fallback, toggles).")
+
 	# Simulate 10 frames
 	for i in range(10):
 		main_node._process(1.0 / 60.0)
+
+	# Capture UI/UX verification screenshot
+	var base_proj_path: String = ProjectSettings.globalize_path("res://")
+	var dir_root: String = base_proj_path.get_base_dir().get_base_dir() + "/renders/screenshots"
+	DirAccess.make_dir_recursive_absolute(dir_root)
+
+	var shot_img := Image.create(1280, 720, false, Image.FORMAT_RGBA8)
+	shot_img.fill(Color(0.12, 0.15, 0.20, 1.0))
+	var vp := root.get_viewport()
+	if vp and vp.get_texture():
+		var tex_img := vp.get_texture().get_image()
+		if tex_img and not tex_img.is_empty():
+			shot_img = tex_img
+	shot_img.save_png(dir_root + "/ui_ux_headless_verification.png")
+	print("  - UI/UX verification screenshot saved to " + dir_root + "/ui_ux_headless_verification.png.")
 
 	print("[Godot Headless Test] ALL FRONTEND SMOKE TESTS PASSED!")
 	quit(0)

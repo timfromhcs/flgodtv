@@ -68,6 +68,9 @@ public:
 
     [[nodiscard]] size_t colony_count() const noexcept { return m_colonies.size(); }
 
+    [[nodiscard]] const std::unordered_map<EntityID, Agent>& agents() const noexcept { return m_agents; }
+    [[nodiscard]] const std::unordered_map<uint32_t, Colony>& colonies() const noexcept { return m_colonies; }
+
     // Multi-agent spatial step
     void step(double dt, const World& world, RNGStream& rng) {
         std::vector<EntityID> dead_agents;

@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/water_renderer.gd" id="5_water"]
 [ext_resource type="Script" path="res://scripts/weather_renderer.gd" id="6_weather"]
 [ext_resource type="Script" path="res://scripts/lighting_profiles.gd" id="7_lighting"]
+[ext_resource type="Script" path="res://scripts/telemetry_hud.gd" id="8_hud"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.2, 0.45, 0.8, 1)
@@ -88,12 +89,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 8, 30)
 mesh = SubResource("SphereMesh_godfly")
 
 [node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource("8_hud")
 
 [node name="Panel" type="PanelContainer" parent="UI"]
 offset_left = 20.0
 offset_top = 20.0
-offset_right = 450.0
-offset_bottom = 220.0
+offset_right = 550.0
+offset_bottom = 260.0
 
 [node name="VBox" type="VBoxContainer" parent="UI/Panel"]
 layout_mode = 2
@@ -102,14 +104,30 @@ layout_mode = 2
 layout_mode = 2
 text = "FLGODTV — 4-CAMERA AUTONOMOUS SIMULATION"
 
-[node name="Status" type="Label" parent="UI/Panel/VBox"]
+[node name="Live" type="Label" parent="UI/Panel/VBox"]
 layout_mode = 2
-text = "Backend: Connected (9418 Ticks/s, 157x Realtime)"
+text = "LIVE: Tick 0 | Elapsed 0.0s | 9418 Ticks/s | Connected"
 
-[node name="Connectome" type="Label" parent="UI/Panel/VBox"]
+[node name="Time" type="Label" parent="UI/Panel/VBox"]
 layout_mode = 2
-text = "Brain Dynamics: 128.95M soma-updates/s (MaleCNS)"
+text = "TIME: Gen 0 | Day 1"
 
-[node name="Cameras" type="Label" parent="UI/Panel/VBox"]
+[node name="Population" type="Label" parent="UI/Panel/VBox"]
 layout_mode = 2
-text = "4-CAM Layout: [1] Global [2] God Fly [3] Colony [4] Cine"
+text = "POPULATION: 20 Alive / 20 Total | Colonies: 2"
+
+[node name="Camera" type="Label" parent="UI/Panel/VBox"]
+layout_mode = 2
+text = "CAMERA: Cam3_Event [Close] -> Focus: Nectar Interaction"
+
+[node name="Event" type="Label" parent="UI/Panel/VBox"]
+layout_mode = 2
+text = "EVENT: God Fly Instructed Student on Foraging (Priority 85.0)"
+
+[node name="Weather" type="Label" parent="UI/Panel/VBox"]
+layout_mode = 2
+text = "WEATHER: Clear | Temp 22.5°C | Wind 1.5 m/s"
+
+[node name="Research" type="Label" parent="UI/Panel/VBox"]
+layout_mode = 2
+text = "RESEARCH: Brain [128.9M soma/s] | Mem [48 recs] | Lang [11 words] | Tech [2 progs] | Evo [2 species]"

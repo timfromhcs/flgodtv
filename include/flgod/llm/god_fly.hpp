@@ -59,6 +59,7 @@ private:
     ModelManager* m_model_manager{nullptr};
     ActionSecurityValidator m_security_validator;
     uint64_t m_total_lessons_taught{0};
+    Vec3 m_position{30.0, 8.0, 30.0};
 
 public:
     explicit GodFly(ModelManager* mgr = nullptr) : m_model_manager(mgr) {}
@@ -67,6 +68,8 @@ public:
     [[nodiscard]] const MemorySystem& get_memory() const noexcept { return m_memory; }
     [[nodiscard]] MemorySystem& get_memory() noexcept { return m_memory; }
     [[nodiscard]] uint64_t get_total_lessons_taught() const noexcept { return m_total_lessons_taught; }
+    [[nodiscard]] const Vec3& position() const noexcept { return m_position; }
+    void set_position(const Vec3& pos) noexcept { m_position = pos; }
 
     void set_model_manager(ModelManager* mgr) noexcept { m_model_manager = mgr; }
 

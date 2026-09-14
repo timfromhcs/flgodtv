@@ -83,6 +83,8 @@ public:
         m_words[id] = {id, token, cat, sym_id, 0};
     }
 
+    [[nodiscard]] size_t vocabulary_size() const noexcept { return word_count(); }
+
     [[nodiscard]] bool has_word(uint32_t id) const noexcept {
         return m_words.find(id) != m_words.end();
     }

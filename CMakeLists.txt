@@ -280,6 +280,20 @@ if(BUILD_TESTING)
     add_executable(benchmark_multi_agent_ecosystem benchmarks/benchmark_multi_agent_ecosystem.cpp)
     target_link_libraries(benchmark_multi_agent_ecosystem PRIVATE flgod_core)
 
+    # Camera Director and Presentation Subsystem tests (Stage 18)
+    add_executable(test_camera_director tests/unit/test_camera_director.cpp)
+    target_link_libraries(test_camera_director PRIVATE flgod_core)
+    add_test(NAME CameraDirectorTest COMMAND test_camera_director)
+
+    add_executable(test_deterministic_camera tests/deterministic/test_deterministic_camera.cpp)
+    target_link_libraries(test_deterministic_camera PRIVATE flgod_core)
+    add_test(NAME DeterministicCameraTest COMMAND test_deterministic_camera)
+
+    # Telemetry HUD Subsystem tests (Stage 19)
+    add_executable(test_telemetry_hud tests/unit/test_telemetry_hud.cpp)
+    target_link_libraries(test_telemetry_hud PRIVATE flgod_core)
+    add_test(NAME TelemetryHUDTest COMMAND test_telemetry_hud)
+
     # Godot Frontend Smoke Test
     find_program(GODOT_EXECUTABLE
         NAMES godot godot_console Godot_v4.7.2-stable_win64_console.exe

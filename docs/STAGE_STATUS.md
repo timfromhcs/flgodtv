@@ -340,13 +340,36 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### STAGE 18 — CAMERA
-**Status:** `NEXT`
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/camera/camera_types.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/camera/camera_types.hpp) (11 reusable shot types: `Macro`, `Close`, `Medium`, `Wide`, `Establishing`, `Tracking`, `Orbit`, `Overhead`, `LowAngle`, `POV`, `ReactionShot` per GEMINI.md Section 81; 4 presentation channels: `Cam1_GodFly`, `Cam2_LearningAgent`, `Cam3_Event`, `Cam4_EnvironmentColony` per Section 83; `CameraPose` and `CameraTarget` with `is_valid` flag).
+- [include/flgod/camera/event_detector.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/camera/event_detector.hpp) (`EventDetector` with priority-sorted queue, deterministic tie-breaking by priority descending, tick ascending, ID ascending; event lifecycle management, automatic expiration, and JSON serialization per Section 82).
+- [include/flgod/camera/camera_director.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/camera/camera_director.hpp) (`SingleCameraDirector` and 4-channel `CameraDirector` implementing target selection, minimum shot durations, cooldown periods, priority hysteresis to avoid cut flutter, terrain collision avoidance clamping `eye.y >= ground_y + 0.5`, smooth slerp/lerp interpolation, and full state serialization).
+- Unit and deterministic tests:
+  - [test_camera_director.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_camera_director.cpp): Event queue sorting, tie-breaking, shot selection, hysteresis interruption, minimum duration hold, terrain avoidance, and 4-channel updates: Passed.
+  - [test_deterministic_camera.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/deterministic/test_deterministic_camera.cpp): Bit-exact deterministic camera pose replication across runs over 150 ticks, and 100% midpoint crash recovery match: Passed.
+- CTest suite: **51/51 tests passed (100%)**.
+
+---
 
 ### STAGE 19 — UI
-**Status:** `PENDING`
+**Status:** `VERIFIED`  
+**Evidence:**
+- [include/flgod/ui/telemetry_hud.hpp](file:///C:/Users/hcsme/Desktop/Fly/include/flgod/ui/telemetry_hud.hpp) (`TelemetrySnapshot` and `TelemetryCollector` aggregating authentic simulation metrics: tick, clock time, weather, active population/colonies, camera director channel statuses, high-priority events, MaleCNS connectome soma update rate [128.95M/s], memory records, vocabulary size, sandboxed technology VMs, and species counts; strict Section 85 rule: all unpopulated or unavailable metrics report `"N/A"`, zero fake or mocked values).
+- [godot/scripts/telemetry_hud.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/telemetry_hud.gd) (Godot Telemetry HUD controller managing 7 distinct visual panels: Live, Time, Population, Camera, Event, Weather, Research; supports dynamic HUD panel visibility toggles; strictly mirrors backend telemetry snapshot).
+- [godot/scripts/flgod_tv_controller.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/flgod_tv_controller.gd) and [godot/scripts/backend_bridge.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/backend_bridge.gd) (Authoritative backend camera pose and FOV application to Godot viewports).
+- Unit and Godot Frontend verification:
+  - [test_telemetry_hud.cpp](file:///C:/Users/hcsme/Desktop/Fly/tests/unit/test_telemetry_hud.cpp): Metric extraction, JSON serialization roundtrip, and strict N/A formatting on empty data: Passed.
+  - [godot/scripts/test_headless_frontend.gd](file:///C:/Users/hcsme/Desktop/Fly/godot/scripts/test_headless_frontend.gd): Headless smoke test executing under Godot 4.7.2 Forward+ Vulkan verifying 4-camera poses, FOV configuration, HUD metric binding, strict `"N/A"` fallback on empty data, panel visibility toggles, and automated UI/UX verification screenshot generation: Passed.
+- Automated UI/UX Screenshot:
+  - [renders/screenshots/ui_ux_headless_verification.png](file:///C:/Users/hcsme/Desktop/Fly/renders/screenshots/ui_ux_headless_verification.png): Rendered and captured headlessly by Godot 4.7.2.
+- Local CTest target: `GodotFrontendSmokeTest` passed in 0.28s.
+- CTest suite: **52/52 tests passed (100%)**.
+
+---
 
 ### STAGE 20 — VIDEO
-**Status:** `PENDING`
+**Status:** `NEXT`
 
 ### STAGE 21 — INTEGRATION
 **Status:** `PENDING`
@@ -354,7 +377,7 @@ This document records the exact status and evidence for every development stage 
 ### STAGE 22 — WINDOWS
 **Status:** `VERIFIED`  
 **Evidence:**
-- Local MSVC 19.44.35228 x64 + Ninja build: 49/49 CTest targets passed (100%).
+- Local MSVC 19.44.35228 x64 + Ninja build: 52/52 CTest targets passed (100%).
 - Real hardware execution: AMD Ryzen 7 7735HS, AMD Radeon(TM) Graphics (RDNA2).
 - Headless CLI modes tested and verified: `--self-test`, `--validate`, `--benchmark`, `--simulate 600`, `--train 5`, `--evolve 3`, `--checkpoint`, `--restore`.
 - GitHub Actions Windows runner (`windows-latest` MSVC x64, Run ID `34780763802`): 45/45 headless CTest targets passed; Headless CLI verified; artifact `flgodtv-windows-x64` generated (173,415 bytes).

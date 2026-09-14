@@ -14,6 +14,9 @@ var agents_data: Array = []
 var colonies_data: Array = []
 var god_fly_data: Dictionary = {}
 var telemetry_data: Dictionary = {}
+var camera_data: Dictionary = {}
+var events_data: Array = []
+var telemetry_snapshot: Dictionary = {}
 var is_connected: bool = false
 
 # Polling or IPC stream configuration
@@ -58,6 +61,15 @@ func apply_state_dictionary(data: Dictionary) -> void:
 	if data.has("telemetry"):
 		telemetry_data = data["telemetry"]
 
+	if data.has("camera"):
+		camera_data = data["camera"]
+
+	if data.has("events"):
+		events_data = data["events"]
+
+	if data.has("telemetry_snapshot"):
+		telemetry_snapshot = data["telemetry_snapshot"]
+
 	state_updated.emit(data)
 
 func apply_synthetic_baseline() -> void:
@@ -97,6 +109,44 @@ func apply_synthetic_baseline() -> void:
 		"soma_rate_mps": 128.95,
 		"gpu_device": "AMD Radeon(TM) Graphics",
 		"active_agents": 20
+	}
+	camera_data = {
+		"channels": [
+			{
+				"channel": 0, "channel_name": "Cam1_GodFly", "shot": 6, "shot_name": "Orbit",
+				"current_pose": {"pos": [30.0, 11.5, 36.0], "look_at": [30.0, 8.0, 30.0], "fov": 55.0, "distance": 7.0}
+			},
+			{
+				"channel": 1, "channel_name": "Cam2_LearningAgent", "shot": 5, "shot_name": "Tracking",
+				"current_pose": {"pos": [5.0, 3.5, 8.0], "look_at": [3.0, 1.5, 5.0], "fov": 50.0, "distance": 4.5}
+			},
+			{
+				"channel": 2, "channel_name": "Cam3_Event", "shot": 1, "shot_name": "Close",
+				"current_pose": {"pos": [12.0, 3.2, 14.0], "look_at": [10.0, 2.0, 12.0], "fov": 45.0, "distance": 3.0}
+			},
+			{
+				"channel": 3, "channel_name": "Cam4_EnvironmentColony", "shot": 3, "shot_name": "Wide",
+				"current_pose": {"pos": [30.0, 45.0, 85.0], "look_at": [30.0, 0.0, 30.0], "fov": 65.0, "distance": 18.0}
+			}
+		]
+	}
+	events_data = [
+		{"id": 1, "type_name": "LessonTaught", "priority": 85.0, "description": "God Fly Instructed Student on Foraging"}
+	]
+	telemetry_snapshot = {
+		"live": {"tick": 0, "elapsed_seconds": 0.0, "ticks_per_second": 9418.0, "backend_status": "Connected"},
+		"time": {"generation": 0, "day": 1},
+		"population": {"colony_count": 2, "total_agents": 20, "alive_agents": 20},
+		"camera": {"active_camera": "Cam3_Event", "active_shot": "Close", "focus_target": "Nectar Interaction"},
+		"event": {"latest_event": "God Fly Instructed Student on Foraging", "priority": 85.0},
+		"weather": {"available": true, "summary": "Clear", "temperature_c": 22.5, "wind_speed": 1.5, "precipitation": 0.0},
+		"research": {
+			"brain": {"available": true, "soma_rate_mps": 128.95, "model": "MaleCNS (VNC+Central Brain)"},
+			"memory": {"available": true, "records": 48},
+			"language": {"available": true, "vocab_size": 11, "utterances": 4},
+			"technology": {"available": true, "programs": 2},
+			"evolution": {"available": true, "species_count": 2}
+		}
 	}
 	is_connected = true
 
