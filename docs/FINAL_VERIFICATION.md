@@ -52,8 +52,8 @@ real model inference — a parser is not an inference engine.
   PASS; installed frontend PCK main-scene run PASS; SHA256SUMS verified;
   1-byte tamper correctly detected (FAIL on modified copy, PASS on original).
 - **CI:** workflow `.github/workflows/ci.yml` = CPU/headless CI (excludes 3 Vulkan
-  + Godot smoke tests; Godot absent in cloud). Prior HEAD green; matrix in
-  `evidence/ci/coverage_matrix.json`. New commit requires a fresh CI run.
+  + Godot smoke tests; Godot absent in cloud). HEAD run 34839952661 green on
+  Windows + Linux. Matrix in `evidence/ci/coverage_matrix.json`.
 - **Documentation:** synchronized (README 55/55, checksums, display/GPU notes;
   inventory generated; this file). Historical stage counts remain in
   `STAGE_STATUS.md` labeled historical.
@@ -65,5 +65,5 @@ real model inference — a parser is not an inference engine.
 3. No real LLM inference runtime or model weights bundled.
 4. Godot captures need display + Vulkan GPU; resolution follows window size.
 5. Test-code C4189/C4100 warnings (benign, tracked).
-6. No GitHub Release published yet at time of writing — see release section;
-  public download claim must match actual publication state.
+6. GitHub Release `v0.1.0` published with all three packages
+  (`https://github.com/timfromhcs/flgodtv/releases/tag/v0.1.0`).

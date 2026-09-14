@@ -522,7 +522,10 @@ This document records the exact status and evidence for every development stage 
 ---
 
 ### CURRENT REVERIFICATION SNAPSHOT — 2026-09-14
-**Status:** `VERIFIED (local Windows)` / `CI PENDING (new commit)`
+**Status:** `VERIFIED (local Windows)` / `CI GREEN (HEAD run 34839952661)`
+**Release:** `v0.1.0` published at
+`https://github.com/timfromhcs/flgodtv/releases/tag/v0.1.0` with all three
+packages (README download claim verified true).
 **Commit:** `53384aa` (code+evidence) plus the docs synchronization commit carrying
 this snapshot, `FINAL_VERIFICATION.md`, `VISUAL_V2_FINAL_VERIFICATION.md`,
 `release_manifest.json`, and `evidence/ci/coverage_matrix.json`.
